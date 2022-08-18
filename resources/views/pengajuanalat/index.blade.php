@@ -10,7 +10,7 @@
             <i class="ri-user-smile-line label-icon"></i><strong>Koordinator Matakuliah (Matakuliah Aktif)</strong>
         </div>
         @foreach ($data['MKExist'] as $MK)
-        <div class="col-xl-4 col-md-6">
+        <div class="col-xl-6 col-lg-6 col-md-6">
             <div class="card card-height-100">
                 <div class="card-header align-items-center d-flex">
                     <h4 class="card-title mb-0 flex-grow-1">{{"(".$MK->kode.") ".$MK->matakuliah}}</h4>
@@ -23,6 +23,7 @@
                                 <tr>
                                     <th scope="col" style="width: 62;">Minggu Ke</th>
                                     <th scope="col">Status</th>
+                                    <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,7 +36,22 @@
                                     <td>
                                         <a href="javascript:void(0);">{{"Minggu ".$vu->mingguData->minggu_ke}}</a>
                                     </td>
-                                    <td>{{$vu->stts}}</td>
+                                    @php
+                                        if($vu->status==1){
+                                            $badge = "warning";
+                                        }else if($vu->status==3){
+                                            $badge = "success";
+                                        }else{
+                                            $badge = "primary";
+                                        }
+                                    @endphp
+                                    <td ><a href="#" class="badge badge-outline-{{$badge}} stts" data-id="{{Crypt::encryptString($vu->id)}}" data-val="{{$vu->status}}" >{{$vu->stts}}</a> </td>
+                                    <td >
+                                        @if ($vu->status == 1)
+                                        <a href="{{route('pengajuanalat.edit',$vu->kode)}}" class="btn btn-info btn-icon waves-effect waves-light" data-id="{{$vu->kode}}"><i class="ri-edit-2-line"></i></a>
+                                        @endif
+                                    </td>
+
                                 </tr><!-- end -->
                                 @empty
                                 <tr>
@@ -48,8 +64,9 @@
                 </div><!-- end cardbody -->
                 <div class="card-footer justify-content-center">
                     <?php $enc = Crypt::encryptString($MK->tr_matakuliah_dosen_id);?>
+                    @can('pengajuan-alat-bahan-edit')
                     <a href="{{url('createPengajuan/'.$enc)}}" type="button" class="btn btn-primary btn-label waves-effect waves-light rounded-pill"><i class="ri-add-line label-icon align-middle rounded-pill fs-16 me-2"></i> Buat Pengajuan Alat</a>
-
+                    @endcan
                 </div>
             </div><!-- end card -->
         </div><!-- end col -->

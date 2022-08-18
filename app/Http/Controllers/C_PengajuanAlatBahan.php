@@ -116,84 +116,62 @@ class C_PengajuanAlatBahan extends Controller
 
 
     public function edit($id){
-        $id = Crypt::decryptString($id);
+        $qrUsulan = MUsulanKebutuhan::where('kode',$id)->get();
+        $qrDetailUsulan = MDetailUsulanKebutuhan::where('tr_usulan_kebutuhan_id',$qrUsulan[0]->id)->get();
+        $mvExist = MvExistMK::where('tr_matakuliah_dosen_id',$qrUsulan[0]->tr_matakuliah_dosen_id)->get();
+
         $data = [
             'title' => "Sistem Informasi Laboratorium",
-            'subtitle' => "Tambah Data Pegawai",
-            'npage' => 1,
+            'subtitle' => "Data Usulan Pengajuan Alat Bahan",
+            'npage' => 95,
+            'minggu' => MMinggu::where('tm_tahun_ajaran_id', $mvExist[0]->tm_tahun_ajaran_id)->get(),
+            'barang' => MBarang::all(),
+
         ];
 
         $Breadcrumb = array(
-            1 => array("link" => url("staff"), "label" => "Data Pegawai"),
-            2 => array("link" => "active", "label" => "Tambah Pegawai"),
+            1 => array("link" => url("staff"), "label" => "Data Pengajuan Alat & Bahan"),
+            2 => array("link" => "active", "label" => "Tambah Pengajuan Alat & Bahan"),
         );
-        if (Gate::check('all-staff-list')) {
-            $pegawai           = M_Staff::find($id);
-        } else {
-            $pegawai           = M_Staff::find(Auth::user()->tm_staff_id);
-        }
 
-        $user       = User::where('tm_staff_id', '=', $id)->where('is_aktif', '=', '1')->get();
-        $user_id           = $user[0]['id'];
-        $roles = "";
-        $userRole = "";
-        if (Gate::check('set-staff-role')) {
-            $user = User::find($user[0]['id']);
-            $roles      = Role::pluck('name', 'name')->all();
-            $userRole   = $user->roles->pluck('name', 'name')->first();
-        }
-
-        $cekPassword = route('cekPassword');
-        $imagePath  =  "img/users/".$pegawai->foto;
-        if (!file_exists($imagePath) || $pegawai->foto == "") {
-            $imagePath = "img/system/anonymous.jpg";
-        }
-        $idEncrypt = Crypt::encryptString($id);
-        return view('pegawai.edit',compact('pegawai','imagePath','data','user_id','cekPassword', 'Breadcrumb', 'roles', 'userRole','idEncrypt'));
+        return view('pengajuanalat.edit', compact('data', 'Breadcrumb','mvExist','qrUsulan','qrDetailUsulan'));
     }
 
     public function update(Request $request, $id){
-        $id = Crypt::decryptString($id);
-        $date = Carbon::now();
-        $request->validate([
-            'foto'                => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'kode'                => 'nullable|string|max:32',
-            'nama'                => 'required|string|max:255',
-            'email'               => 'required|string|email|max:255',
-            'no_hp'               => 'nullable|string|max:64',
-        ]);
-        $input['nama']          = $request->nama;
-        $input['kode']          = $request->kode;
-        $input['email']         = strtolower($request->email);
-        $input['no_hp']         = $request->no_hp;
-        if (Gate::check('set-staff-role')) {
-            $input['is_aktif']      = $request->is_aktif;
-        }
-        $image                  = $request->foto;
-        if ($image != null){
-            $ext            = strtolower($image->getClientOriginalExtension());
-            $fileName       = Str::random(8) . $date->format('YmdHis') . "." . $ext;
-            $upload         = $image->move('img/users', $fileName);
-            $input['foto']  = $fileName;
-        }
-        $pegawai = M_Staff::find($id);
-        $pegawai->update($input);
+        $update['acara_praktek']             = $request->acara_praktek;
+        $update['jml_kel']                   = $request->jml_kel;
+        $update['jml_gol']                   = $request->jml_gol;
+        $update['tm_minggu_id']              = $request->tm_minggu_id;
+        $update['tanggal']                   = $request->tanggal;
+        $UsulanKebutuhan = MUsulanKebutuhan::find($id);
+        $UsulanKebutuhan->update($update);
 
-        $getUser        = User::where('tm_staff_id','=',$id)->where('is_aktif','=','1')->get();
-        $user_id        = $getUser[0]['id'];
-        $user           = User::find($user_id);
-        if ($request->password != null) {
-            $updateUser['password']        = Hash::make($request->password);
-        }
-        $updateUser['name']            = $request->nama;
-        $updateUser['email']           = strtolower($request->email);
-        $user->update($updateUser);
-        if (Gate::check('set-staff-role')) {
-            DB::table('model_has_roles')->where('model_id', $user_id)->delete();
-            $user->assignRole($request->input('roles'));
+        foreach($request->barang as $key => $value){
+            if($value != ""){
+                $detailInput['keb_kel'] = $request->kebkel[$key];
+                $detailInput['total_keb'] = $request->total_keb[$key];
+                $detailInput['tm_barang_id'] = $value;
+                $detailInput['td_satuan_id'] = $request->satuan[$key];
+                $detailInput['keterangan'] = $request->keterangan[$key];
+                $detailInput['tr_usulan_kebutuhan_id'] = $id;
+                $DetailUsulanKebutuhan = MDetailUsulanKebutuhan::create($detailInput);
+            }
         }
 
-        return redirect(route('staff.index'))->with('success','Pegawai Berhasil di Simpan.');
+        $detailUsulan = @$request->detailUsulan;
+        if(count($detailUsulan)){
+            foreach($detailUsulan as $vdu){
+                //echo $_REQUEST['barang-'.$vdu]; ;
+                $detailInput['keb_kel'] = $_REQUEST['kebkel-'.$vdu];
+                $detailInput['total_keb'] =  $_REQUEST['total_keb-'.$vdu];
+                $detailInput['tm_barang_id'] =  $_REQUEST['barang-'.$vdu];
+                $detailInput['td_satuan_id'] =  $_REQUEST['satuan-'.$vdu];
+                $detailInput['keterangan'] =  $_REQUEST['keterangan-'.$vdu];
+                $DetailUsulanKebutuhan = MDetailUsulanKebutuhan::find($vdu);
+                $DetailUsulanKebutuhan->update($detailInput);
+            }
+        }
+        return redirect(route('pengajuanalat.index'))->with('success','Usulan Bahan dan Alat Praktikum Berhasil di Ubah.');
     }
 
     public function destroy(Request $request){

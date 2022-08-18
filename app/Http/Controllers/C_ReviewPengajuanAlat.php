@@ -28,6 +28,7 @@ class C_ReviewPengajuanAlat extends Controller
             'subtitle' => "Data Pengajuan Alat Bahan",
             'npage' => 95,
             "MKExist" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where('status',1)->get())->get(),
+            "PengajuanCetak" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where('status',3)->get())->get(),
 
         ];
 
@@ -356,6 +357,14 @@ class C_ReviewPengajuanAlat extends Controller
         $pdf = PDF::loadView('cetak.cetak',compact('data','qrUsulan','dataDukung'))->setPaper('a4', 'landscape')->setWarnings(false)->save('myfile.pdf');
         return $pdf->download($nama." ".$mk.".pdf");
 
+    }
+
+    public function statusPengajuan(){
+        $input['status']        = $_REQUEST['status'];
+        $id                     =  Crypt::decryptString($_REQUEST['id']);
+        $usulan             = MUsulanKebutuhan::find($id);
+        $data = $usulan->update($input);
+        return response()->json($data);
     }
 
 }

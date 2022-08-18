@@ -99,7 +99,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('UsulanDetailDelete',         [C_ReviewPengajuanAlat::class,'destroy'])->name('UsulanDetailDelete');
     Route::get('CetakOneWeek/{id}',           [C_ReviewPengajuanAlat::class,'CetakOneWeek'])->name('CetakOneWeek');
     Route::post('CetakPengajuan',             [C_ReviewPengajuanAlat::class,'CetakPengajuan'])->name('CetakPengajuan');
-    /* Route::resource('users',                UserController::class); */
+    Route::get('statusPengajuan',             [C_ReviewPengajuanAlat::class,'statusPengajuan'])->name('statusPengajuan');
 
     Route::get('/manage',       [ManageController::class, 'index'])->name('manage');
     Route::get('/pendidikan',   [ManageController::class, 'pendidikan'])->name('manage.pendidikan');
