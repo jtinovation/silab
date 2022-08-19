@@ -148,6 +148,14 @@
 				</li>
                 @endcan
 
+                @can('penggantian-praktek-create')
+                <li class="nav-item">
+					<a class="nav-link menu-link{{ $data['npage'] == 4 ? ' active' : '' }}" href="{{ route('reviewPengajuan.index') }}">
+						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Usulan Bahan Praktikum</span>
+					</a>
+				</li>
+                @endcan
+
 			</ul>
 		</div>
 		<!-- Sidebar -->
