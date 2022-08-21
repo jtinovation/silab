@@ -82,7 +82,7 @@ class Pengajuan extends Migration
         });
 
         Schema::create('tr_usulan_kebutuhan', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->Increments('id');
             $table->string('acara_praktek', 64);
             $table->unsignedTinyInteger('keb_kel');
             $table->unsignedTinyInteger('jml_kel');

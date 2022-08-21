@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\C_Barang;
+use App\Http\Controllers\C_DeliverPengajuanAlatBahan;
 use App\Http\Controllers\C_Permission;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Manage\ManageController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\C_Welcome;
 use App\Http\Controllers\C_Staff;
 use App\Http\Controllers\C_Role;
 use App\Http\Controllers\C_Jurusan;
+use App\Http\Controllers\C_Lab;
 use App\Http\Controllers\C_Matakuliah;
 use App\Http\Controllers\C_Semester;
 use App\Http\Controllers\C_ProgramStudi;
@@ -18,6 +20,7 @@ use App\Http\Controllers\C_Satuan;
 use App\Http\Controllers\C_SatuanDetail;
 use App\Http\Controllers\C_TahunAjaran;
 use App\Http\Controllers\C_LoginWithGoogleController;
+use App\Http\Controllers\C_MemberLab;
 use App\Http\Controllers\C_ReviewPengajuanAlat;
 use App\Http\Controllers\PDFController;
 
@@ -93,13 +96,25 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('barangSelect',              [C_PengajuanAlatBahan::class, 'barangSelect'])->name('barangSelect');
     Route::get('satuanSelect',              [C_PengajuanAlatBahan::class, 'satuanSelect'])->name('satuanSelect');
 
-    Route::resource('reviewPengajuan',         C_ReviewPengajuanAlat::class);
-    Route::get('getReviewUsulan/{id}',        [C_ReviewPengajuanAlat::class,'getReviewUsulan'])->name('getReviewUsulan');
-    Route::get('getReviewUsulanMK/{id}',      [C_ReviewPengajuanAlat::class,'getReviewUsulanMK'])->name('getReviewUsulanMK');
-    Route::post('UsulanDetailDelete',         [C_ReviewPengajuanAlat::class,'destroy'])->name('UsulanDetailDelete');
-    Route::get('CetakOneWeek/{id}',           [C_ReviewPengajuanAlat::class,'CetakOneWeek'])->name('CetakOneWeek');
-    Route::post('CetakPengajuan',             [C_ReviewPengajuanAlat::class,'CetakPengajuan'])->name('CetakPengajuan');
-    Route::get('statusPengajuan',             [C_ReviewPengajuanAlat::class,'statusPengajuan'])->name('statusPengajuan');
+    Route::resource('reviewPengajuan',        C_ReviewPengajuanAlat::class);
+    Route::get('getReviewUsulan/{id}',       [C_ReviewPengajuanAlat::class,'getReviewUsulan'])->name('getReviewUsulan');
+    Route::get('reviewPengajuanCetak/{id}',  [C_ReviewPengajuanAlat::class,'getReviewUsulanCetak'])->name('reviewPengajuan.cetak');
+    Route::get('getReviewUsulanMK/{id}',     [C_ReviewPengajuanAlat::class,'getReviewUsulanMK'])->name('getReviewUsulanMK');
+    Route::post('UsulanDetailDelete',        [C_ReviewPengajuanAlat::class,'destroy'])->name('UsulanDetailDelete');
+    Route::get('CetakOneWeek/{id}',          [C_ReviewPengajuanAlat::class,'CetakOneWeek'])->name('CetakOneWeek');
+    Route::post('CetakPengajuan',            [C_ReviewPengajuanAlat::class,'CetakPengajuan'])->name('CetakPengajuan');
+    Route::get('statusPengajuan',            [C_ReviewPengajuanAlat::class,'statusPengajuan'])->name('statusPengajuan');
+
+    Route::resource('deljulat'       ,        C_DeliverPengajuanAlatBahan::class);
+
+    Route::resource('laboratorium',           C_Lab::class);
+    Route::get('getLab',                     [C_Lab::class, 'getLab'])->name('getLab');
+    Route::post('labDelete',                 [C_Lab::class,'destroy'])->name('labDelete');
+
+    Route::resource('memberLab',                  C_MemberLab::class);
+    Route::get('getMemberLab/{id}',          [C_MemberLab::class, 'getMemberLab']);
+    Route::post('memberDelete',              [C_MemberLab::class,'destroy'])->name('memberDelete');
+    Route::get('memberLabSelect',                [C_MemberLab::class, 'memberLabSelect'])->name('memberLabSelect');
 
     Route::get('/manage',       [ManageController::class, 'index'])->name('manage');
     Route::get('/pendidikan',   [ManageController::class, 'pendidikan'])->name('manage.pendidikan');

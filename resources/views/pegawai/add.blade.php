@@ -41,13 +41,26 @@
                             </div>
                             <div class="col-12 gy-4">
                                 <div>
-                                    <div class="btn-group btn-group-toggle d-flex justify-content-center" data-toggle="buttons">
-                                        <label class="btn btn-outline-primary waves-effect waves-light active">
-                                            <input type="radio" name="is_aktif" id="is_aktif1" value="1" checked=""> &nbsp;&nbsp;&nbsp;&nbsp;Aktif&nbsp;&nbsp;&nbsp;
-                                        </label>
-                                        <label class="btn btn-outline-dark waves-effect waves-light">
-                                            <input type="radio" name="is_aktif" id="is_aktif2" value="0"> Tidak Aktif
-                                        </label>
+                                    <div class="col-12 btn-group" role="group" aria-label="Basic radio toggle button group">
+                                        <input type="radio" class="btn-check" name="is_aktif" id="is_aktif1" value="1" autocomplete="off" checked="">
+                                        <label class="btn btn-outline-primary" for="is_aktif1">&nbsp;&nbsp;&nbsp;&nbsp;Aktif&nbsp;&nbsp;&nbsp;</label>
+
+                                        <input type="radio" class="btn-check" name="is_aktif" id="is_aktif2" value="0" autocomplete="off">
+                                        <label class="btn btn-outline-dark" for="is_aktif2">Tidak Aktif</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 gy-4">
+                                <div>
+                                    <div class="col-12 btn-group" role="group" aria-label="Basic radio toggle button group">
+                                        <input type="radio" class="btn-check" name="tm_status_kepegawaian_id" id="tm_status_kepegawaian_id1" value="1" autocomplete="off" checked="">
+                                        <label class="btn btn-outline-success" for="tm_status_kepegawaian_id1">Dosen</label>
+
+                                        <input type="radio" class="btn-check" name="tm_status_kepegawaian_id" id="tm_status_kepegawaian_id2" value="2" autocomplete="off">
+                                        <label class="btn btn-outline-warning" for="tm_status_kepegawaian_id2">Administrasi</label>
+
+                                        <input type="radio" class="btn-check" name="tm_status_kepegawaian_id" id="tm_status_kepegawaian_id3" value="3" autocomplete="off">
+                                        <label class="btn btn-outline-danger" for="tm_status_kepegawaian_id3">Teknisi</label>
                                     </div>
                                 </div>
                             </div>

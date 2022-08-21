@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MBarang;
 use App\Models\MDetailUsulanKebutuhan;
+use App\Models\MLab;
 use App\Models\MMinggu;
 use App\Models\MUsulanKebutuhan;
 use App\Models\MvExistMK;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use PDF;
 
-class C_ReviewPengajuanAlat extends Controller
+class C_DeliverPengajuanAlatBahan extends Controller
 {
     function __construct(){
         $this->middleware('permission:review-pangajuan-alat-list|review-pangajuan-alat-edit|review-pangajuan-alat-cetak', ['only' => ['index','store']]);
@@ -25,18 +26,18 @@ class C_ReviewPengajuanAlat extends Controller
     public function index(){
         $data = [
             'title' => "Sistem Informasi Laboratorium",
-            'subtitle' => "Data Pengajuan Alat Bahan",
-            'npage' => 95,
-            "MKExist" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where('status',1)->get())->get(),
+            'subtitle' => "Data Deliver Pengajuan Alat Bahan ACC",
+            'npage' => 88,
+            "MKExist" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where('status',4)->get())->get(),
             "PengajuanCetak" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where('status',3)->get())->get(),
 
         ];
 
         $Breadcrumb = array(
-            1 => array("link" => "active", "label" => "Data Pengajuan Alat & Bahan"),
+            1 => array("link" => "active", "label" => "Data Deliver Pengajuan Alat & Bahan ACC"),
             /*    2 => array("link" => "active", "label" => "Edit Pegawai"), */
         );
-        return view('reviewpengajuanalat.index',compact('data','Breadcrumb'));
+        return view('deliverpengajuanalat.index',compact('data','Breadcrumb'));
     }
 
     /**
@@ -72,7 +73,7 @@ class C_ReviewPengajuanAlat extends Controller
             2 => array("link" => "active", "label" => "Tambah Pengajuan Alat & Bahan"),
         );
 
-        $qrUsulan = MUsulanKebutuhan::where([['tr_matakuliah_dosen_id',$id],['status',1]])->get();
+        $qrUsulan = MUsulanKebutuhan::where([['tr_matakuliah_dosen_id',$id],['status',4]])->get();
         if($id=="0"){
             $dataTable[]=array("","","","","","","","","","","","");
         }else{
@@ -108,7 +109,7 @@ class C_ReviewPengajuanAlat extends Controller
         /* $output = array("data" => $data);
         return json_encode($output); */
 
-        return view('reviewpengajuanalat.show', compact('data', 'Breadcrumb','mvExist','dataTable'));
+        return view('deliverpengajuanalat.show', compact('data', 'Breadcrumb','mvExist','dataTable'));
     }
 
     public function getReviewUsulanCetak($id)
@@ -119,8 +120,8 @@ class C_ReviewPengajuanAlat extends Controller
 
         $data = [
             'title' => "Sistem Informasi Laboratorium",
-            'subtitle' => "Data Usulan Pengajuan Alat Bahan",
-            'npage' => 95,
+            'subtitle' => "Data Deliver Pengajuan Alat Bahan ACC",
+            'npage' => 88,
         ];
 
         $Breadcrumb = array(
@@ -164,7 +165,7 @@ class C_ReviewPengajuanAlat extends Controller
         /* $output = array("data" => $data);
         return json_encode($output); */
 
-        return view('reviewpengajuanalat.show', compact('data', 'Breadcrumb','mvExist','dataTable'));
+        return view('deliverpengajuanalat.show', compact('data', 'Breadcrumb','mvExist','dataTable'));
     }
 
 
@@ -176,57 +177,38 @@ class C_ReviewPengajuanAlat extends Controller
 
         $data = [
             'title' => "Sistem Informasi Laboratorium",
-            'subtitle' => "Data Usulan Pengajuan Alat Bahan",
-            'npage' => 95,
+            'subtitle' => "Data Deliver Pengajuan Alat Bahan ACC",
+            'npage' => 88,
             'minggu' => MMinggu::where('tm_tahun_ajaran_id', $mvExist[0]->tm_tahun_ajaran_id)->get(),
             'barang' => MBarang::all(),
-
+            'lab'    => MLab::all(),
         ];
 
         $Breadcrumb = array(
             1 => array("link" => url("staff"), "label" => "Data Pengajuan Alat & Bahan"),
-            2 => array("link" => "active", "label" => "Tambah Pengajuan Alat & Bahan"),
+            2 => array("link" => "active", "label" => "Data Deliver Pengajuan Alat Bahan ACC"),
         );
 
-        return view('reviewpengajuanalat.edit', compact('data', 'Breadcrumb','mvExist','qrUsulan','qrDetailUsulan'));
+        return view('deliverpengajuanalat.edit', compact('data', 'Breadcrumb','mvExist','qrUsulan','qrDetailUsulan'));
     }
 
     public function update(Request $request, $id)
     {
-        $update['acara_praktek']             = $request->acara_praktek;
-        $update['jml_kel']                   = $request->jml_kel;
-        $update['jml_gol']                   = $request->jml_gol;
-        $update['tm_minggu_id']              = $request->tm_minggu_id;
-        $update['tanggal']                   = $request->tanggal;
+        $update['tm_laboratorium_id']              = $request->tm_laboratorium_id;
+        $update['status']                          = 5;
         $UsulanKebutuhan = MUsulanKebutuhan::find($id);
         $UsulanKebutuhan->update($update);
-
-        foreach($request->barang as $key => $value){
-            if($value != ""){
-                $detailInput['keb_kel'] = $request->kebkel[$key];
-                $detailInput['total_keb'] = $request->total_keb[$key];
-                $detailInput['tm_barang_id'] = $value;
-                $detailInput['td_satuan_id'] = $request->satuan[$key];
-                $detailInput['keterangan'] = $request->keterangan[$key];
-                $detailInput['tr_usulan_kebutuhan_id'] = $id;
-                $DetailUsulanKebutuhan = MDetailUsulanKebutuhan::create($detailInput);
-            }
-        }
 
         $detailUsulan = @$request->detailUsulan;
         if(count($detailUsulan)){
             foreach($detailUsulan as $vdu){
                 //echo $_REQUEST['barang-'.$vdu]; ;
-                $detailInput['keb_kel'] = $_REQUEST['kebkel-'.$vdu];
-                $detailInput['total_keb'] =  $_REQUEST['total_keb-'.$vdu];
-                $detailInput['tm_barang_id'] =  $_REQUEST['barang-'.$vdu];
-                $detailInput['td_satuan_id'] =  $_REQUEST['satuan-'.$vdu];
-                $detailInput['keterangan'] =  $_REQUEST['keterangan-'.$vdu];
+                $detailInput['keb_acc'] = $_REQUEST['acc-'.$vdu];
                 $DetailUsulanKebutuhan = MDetailUsulanKebutuhan::find($vdu);
                 $DetailUsulanKebutuhan->update($detailInput);
             }
         }
-        return redirect(route('reviewPengajuan.index'))->with('success','Usulan Bahan dan Alat Praktikum Berhasil di Ubah.');
+        return redirect(route('deljulat.index'))->with('success','Usulan Bahan dan Alat Praktikum Berhasil di Ubah.');
     }
 
     public function destroy(Request $request)

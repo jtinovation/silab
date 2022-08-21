@@ -1,47 +1,52 @@
-$("#SelectKaJur").select2({
-    placeholder: "Pilih Ketua Jurusan",
+$("#SelectJurusan").select2({
+    placeholder: "Pilih Jurusan",
     allowClear: true
 });
 
-$("#SelectKaprodi").select2({
-    placeholder: "Pilih Ketua Program Studi",
+$("#SelectKaLab").select2({
+    placeholder: "Pilih Ka.Lab",
     allowClear: true
 });
 
-$('#tableUser').DataTable({
+$("#SelectTeknisi").select2({
+    placeholder: "Pilih Teknisi",
+    allowClear: true
+});
+
+$('#tableLab').DataTable({
     responsive:true,
     processing: true,
     serverSide: true,
-    ajax: getJurusan,
+    ajax: getLab,
     columns: [
         { data: 'id' },
         { data: 'kode' },
-        { data: 'jurusan' },
-        { data: 'kajur' },
+        { data: 'laboratorium' },
+        { data: 'kalab' },
         /* { data: 'is_aktif' }, */
         { data: 'action' },
     ]
 });
 
-var tableProdi = $('#tblAllInOneProdi').DataTable({
+var tableMember = $('#tblAllInOneProdi').DataTable({
     ordering:false,
     paging:false,
     searching: false,
     "ajax" : url,
 });
 
-$('.tableElementProdi').hide("slide",{direction:'up'},900);
+$('.tableElementMember').hide("slide",{direction:'up'},900);
 
-$("#BtnAddJurusan").click(function() {
+$("#BtnAddLaboratorium").click(function() {
 
     event.preventDefault();
 
      $('.tableElement').hide("slide",{direction:'left'},1000, function(){
         $('.formElement').show("slide",{direction:'left'},1000);
-        document.getElementById("frmJurusan").action = act
+        document.getElementById("frmLaboratorium").action = act
     });
-    $("#btnSubmit").html('Simpan Data Jurusan');
-    $("#btnCancel").html('Batal Tambah Jurusan');
+    $("#btnSubmit").html('Simpan Data Laboratorium');
+    $("#btnCancel").html('Batal Tambah Laboratorium');
     //console.log(urlProdi);
 });
 
@@ -49,78 +54,84 @@ $("#btnCancel").click(function() {
     $('.formElement').hide("slide",{direction:'left'},1000, function(){
         $('.tableElement').show("slide",{direction:'left'},1000);
     });
-    $('#kodejurusan').val("");
-    $('#jurusan').val("");
-});
+    $('#kodelaboratorium').val("");
+    $('#laboratorium').val("");
+    $('#memberid').val("");
+    $('#SelectKaLab').val("");
+    $('#SelectKaLab').select2().trigger('change');
+    $('#SelectJurusan').val("");
+    $('#SelectJurusan').select2().trigger('change');
+})
 
 $("body").on("click",".btnEditClass",function(){
     event.preventDefault();
     var kode = $(this).attr("data-kode");
-    var jurusan = $(this).attr("data-jurusan");
+    var laboratorium = $(this).attr("data-laboratorium");
     var staff = $(this).attr("data-staff");
-    kajurid = $(this).attr("data-kajur");
+    var jurusan = $(this).attr("data-jurusan");
+    var memberid = $(this).attr("data-memberid");
     let dataUpdate=$(this).attr("data-update");
-    $('#kodejurusan').val(kode);
-    $('#jurusan').val(jurusan);
-    $('#tr_kajur_id').val(kajurid);
-    $('#SelectKaJur').val(staff);
-    $('#SelectKaJur').select2().trigger('change');
+    $('#kodelaboratorium').val(kode);
+    $('#laboratorium').val(laboratorium);
+    $('#memberid').val(memberid);
+    $('#SelectKaLab').val(staff);
+    $('#SelectKaLab').select2().trigger('change');
+    $('#SelectJurusan').val(jurusan);
+    $('#SelectJurusan').select2().trigger('change');
     $('#metod').val("PUT");
     var act = dataUpdate;
     $('.tableElement').hide("slide",{direction:'left'},1000, function(){
         $('.formElement').show("slide",{direction:'left'},1000);
-        document.getElementById("frmJurusan").action = act;
+        document.getElementById("frmLaboratorium").action = act;
     });
-    $("#btnSubmit").html('Ubah Data Jurusan');
-    $("#btnCancel").html('Batal Ubah Jurusan');
+    $("#btnSubmit").html('Ubah Data Laboratorium');
+    $("#btnCancel").html('Batal Ubah Laboratorium');
 });
 
 $("body").on("click",".btnDetailClass",function(){
     let kode = $(this).attr("data-kode");
-    let jurusan = $(this).attr("data-jurusan");
-    let titlekode = jurusan+" ( "+kode+" ) ";
+    let laboratorium = $(this).attr("data-laboratorium");
+    let titlekode = laboratorium+" ( "+kode+" ) ";
     let id=$(this).attr("data-val");
-    idjur = id;
+
+    idlab = id;
     //$(".header-title-prodi").text(tm_jurusan_title);
-    $(".header-title-prodi").text(titlekode);
-    let url = urlProdi+"/"+id;
+    $(".header-title-member").text(titlekode);
+    let url = urlMember+"/"+id;
     //console.log(url);
     //table.ajax.reload();
-    tableProdi.ajax.url(url).load();
+    tableMember.ajax.url(url).load();
     $('.tableElement').hide("slide",{direction:'left'},1000, function(){
-        $('.tableElementProdi').show("slide",{direction:'left'},1000);
+        $('.tableElementMember').show("slide",{direction:'left'},1000);
         //document.getElementById("frmJurusan").action = actEdit;
     });
 });
 
-$("#BtnAddProdi").click(function() {
+$("#BtnAddMemberLab").click(function() {
     event.preventDefault();
     mode = "add";
-     $('.tableElementProdi').hide("slide",{direction:'left'},1000, function(){
-        $('.formElementProdi').show("slide",{direction:'left'},1000);
-        document.getElementById("frmProdi").action = "";
+     $('.tableElementMember').hide("slide",{direction:'left'},1000, function(){
+        $('.formElementMember').show("slide",{direction:'left'},1000);
+        document.getElementById("frmMember").action = "";
     });
     $('#txtProdiKode').val("");
     $('#txtProgramStudiTitle').val("");
     $('#txtIdProgramStudi').val("");
-    $('#SelectKaprodi').val("");
-    $('#SelectKaprodi').select2().trigger('change');
 
-    $("#btnSubmitProdi").html('Simpan Data Program Studi');
-    $("#btnCancelProdi").html('Batal Tambah Program Studi');
+    $("#btnSubmitMember").html('Simpan Data Teknisi');
+    $("#btnCancelMember").html('Batal Tambah Teknisi');
 });
 
-$("#btnSubmitProdi").click(function(){
+$("#btnSubmitMember").click(function(){
     event.preventDefault();
     if(mode=="add"){
-        let tm_program_studi_kode  = $('#txtProdiKode').val();
-        let tm_program_studi_title = $('#txtProgramStudiTitle').val();
-        let SelectKaprodi = $('#SelectKaprodi').val();
+        let tm_staff_id = $('#SelectTeknisi').val();
+        console.log(tm_staff_id);
         var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
         $.ajax({
             method: "POST",
-            url: prodistore,
-            data: { kode: tm_program_studi_kode, prodi: tm_program_studi_title, jurusan_id:idjur, kaprodi:SelectKaprodi, _token: token}
+            url: memberstore,
+            data: { labid: idlab, staff: tm_staff_id, _token: token}
         })
             .done(function( msg ) {
             //alert( "Data Saved: " + msg );
@@ -128,18 +139,17 @@ $("#btnSubmitProdi").click(function(){
             Swal.fire({
                 type: 'success',
                 title: 'Berhasil',
-                text: 'Data Prodi Berhasil Di Simpan',
+                text: 'Data Teknisi Berhasil Di Simpan',
              });
         });
     }else if(mode=="edit"){
         let tm_program_studi_kode  = $('#txtProdiKode').val();
         let tm_program_studi_title = $('#txtProgramStudiTitle').val();
-        let SelectKaprodi = $('#SelectKaprodi').val();
         let dataUpdate= $('#txtIdProgramStudi').val();
         $.ajax({
             method: "POST",
             url: dataUpdate,
-            data: { kode: tm_program_studi_kode, prodi: tm_program_studi_title, kaprodi:SelectKaprodi, kaprodiid:kaprodiid, _method:"PUT", _token: token}
+            data: { kode: tm_program_studi_kode, prodi: tm_program_studi_title, _method:"PUT", _token: token}
         }).done(function( msg ) {
     //        alert( "Data Saved: " + msg );
             //Swal.fire(msg);
@@ -151,11 +161,16 @@ $("#btnSubmitProdi").click(function(){
         });
     }
 
-    let jurlid = urlProdi+"/"+idjur;
-    tableProdi.ajax.url(jurlid).load();
-    $('.formElementProdi').hide("slide",{direction:'left'},1000, function(){
-        $('.tableElementProdi').show("slide",{direction:'left'},1000);
+
+
+    $('#SelectTeknisi').val("");
+    $('#SelectTeknisi').select2().trigger('change');
+    let jurlid = urlMember+"/"+idlab;
+    tableMember.ajax.url(jurlid).load();
+    $('.formElementMember').hide("slide",{direction:'left'},1000, function(){
+        $('.tableElementMember').show("slide",{direction:'left'},1000);
     });
+
 });
 
 $("body").on("click",".btnEditClassProdi",function(){
@@ -166,54 +181,43 @@ $("body").on("click",".btnEditClassProdi",function(){
     let tm_program_studi_title   =currentRow.find("td:eq(1)").text(); // get current row 2nd TD
     //var col3=currentRow.find("td:eq(2)").text(); // get current row 3rd TD
     let id=$(this).attr("data-update");
-    let dataKaprodi=$(this).attr("data-kaprodi");
-    kaprodiid=$(this).attr("data-kaprodiid");
     $('#txtProdiKode').val(tm_program_studi_kode);
     $('#txtProdiKode').focus();
     $('#txtProgramStudiTitle').val(tm_program_studi_title);
     $('#txtIdProgramStudi').val(id);
-    if(dataKaprodi==""){
-        $('#SelectKaprodi').val("");
-        $('#SelectKaprodi').select2().trigger('change');
-    }else{
-        $('#SelectKaprodi').val(dataKaprodi);
-        $('#SelectKaprodi').select2().trigger('change');
-    }
 
-    $('.tableElementProdi').hide("slide",{direction:'left'},1000, function(){
-        $('.formElementProdi').show("slide",{direction:'left'},1000);
+    $('.tableElementMember').hide("slide",{direction:'left'},1000, function(){
+        $('.formElementMember').show("slide",{direction:'left'},1000);
     });
-    $("#btnSubmitProdi").html('Ubah Data Program Studi');
-    $("#btnCancelProdi").html('Batal Ubah Program Studi');
+    $("#btnSubmitMember").html('Ubah Data Program Studi');
+    $("#btnSubmitMember").html('Batal Ubah Program Studi');
 });
 
 $("#BtnBackProdi").click(function(){
     event.preventDefault();
-    $('.tableElementProdi').hide("slide",{direction:'left'},1000, function(){
+    $('.tableElementMember').hide("slide",{direction:'left'},1000, function(){
         $('.tableElement').show("slide",{direction:'left'},1000);
     });
     //console.log("test");
 });
 
-$("#btnCancelProdi").click(function() {
-    $('.formElementProdi').hide("slide",{direction:'left'},1000, function(){
-        $('.tableElementProdi').show("slide",{direction:'left'},1000);
+$("#btnSubmitMember").click(function() {
+    $('.formElementMember').hide("slide",{direction:'left'},1000, function(){
+        $('.tableElementMember').show("slide",{direction:'left'},1000);
     });
     $('#txtProdiKode').val("");
     $('#txtProgramStudiTitle').val("");
     $('#txttm_program_studi_id').val("");
-    $('#SelectKaprodi').val("");
-    $('#SelectKaprodi').select2().trigger('change');
 });
 
-$("body").on("click",".btnDeleteClassProdi",function(){
+$("body").on("click",".btnDeleteClassMember",function(){
     event.preventDefault();
     var currentRow = $(this).closest("tr");
-    let tm_program_studi_title   =currentRow.find("td:eq(1)").text(); // get current row 2nd TD
+    let tm_program_studi_title   =currentRow.find("td:eq(0)").text(); // get current row 2nd TD
     var id=$(this).attr("data-val");
     //console.log(id);
     swal.fire({
-        title: 'Hapus Data Program Studi?',
+        title: 'Hapus Data Teknisi?',
         text: "Anda akan menghapus "+tm_program_studi_title,
         icon: 'warning',
         showCancelButton: true,
@@ -225,7 +229,7 @@ $("body").on("click",".btnDeleteClassProdi",function(){
             var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
                 type: "POST",
-                url: prodidelete,
+                url: memberDelete,
                 data: {id:id, _token: token},
                 dataType: "html",
                 success: function (data) {
@@ -234,8 +238,8 @@ $("body").on("click",".btnDeleteClassProdi",function(){
                         text: "",
                         icon: "success"
                     }).then(function(){
-                        let jurlid = urlProdi+"/"+idjur;
-                        tableProdi.ajax.url(jurlid).load();
+                        let jurlid = urlMember+"/"+idlab;
+                        tableMember.ajax.url(jurlid).load();
 
                     });
                 },

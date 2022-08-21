@@ -85,6 +85,7 @@ class C_Staff extends Controller
         $input['email']         = strtolower($request->email);
         $input['no_hp']         = $request->no_hp;
         $input['is_aktif']      = $request->is_aktif;
+        $input['tm_status_kepegawaian_id']      = $request->tm_status_kepegawaian_id;
         $image                  = $request->foto;
         if ($image != null){
             $ext            = strtolower($image->getClientOriginalExtension());
@@ -163,6 +164,7 @@ class C_Staff extends Controller
         $input['no_hp']         = $request->no_hp;
         if (Gate::check('set-staff-role')) {
             $input['is_aktif']      = $request->is_aktif;
+            $input['tm_status_kepegawaian_id']      = $request->tm_status_kepegawaian_id;
         }
         $image                  = $request->foto;
         if ($image != null){

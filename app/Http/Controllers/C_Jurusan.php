@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\M_Staff;
 use App\Models\MJurusan;
+use App\Models\MKajur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +24,7 @@ class C_Jurusan extends Controller
             'title' => "Sistem Informasi Laboratorium",
             'subtitle' => "Data Jurusan",
             'npage' => 90,
+            'dosen' => M_Staff::where('tm_status_kepegawaian_id',1)->get(),
         ];
 
         $Breadcrumb = array(
@@ -42,6 +45,11 @@ class C_Jurusan extends Controller
         $input['jurusan']       = ucwords($request->jurusan);
         $input['user_id']       = Auth::user()->id;
         $jurusan = MJurusan::create($input);
+
+        $kajur['tm_jurusan_id'] = $jurusan->id;
+        $kajur['tm_staff_id']   = $request->tm_staff_id;
+        $kajur['is_aktif']      = 1;
+        $trKajur = MKajur::create($kajur);
         return redirect(route('jurusan.index'))->with('success','Data Jurusan Berhasil di Simpan.');
     }
 
@@ -59,6 +67,17 @@ class C_Jurusan extends Controller
         $input['user_id']       = Auth::user()->id;
         $jurusan = MJurusan::find($id);
         $jurusan->update($input);
+
+        if ($request->filled('tr_kajur_id')) {
+            $update['is_aktif'] = 0;
+            $updateKajur = MKajur::find($request->tr_kajur_id);
+            $updateKajur->update($update);
+        }
+
+        $kajur['tm_jurusan_id'] = $id;
+        $kajur['tm_staff_id']   = $request->tm_staff_id;
+        $kajur['is_aktif']      = 1;
+        $trKajur = MKajur::create($kajur);
         return redirect(route('jurusan.index'))->with('success','Data Jurusan Berhasil di Ubah.');
     }
 
@@ -98,9 +117,16 @@ class C_Jurusan extends Controller
         $number = $start;
         foreach ($records as $record) { $number += 1;
             $idEncrypt = Crypt::encryptString($record->id);
+            $qryKajur = MKajur::where([['tm_jurusan_id',$record->id],['is_aktif',1]])->get();
+            $kajur = "";$staff = "";$kajurid="";
+            if(count($qryKajur)){
+                $kajur = $qryKajur[0]->StaffData->nama;
+                $staff = $qryKajur[0]->tm_staff_id;
+                $kajurid = $qryKajur[0]->id;
+            }
             $button = "";
             if(Gate::check('jurusan-edit')){
-                $button = $button."<a href='#' data-href='".route('jurusan.edit',$record->id)."' data-update='".route('jurusan.update',$record->id)."' data-kode='".$record->kode."' data-jurusan='".$record->jurusan."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
+                $button = $button."<a href='#' data-href='".route('jurusan.edit',$record->id)."' data-update='".route('jurusan.update',$record->id)."' data-kode='".$record->kode."' data-jurusan='".$record->jurusan."' data-staff='".$staff."' data-kajur='".$kajurid."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
                 <i class='ri-edit-2-line'></i></a>";
             }
             if(Gate::check('jurusan-delete')){
@@ -121,6 +147,7 @@ class C_Jurusan extends Controller
                 "id"               => $number,
                 "kode"             => $record->kode,
                 "jurusan"          => $record->jurusan,
+                "kajur"            => $kajur,
                 /* "is_aktif"         => $span, */
                 "action"           => $button
             );

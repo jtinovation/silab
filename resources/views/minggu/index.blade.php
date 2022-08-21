@@ -11,6 +11,10 @@
 <!-- Daterangepicker -->
 <link href="{{asset('assets/libs/daterangepicker/daterangepicker.css')}}" rel="stylesheet" />
 
+<!-- Select2 -->
+<link rel="stylesheet" href="{{ asset('assets/libs/select2/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/libs/select2/select2-bootstrap4.min.css') }}">
+
 @if(session('success'))
     <div class="alert alert-success alert-dismissible alert-dismissable fade show" role="alert">
         <strong> {{session('success')}}</strong>
@@ -143,16 +147,15 @@
     <script src="{{asset('assets/libs/daterangepicker/moment.min.js')}}"></script>
     <script src="{{asset('assets/libs/daterangepicker/daterangepicker.js')}}"></script>
 
+    <!-- Select 2 -->
+    <script src="{{ asset('assets/libs/select2/select2.min.js') }}"></script>
+
     <script type="text/javascript">
-        var getMinggu  = "{{route('getMinggu')}}";
-        var act         = "{{route('minggu.store')}}";
-        var mingguDelete         = "{{url('mingguDelete')}}";
-        var token = "{{ csrf_token() }}";
-        $('#tanggal').daterangepicker({
-        locale: {
-            format: 'D/M/Y',
-        }
-    });
+        var getMinggu       = "{{route('getMinggu')}}";
+        var act             = "{{route('minggu.store')}}";
+        var mingguDelete    = "{{url('mingguDelete')}}";
+        var token           = "{{ csrf_token() }}";
+
     </script>
     <script src="{{ asset('assets/js/pages/minggu.js') }}"></script>
 

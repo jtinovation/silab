@@ -40,7 +40,7 @@
                 <div class="col-lg-12 ">
                     <div class="live-preview">
                         <div class="table-responsive">
-                            <table id="tableDetailUsulan" class="table align-middle table-nowrap mb-0">
+                            <table id="tableDetailUsulan" class="table align-middle mb-0" width="100%">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Minggu Ke</th>
@@ -64,10 +64,10 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer"> 
+            <div class="modal-footer">
                 <!-- Buttons with Label -->
-                <button type="button" class="btn btn-primary btn-label waves-effect waves-light mdlPrint" data-href=""><i class="ri-printer-fill label-icon align-middle fs-16 me-2"></i> Cetak</button>
-                <button type="button" class="btn btn-success btn-label waves-effect waves-light mdlEdit" data-href=""><i class="ri-edit-2-line label-icon align-middle fs-16 me-2"></i> Ubah</button>
+                <button type="button" class="btn btn-primary btn-label waves-effect waves-light mdlPrint" data-href=""><i class="ri-printer-fill label-icon align-middle fs-16 me-2"></i> <span> Cetak </span> </button>
+                <button type="button" class="btn btn-success btn-label waves-effect waves-light mdlEdit" data-href=""><i class="ri-edit-2-line label-icon align-middle fs-16 me-2"></i> <span>Ubah</span> </button>
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
             </div>
 

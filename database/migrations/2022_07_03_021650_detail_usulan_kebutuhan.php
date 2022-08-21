@@ -22,7 +22,7 @@ class DetailUsulanKebutuhan extends Migration
         });
 
         Schema::create('tr_usulan_kebutuhan_detail', function (Blueprint $table) {
-            $table->Increments('id');
+            $table->bigIncrements('id');
             $table->unsignedTinyInteger('keb_kel');
             $table->unsignedInteger('total_keb');
             $table->unsignedInteger('keb_acc');

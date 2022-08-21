@@ -8,8 +8,8 @@
 
 <div class="row">
     <div class="col-lg-12 row mt-3 animate__animated animate__backInLeft">
-        <div class="alert alert-warning alert-dismissible alert-label-icon label-arrow fade show" role="alert">
-            <i class="ri-user-smile-line label-icon"></i><strong>Pengajuan Alat Praktikum Oleh Koordinator Mata Kuliah</strong>
+        <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
+            <i class="ri-user-smile-line label-icon"></i><strong>Distribusi Pengajuan Alat dan Bahan Paktikum yang telah disetujui</strong>
         </div>
         @foreach ($data['MKExist'] as $MK)
         <div class="col-xl-6 col-lg-6 col-md-6">
@@ -30,12 +30,12 @@
                             </thead>
                             <tbody>
                                 @php
-                                    $usulan =  App\Models\MUsulanKebutuhan::where('tr_matakuliah_dosen_id',$MK->tr_matakuliah_dosen_id)->where('status',1)->get();
+                                    $usulan =  App\Models\MUsulanKebutuhan::where('tr_matakuliah_dosen_id',$MK->tr_matakuliah_dosen_id)->where('status',4)->get();
                                 @endphp
                                 @foreach ($usulan as $vu )
                                 <tr>
                                     <td>
-                                        <a href="javascript:void(0);" class="showUsulan" data-url="{{url('getReviewUsulan')."/".$vu->kode}}" data-urls="{{url('getReviewUsulanMK')."/".Crypt::encryptString($vu->tr_matakuliah_dosen_id)}}" data-cetak="{{url('CetakOneWeek'."/".$vu->kode)}}" data-edit="{{route('reviewPengajuan.edit',$vu->kode)}}">{{"Minggu ".$vu->mingguData->minggu_ke}}</a>
+                                        <a href="javascript:void(0);" class="showUsulan" data-url="{{url('getReviewUsulan')."/".$vu->kode}}" data-urls="{{url('getReviewUsulanMK')."/".Crypt::encryptString($vu->tr_matakuliah_dosen_id)}}" data-cetak="{{url('CetakOneWeek'."/".$vu->kode)}}" data-edit="{{route('deljulat.edit',$vu->kode)}}">{{"Minggu ".$vu->mingguData->minggu_ke}}</a>
                                     </td>
                                     <td ><a href="#" class="badge badge-outline-warning stts" data-id="{{Crypt::encryptString($vu->id)}}" data-val="{{$vu->status}}" >{{$vu->stts}}</a> </td>
                                 </tr><!-- end -->
@@ -51,66 +51,12 @@
                     </div>
                     <div class="col-md-12 row button-items justify-content-end gap-3" style="margin-top: 10px;">
                         <?php $enc = Crypt::encryptString($MK->tr_matakuliah_dosen_id);?>
-                        <a href="{{route('reviewPengajuan.show',$enc)}}" type="button" class="btn btn-primary btn-label waves-effect waves-light rounded-pill"><i class=" ri-list-check-2 label-icon align-middle rounded-pill fs-16 me-2"></i> Tampilkan Pengajuan Alat</a>
+                        <a href="{{route('deljulat.show',$enc)}}" type="button" class="btn btn-primary btn-label waves-effect waves-light rounded-pill"><i class="  ri-takeaway-line label-icon align-middle rounded-pill fs-16 me-2"></i> Deliver Pengajuan Alat</a>
                     </div>
                 </div>
             </div><!-- end card -->
         </div><!-- end col -->
         @endforeach
-    </div>
-
-    <div class="col-lg-12 row mt-3  animate__animated animate__backInLeft animate__delay-1s">
-        <div class="alert alert-success alert-dismissible alert-label-icon label-arrow fade show" role="alert">
-            <i class="ri-user-smile-line label-icon"></i><strong>Cetak Pengajuan Oleh Tim Bahan</strong>
-        </div>
-
-        @foreach ($data['PengajuanCetak'] as $PC)
-        <div class="col-xl-6 col-lg-6 col-md-6">
-            <div class="card card-height-100">
-                <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1 text-center">{{"(".$PC->kode.") ".$PC->matakuliah}}</h4>
-
-                </div><!-- end card header -->
-                <div class="card-body">
-                    <div class="table-responsive table-card">
-                        <table
-                            class="table align-middle table-borderless table-centered table-nowrap mb-0">
-                            <thead class="text-muted table-light">
-                                <tr>
-                                    <th scope="col" style="width: 62;">Minggu Ke</th>
-                                    <th scope="col">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php
-                                    $usulan =  App\Models\MUsulanKebutuhan::where('tr_matakuliah_dosen_id',$PC->tr_matakuliah_dosen_id)->where('status',3)->get();
-                                @endphp
-                                @foreach ($usulan as $vu )
-                                <tr>
-                                    <td>
-                                        <a href="javascript:void(0);" class="showUsulan" data-url="{{url('getReviewUsulan')."/".$vu->kode}}" data-urls="{{url('getReviewUsulanMK')."/".Crypt::encryptString($vu->tr_matakuliah_dosen_id)}}" data-cetak="{{url('CetakOneWeek'."/".$vu->kode)}}" data-edit="{{route('reviewPengajuan.edit',$vu->kode)}}">{{"Minggu ".$vu->mingguData->minggu_ke}}</a>
-                                    </td>
-                                    <td ><a href="#" class="badge badge-outline-success sttsCetak" data-id="{{Crypt::encryptString($vu->id)}}" data-val="{{$vu->status}}" >{{$vu->stts}}</a> </td>
-                                </tr><!-- end -->
-                                @endforeach
-                            </tbody><!-- end tbody -->
-                        </table><!-- end table -->
-                    </div><!-- end -->
-
-                </div><!-- end cardbody -->
-                <div class="card-footer justify-content-center">
-                    <div class="alert alert-primary alert-dismissible alert-label-icon rounded-label fade show" role="alert">
-                        <i class="ri-user-smile-line label-icon text-center"></i><strong> {{$PC->nama}}</strong>
-                    </div>
-                    <div class="col-md-12 row button-items justify-content-end gap-3" style="margin-top: 10px;">
-                        <?php $enc = Crypt::encryptString($PC->tr_matakuliah_dosen_id);?>
-                        <a href="{{route('reviewPengajuan.cetak',$enc)}}" type="button" class="btn btn-primary btn-label waves-effect waves-light rounded-pill"><i class=" ri-list-check-2 label-icon align-middle rounded-pill fs-16 me-2"></i> Tampilkan Pengajuan Alat</a>
-                    </div>
-                </div>
-            </div><!-- end card -->
-        </div><!-- end col -->
-        @endforeach
-
     </div>
 </div>
 
@@ -142,7 +88,10 @@
                         $('#dtJrsn').text(v.jurusan);
                         $('#dtAkademik').text(v.tahun);
                         $('.mdlEdit').attr("data-href", urlEdit);
-                        $('.mdlPrint').attr("data-href", urlCetak);
+                        $('.mdlEdit').find('span').text("Deliver To...");
+                        $('.mdlEdit').find('i').removeClass().addClass("ri-takeaway-line label-icon align-middle fs-16 me-2");
+                        $('.mdlEdit').removeClass('btn-success').addClass("btn-info");
+                        $('.mdlPrint').hide();
                     });
                 }else{
                     //console.log("Belum Ada Usulan");

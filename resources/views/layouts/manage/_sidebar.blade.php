@@ -38,11 +38,11 @@
 						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Beranda</span>
 					</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link menu-link{{ in_array($data['npage'], [1, 2, 3, 90, 91, 92, 93, 94, 96, 97, 98, 99]) ? ' active' : '' }}" href="#sidebarLayanan" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
+                <li class="nav-item">
+					<a class="nav-link menu-link{{ in_array($data['npage'], [1, 2, 3, 90, 98, 99, 89]) ? ' active' : '' }}" href="#sidebarMaster" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
 						<i class="ri-book-line"></i> <span data-key="t-master">Master</span>
 					</a>
-					<div class="collapse menu-dropdown{{ in_array($data['npage'], [1, 2, 3, 90, 91, 92, 93, 94, 96, 97, 98, 99]) ? ' show' : '' }}" id="sidebarLayanan">
+					<div class="collapse menu-dropdown{{ in_array($data['npage'], [1, 2, 3, 90, 98, 99, 89]) ? ' show' : '' }}" id="sidebarMaster">
 						<ul class="nav nav-sm flex-column">
                             @can('staff-list')
 							<li class="nav-item">
@@ -72,6 +72,39 @@
 								</a>
 							</li>
                             @endcan
+
+                            @can('satuan-list')
+							<li class="nav-item">
+								<a class="nav-link menu-link{{ $data['npage'] == 98 ? ' active' : '' }}" href="{{ route('satuan.index') }}">
+									<span data-key="t-penelitian">Satuan</span>
+								</a>
+							</li>
+                            @endcan
+                            @can('barang-list')
+							<li class="nav-item">
+								<a class="nav-link menu-link{{ $data['npage'] == 99 ? ' active' : '' }}" href="{{ route('barang.index') }}">
+									<span data-key="t-penelitian">Barang</span>
+								</a>
+							</li>
+                            @endcan
+                            @can('lab-list')
+							<li class="nav-item">
+								<a class="nav-link menu-link{{ $data['npage'] == 89 ? ' active' : '' }}" href="{{ route('laboratorium.index') }}">
+									<span data-key="t-penelitian">Laboratorium</span>
+								</a>
+							</li>
+                            @endcan
+						</ul>
+					</div>
+				</li> <!-- end Dashboard Menu -->
+
+                <li class="nav-item">
+					<a class="nav-link menu-link{{ in_array($data['npage'], [91, 92, 93, 94, 96, 97]) ? ' active' : '' }}" href="#sidebarAkademik" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
+						<i class="ri-book-line"></i> <span data-key="t-master">Akademik</span>
+					</a>
+					<div class="collapse menu-dropdown{{ in_array($data['npage'], [91, 92, 93, 94, 96, 97]) ? ' show' : '' }}" id="sidebarAkademik">
+						<ul class="nav nav-sm flex-column">
+
                             @can('tahunajaran-list')
                             <li class="nav-item">
 								<a class="nav-link menu-link{{ $data['npage'] == 96 ? ' active' : '' }}" href="{{ route('tahunajaran.index') }}">
@@ -114,20 +147,7 @@
 								</a>
 							</li>
                             @endcan
-                            @can('satuan-list')
-							<li class="nav-item">
-								<a class="nav-link menu-link{{ $data['npage'] == 98 ? ' active' : '' }}" href="{{ route('satuan.index') }}">
-									<span data-key="t-penelitian">Satuan</span>
-								</a>
-							</li>
-                            @endcan
-                            @can('barang-list')
-							<li class="nav-item">
-								<a class="nav-link menu-link{{ $data['npage'] == 99 ? ' active' : '' }}" href="{{ route('barang.index') }}">
-									<span data-key="t-penelitian">Barang</span>
-								</a>
-							</li>
-                            @endcan
+
 						</ul>
 					</div>
 				</li> <!-- end Dashboard Menu -->
@@ -148,13 +168,15 @@
 				</li>
                 @endcan
 
-                @can('penggantian-praktek-create')
+                @can('deliver-pangajuan-alat-list')
                 <li class="nav-item">
-					<a class="nav-link menu-link{{ $data['npage'] == 4 ? ' active' : '' }}" href="{{ route('reviewPengajuan.index') }}">
-						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Usulan Bahan Praktikum</span>
+					<a class="nav-link menu-link{{ $data['npage'] == 88 ? ' active' : '' }}" href="{{ route('deljulat.index') }}">
+						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Deliver Pengajuan Alat ACC</span>
 					</a>
 				</li>
                 @endcan
+
+
 
 			</ul>
 		</div>

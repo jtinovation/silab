@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MKaprodi;
 use App\Models\MProgramStudi;
 use App\Models\MSemester;
 use Illuminate\Http\Request;
@@ -43,6 +44,14 @@ class C_ProgramStudi extends Controller
         }else{
             echo "Data Program Studi Gagal di Inpunt";
         }
+
+        if ($request->filled('kaprodi')) {
+            $dtKaprodi['tm_program_studi_id'] = $prodi->id;
+            $dtKaprodi['tm_staff_id'] = $request->kaprodi;
+            $dtKaprodi['is_aktif'] = 1;
+            $kaprodi = MKaprodi::create($dtKaprodi);
+        }
+
     }
 
 
@@ -69,6 +78,20 @@ class C_ProgramStudi extends Controller
         }else{
             echo "Data Program Studi Gagal di Ubah";
         }
+
+        if ($request->filled('kaprodiid')) {
+            $update['is_aktif'] = 0;
+            $updateKajur = MKaprodi::find($request->kaprodiid);
+            $updateKajur->update($update);
+        }
+        if ($request->filled('kaprodi')) {
+            $dtKaprodi['tm_program_studi_id'] = $id;
+            $dtKaprodi['tm_staff_id'] = $request->kaprodi;
+            $dtKaprodi['is_aktif'] = 1;
+            $kaprodi = MKaprodi::create($dtKaprodi);
+        }
+
+
     }
 
 
@@ -91,13 +114,20 @@ class C_ProgramStudi extends Controller
         $data = array();
 		if(count($qr)){
             foreach($qr as $v){
+                $qrkaprodi= MKaprodi::where([["tm_program_studi_id",$v->id],['is_aktif',1]])->get();
+                $kaprodi="";$kaprodiid="";$nmkaprodi="";
+                if(count($qrkaprodi)){
+                    $kaprodi = $qrkaprodi[0]->tm_staff_id;
+                    $kaprodiid = $qrkaprodi[0]->id;
+                    $nmkaprodi = $qrkaprodi[0]->StaffData->nama;
+                }
     			$id=$v['kode'];
     			$tags=$v['program_studi'];
-                $btn="<button type='button'  data-val='$v[id]' data-update='".route('prodi.update',$v['id'])."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClassProdi'><i class='ri-edit-2-line'></i></button> <button type='button'  data-val='$v[id]' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 btnDeleteClassProdi'><i class='ri-delete-bin-2-line'></i></button>";
-    			$data[] = array($id, $tags,$btn);
+                $btn="<button type='button'  data-val='$v[id]' data-kaprodiid='".$kaprodiid."' data-kaprodi='".$kaprodi."' data-update='".route('prodi.update',$v['id'])."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClassProdi'><i class='ri-edit-2-line'></i></button> <button type='button'  data-val='$v[id]' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 btnDeleteClassProdi'><i class='ri-delete-bin-2-line'></i></button>";
+    			$data[] = array($id,$tags,$nmkaprodi,$btn);
     		}
         }else{
-            $data[]=array("&nbsp;","&nbsp;","&nbsp;");
+            $data[]=array("&nbsp;","&nbsp;","&nbsp;","&nbsp;");
         }
 
         $output = array("data" => $data);

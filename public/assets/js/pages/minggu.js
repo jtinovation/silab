@@ -2,6 +2,7 @@ $('#tableUser').DataTable({
     responsive: true,
     processing: true,
     serverSide: true,
+    pageLength: 16,
     ajax: getMinggu,
     columns: [
         { data: 'id' },
@@ -12,6 +13,20 @@ $('#tableUser').DataTable({
         /* { data: 'is_aktif' }, */
         { data: 'action' },
     ]
+});
+
+$('#tanggal').daterangepicker({
+    locale: {
+        format: 'D/M/Y',
+    }
+});
+$("#minggu_ke").select2({
+    placeholder: "Pilih Minggu",
+    allowClear: true
+});
+$("#tahun_ajaran").select2({
+    placeholder: "Pilih Tahun Ajaran",
+    allowClear: true
 });
 
 $("#btnSubmit").click(function() {
@@ -48,7 +63,9 @@ $("body").on("click", ".btnEditClass", function() {
     let svrKeterangan = $(this).attr("data-keterangan");
     let dataUpdate = $(this).attr("data-update");
     $('#minggu_ke').val(svrMinggu);
+    $('#minggu_ke').select2().trigger('change');
     $('#tahun_ajaran').val(svrTahunajaran);
+    $('#tahun_ajaran').select2().trigger('change');
     $('#keterangan').val(svrKeterangan);
     console.log($(this).attr("data-tahunajaran"));
     $('#tanggal').data('daterangepicker').setStartDate(svrStart);
