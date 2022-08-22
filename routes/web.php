@@ -21,6 +21,8 @@ use App\Http\Controllers\C_SatuanDetail;
 use App\Http\Controllers\C_TahunAjaran;
 use App\Http\Controllers\C_LoginWithGoogleController;
 use App\Http\Controllers\C_MemberLab;
+use App\Http\Controllers\C_PelayananLaboratorium;
+use App\Http\Controllers\C_PengadaanStokin;
 use App\Http\Controllers\C_ReviewPengajuanAlat;
 use App\Http\Controllers\PDFController;
 
@@ -105,16 +107,18 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('CetakPengajuan',            [C_ReviewPengajuanAlat::class,'CetakPengajuan'])->name('CetakPengajuan');
     Route::get('statusPengajuan',            [C_ReviewPengajuanAlat::class,'statusPengajuan'])->name('statusPengajuan');
 
-    Route::resource('deljulat'       ,        C_DeliverPengajuanAlatBahan::class);
+    Route::resource('deljulat',               C_DeliverPengajuanAlatBahan::class);
 
     Route::resource('laboratorium',           C_Lab::class);
     Route::get('getLab',                     [C_Lab::class, 'getLab'])->name('getLab');
     Route::post('labDelete',                 [C_Lab::class,'destroy'])->name('labDelete');
 
-    Route::resource('memberLab',                  C_MemberLab::class);
+    Route::resource('memberLab',              C_MemberLab::class);
     Route::get('getMemberLab/{id}',          [C_MemberLab::class, 'getMemberLab']);
     Route::post('memberDelete',              [C_MemberLab::class,'destroy'])->name('memberDelete');
-    Route::get('memberLabSelect',                [C_MemberLab::class, 'memberLabSelect'])->name('memberLabSelect');
+    Route::get('memberLabSelect',            [C_MemberLab::class, 'memberLabSelect'])->name('memberLabSelect');
+
+    Route::resource('pengadaanStokin',   C_PengadaanStokin::class);
 
     Route::get('/manage',       [ManageController::class, 'index'])->name('manage');
     Route::get('/pendidikan',   [ManageController::class, 'pendidikan'])->name('manage.pendidikan');

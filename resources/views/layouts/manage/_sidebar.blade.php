@@ -176,6 +176,14 @@
 				</li>
                 @endcan
 
+                @can('stok-in-pengadaan-list')
+                <li class="nav-item">
+					<a class="nav-link menu-link{{ $data['npage'] == 87 ? ' active' : '' }}" href="{{ route('pengadaanStokin.index') }}">
+						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Stok-In Pengadaan</span>
+					</a>
+				</li>
+                @endcan
+
 
 
 			</ul>

@@ -25,6 +25,10 @@ class MUsulanKebutuhan extends Model
         return $this->belongsTo(MMinggu::class,'tm_minggu_id');//table class,fk
     }
 
+    public function labData(){
+        return $this->belongsTo(MLab::class,'tm_laboratorium_id');//table class,fk
+    }
+
     public function getTanggalAttribute($value)
     {
         return Carbon::parse($value)->format('d/m/Y');
@@ -33,11 +37,17 @@ class MUsulanKebutuhan extends Model
     public function getSttsAttribute()
     {
         if($this->status==1){
-        return "Pengajuan";
+            return "Pengajuan";
         }elseif($this->status==2){
-        return "Review";
+            return "Review";
         }elseif($this->status==3){
-        return "Cetak";
+            return "Cetak Tim Bahan Jurusan";
+        }elseif($this->status==4){
+            return "ACC Pengadaan Pusat";
+        }elseif($this->status==5){
+            return "Deliver To Unit";
+        }elseif($this->status==6){
+            return "Selesai";
         }
     }
 }
