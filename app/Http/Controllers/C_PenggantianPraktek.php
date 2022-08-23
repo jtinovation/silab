@@ -16,9 +16,9 @@ class C_PenggantianPraktek extends Controller
     function __construct()
     {
          $this->middleware('permission:satuan-list|satuan-create|satuan-edit|satuan-delete', ['only' => ['index','store']]);
-         $this->middleware('permission:satuan-create', ['only' => ['create','store']]);
-         $this->middleware('permission:satuan-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:satuan-delete', ['only' => ['destroy']]);
+         $this->middleware('permission:penggantian-praktek-create', ['only' => ['create','store']]);
+         $this->middleware('permission:penggantian-praktek-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:penggantian-prakte-delete', ['only' => ['destroy']]);
     }
 
     public function index(){

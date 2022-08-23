@@ -15,16 +15,15 @@ use App\Models\MvExistMK;
 use App\Models\MvKartuStok;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
-class C_PengadaanStokin extends Controller
+class C_Inventaris extends Controller
 {
     function __construct()
     {
-         $this->middleware('permission:stok-in-pengadaan-list|stok-in-pengadaan-create|stok-in-pengadaan-edit|stok-in-pengadaan-delete', ['only' => ['index','store']]);
-         $this->middleware('permission:stok-in-pengadaan-create', ['only' => ['create','store']]);
-         $this->middleware('permission:stok-in-pengadaan-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:stok-in-pengadaan-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:inventaris-list|inventaris-cetak', ['only' => ['index','store']]);
     }
+
     public function index(){
         $staff_id = Auth::user()->tm_staff_id;
         $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
@@ -41,7 +40,7 @@ class C_PengadaanStokin extends Controller
         $Breadcrumb = array(
             1 => array("link" => "active", "label" => "Data Stok In Pengadaan"),
         );
-        return view('pengadaanstokin.index',compact('data','Breadcrumb'));
+        return view('inventaris.index',compact('data','Breadcrumb'));
         }else{
             return abort(403, 'Unauthorized action.');
         }
@@ -91,23 +90,30 @@ class C_PengadaanStokin extends Controller
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         $lab_id = $qrlab[0]->tm_laboratorium_id;
         $member_id = $qrlab[0]->id;
+        $UsulanKebutuhanId = $id;
         $update['status']  = 6;
-        $UsulanKebutuhan = MUsulanKebutuhan::find($id);
+        $UsulanKebutuhan = MUsulanKebutuhan::find($UsulanKebutuhanId);
         $UsulanKebutuhan->update($update);
 
         $konfirmasi = @$request->konfirmasi;
         if(count($konfirmasi)){
             foreach($konfirmasi as $vdu){
                 $exp = explode("-",$vdu); $id = $exp[0]; $tm_barang_id = $exp[1]; $qty = $exp[2];
+                $tduid[]=$id;
+                $tdubr[]=$tm_barang_id;
+                $tdqty[]=$qty;
+
                 $qrBarangLab = MvBarangLab::where([['tm_laboratorium_id', $lab_id],['tm_barang_id',$tm_barang_id]])->get();
                 if(count($qrBarangLab)){
                     $qryKartuStok = MvKartuStok::where([['tm_barang_id',$tm_barang_id],['tr_usulan_kebutuhan_detail_id',$id]])->get();
                     if(count($qryKartuStok)){
+                        //echo $qryKartuStok[0]->stok."-".$qryKartuStok[0]->qty_kartu_stok."</br>";
                         $stokKS                   = ($qryKartuStok[0]->stok - $qryKartuStok[0]->qty_kartu_stok) + $qty;
                         $stok                   = ($qrBarangLab[0]->stok - $qryKartuStok[0]->qty_kartu_stok) + $qty;
                         $tr_barang_laboratorium_id = $qrBarangLab[0]->id;
                         $update['stok'] = $stok;
-                        MBarangLab::find($tr_barang_laboratorium_id)->update($update);
+
+                    MBarangLab::find($tr_barang_laboratorium_id)->update($update);
 
                         $updateKS['qty']                       = $qty;
                         $updateKS['stok']                      = $stokKS;
@@ -148,7 +154,28 @@ class C_PengadaanStokin extends Controller
                 $DetailUsulanKebutuhan->update($detailInput);
             }
         }
-        return redirect(route('pengadaanStokin.index'))->with('success','Usulan Bahan dan Alat Praktikum Telah Diterima.');
+
+        $qryNotIn = MDetailUsulanKebutuhan::where('tr_usulan_kebutuhan_id',$UsulanKebutuhanId)->whereNotIn('id',$tduid)->get();
+        if(count($qryNotIn)){
+            foreach($qryNotIn as $qni){
+                $qryKartuStok = MvKartuStok::where([['tr_usulan_kebutuhan_detail_id',$qni->id]])->get();
+                if(count($qryKartuStok)){
+                    $qrBarangLab = MBarangLab::find($qryKartuStok[0]->tr_barang_laboratorium_id);
+                    //echo $qryKartuStok[0]->stok." -". $qryKartuStok[0]->qty_kartu_stok;
+                    $stokKS                   = ($qryKartuStok[0]->stok - $qryKartuStok[0]->qty_kartu_stok);
+                    //echo "</br>".$qrBarangLab->stok."-" .$qryKartuStok[0]->qty_kartu_stok;
+                    $stok                   = ($qrBarangLab->stok - $qryKartuStok[0]->qty_kartu_stok);
+
+                    $update['stok'] = $stok;
+                    MBarangLab::find($qryKartuStok[0]->tr_barang_laboratorium_id)->update($update);
+
+                    $updateKS['qty']                       = 0;
+                    $updateKS['stok']                      = $stokKS;
+                    $kartuStok = MKartuStok::find($qryKartuStok[0]->id)->update($updateKS);
+                }
+            }
+        }
+        //return redirect(route('pengadaanStokin.index'))->with('success','Usulan Bahan dan Alat Praktikum Telah Diterima.');
     }
 
     public function destroy(Request $request)

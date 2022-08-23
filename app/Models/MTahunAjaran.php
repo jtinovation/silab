@@ -16,5 +16,4 @@ class MTahunAjaran extends Model
     {
         return $this->is_genap?"Genap":"Ganjil";
     }
-
 }

@@ -15,6 +15,7 @@ use App\Models\MvExistMK;
 use App\Models\MvKartuStok;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class C_PengadaanStokin extends Controller
 {

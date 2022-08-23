@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\C_Barang;
 use App\Http\Controllers\C_DeliverPengajuanAlatBahan;
+use App\Http\Controllers\C_Invetaris;
 use App\Http\Controllers\C_Permission;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Manage\ManageController;
@@ -119,6 +120,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('memberLabSelect',            [C_MemberLab::class, 'memberLabSelect'])->name('memberLabSelect');
 
     Route::resource('pengadaanStokin',   C_PengadaanStokin::class);
+    Route::resource('inv',               C_Invetaris::class);
 
     Route::get('/manage',       [ManageController::class, 'index'])->name('manage');
     Route::get('/pendidikan',   [ManageController::class, 'pendidikan'])->name('manage.pendidikan');
