@@ -35,7 +35,7 @@ class C_PengadaanStokin extends Controller
             'subtitle' => "Data Deliver Pengajuan Alat Bahan ACC",
             'npage' => 87,
             "Deliver" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where([['status',5],['tm_laboratorium_id',$lab_id[0]->tm_laboratorium_id]])->get())->get(),
-            "Done" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where('status',6)->get())->get(),
+            "Done" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where([['status',6],['tm_laboratorium_id',$lab_id[0]->tm_laboratorium_id]])->get())->get(),
 
         ];
 
@@ -100,9 +100,10 @@ class C_PengadaanStokin extends Controller
         $konfirmasi = @$request->konfirmasi;
         if(count($konfirmasi)){
             foreach($konfirmasi as $vdu){
-                $exp = explode("-",$vdu); $id = $exp[0]; $tm_barang_id = $exp[1]; $qty = $exp[2];
+                $exp = explode("-",$vdu); $id = $exp[0]; $tm_barang_id = $exp[1]; $qty = $exp[2]; $td_satuan_id = $exp[3];
                 $tduid[]=$id;
                 $tdubr[]=$tm_barang_id;
+                $tdsat[]=$td_satuan_id;
                 $tdqty[]=$qty;
 
                 $qrBarangLab = MvBarangLab::where([['tm_laboratorium_id', $lab_id],['tm_barang_id',$tm_barang_id]])->get();

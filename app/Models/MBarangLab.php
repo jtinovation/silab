@@ -10,4 +10,8 @@ class MBarangLab extends Model
     use HasFactory;
     protected $table = 'tr_barang_laboratorium';
     protected $guarded = ['id'];
+
+    public function BarangData(){
+        return $this->belongsTo(MBarang::class,'tm_barang_id');//table class,fk
+    }
 }

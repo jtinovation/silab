@@ -1,7 +1,7 @@
 <?php
 use App\Http\Controllers\C_Barang;
 use App\Http\Controllers\C_DeliverPengajuanAlatBahan;
-use App\Http\Controllers\C_Invetaris;
+use App\Http\Controllers\C_InventarisBahan;
 use App\Http\Controllers\C_Permission;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Manage\ManageController;
@@ -22,7 +22,6 @@ use App\Http\Controllers\C_SatuanDetail;
 use App\Http\Controllers\C_TahunAjaran;
 use App\Http\Controllers\C_LoginWithGoogleController;
 use App\Http\Controllers\C_MemberLab;
-use App\Http\Controllers\C_PelayananLaboratorium;
 use App\Http\Controllers\C_PengadaanStokin;
 use App\Http\Controllers\C_ReviewPengajuanAlat;
 use App\Http\Controllers\PDFController;
@@ -119,8 +118,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('memberDelete',              [C_MemberLab::class,'destroy'])->name('memberDelete');
     Route::get('memberLabSelect',            [C_MemberLab::class, 'memberLabSelect'])->name('memberLabSelect');
 
-    Route::resource('pengadaanStokin',   C_PengadaanStokin::class);
-    Route::resource('inv',               C_Invetaris::class);
+    Route::resource('pengadaanStokin',        C_PengadaanStokin::class);
+    Route::resource('invBahan',               C_InventarisBahan::class);
+    Route::get('GetInvBahan',                [C_InventarisBahan::class,'GetInvBahan'])->name('GetInvBahan');
 
     Route::get('/manage',       [ManageController::class, 'index'])->name('manage');
     Route::get('/pendidikan',   [ManageController::class, 'pendidikan'])->name('manage.pendidikan');

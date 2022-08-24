@@ -184,6 +184,15 @@
 				</li>
                 @endcan
 
+                @can('inventaris-bahan-list')
+                <li class="nav-item">
+					<a class="nav-link menu-link{{ $data['npage'] == 86 ? ' active' : '' }}" href="{{ route('invBahan.index') }}">
+						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Inventaris Bahan Lab</span>
+					</a>
+				</li>
+                @endcan
+
+
 
 
 			</ul>

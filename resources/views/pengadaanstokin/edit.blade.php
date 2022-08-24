@@ -147,7 +147,7 @@
                                         </div>
 
                                         <div class="col-xxl-1 col-xl-1 col-lg-1 col-md-1" >
-                                            <input class="form-check-input" type="checkbox" id="formCheck{{$vdu->id}}" name="konfirmasi[]" value="{{$vdu->id."-".$vdu->tm_barang_id."-".$qty}}" {{$vdu->status?"checked":""}}>
+                                            <input class="form-check-input" type="checkbox" id="formCheck{{$vdu->id}}" name="konfirmasi[]" value="{{$vdu->id."-".$vdu->tm_barang_id."-".$qty."-".$vdu->td_satuan_id}}" {{$vdu->status?"checked":""}}>
                                             <label class="form-check-label" for="formCheck{{$vdu->id}}">
 
                                             </label>
