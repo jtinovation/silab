@@ -192,6 +192,13 @@
 				</li>
                 @endcan
 
+                @can('kesiapan-praktek-list')
+					<a class="nav-link menu-link{{ $data['npage'] == 85 ? ' active' : '' }}" href="{{ route('kestek.index') }}">
+						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Kesiapan Bahan Praktikum</span>
+					</a>
+				</li>
+                @endcan
+
 
 
 

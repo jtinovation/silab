@@ -9,6 +9,7 @@ use App\Http\Controllers\C_Welcome;
 use App\Http\Controllers\C_Staff;
 use App\Http\Controllers\C_Role;
 use App\Http\Controllers\C_Jurusan;
+use App\Http\Controllers\C_KesiapanPraktek;
 use App\Http\Controllers\C_Lab;
 use App\Http\Controllers\C_Matakuliah;
 use App\Http\Controllers\C_Semester;
@@ -108,6 +109,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('statusPengajuan',            [C_ReviewPengajuanAlat::class,'statusPengajuan'])->name('statusPengajuan');
 
     Route::resource('deljulat',               C_DeliverPengajuanAlatBahan::class);
+
+    Route::resource('kestek',                 C_KesiapanPraktek::class);
+    Route::get('getKestek',                  [C_KesiapanPraktek::class, 'getKestek'])->name('getKestek');
 
     Route::resource('laboratorium',           C_Lab::class);
     Route::get('getLab',                     [C_Lab::class, 'getLab'])->name('getLab');
