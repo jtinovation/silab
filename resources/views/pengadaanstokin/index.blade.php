@@ -30,7 +30,7 @@
                             </thead>
                             <tbody>
                                 @php
-                                    $usulan =  App\Models\MUsulanKebutuhan::where('tr_matakuliah_dosen_id',$d->tr_matakuliah_dosen_id)->where('status',5)->get();
+                                    $usulan =  App\Models\MUsulanKebutuhan::where('tr_matakuliah_dosen_id',$d->tr_matakuliah_dosen_id)->where([['status',5],['tm_laboratorium_id',$tm_lab_id]])->get();
                                 @endphp
                                 @foreach ($usulan as $vu )
                                 <tr>

@@ -126,7 +126,7 @@
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 wrap" id="{{"inputCopy-".$vdu->id}}" style="margin-bottom: 10px;">
                                         <input type="hidden" name="detailUsulan[]" value="{{$vdu->id}}">
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
-                                            <input class="form-control number hit" type="text" name="{{'barang-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->barangData->nama_barang}}" readonly>
+                                            <input class="form-control " type="text" name="{{'barang-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->barangData->nama_barang}}" readonly>
                                         </div>
 
 
@@ -136,11 +136,11 @@
                                         </div> --}}
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                               <input type="text" class="form-control jmltotalqty" name="{{'total_keb-'.$vdu->id}}" value="{{$vdu->total_keb}}" readonly>
+                                               <input type="text" class="form-control " name="{{'total_keb-'.$vdu->id}}" value="{{$vdu->total_keb}}" readonly>
                                         </div>
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2" id="place_satuan">
-                                            <input type="text" class="form-control jmltotalqty" name="{{'satuan-'.$vdu->id}}" value="{{$vdu->detailSatuanData->SatuanData->satuan."(".$vdu->detailSatuanData->qty.")"}}" readonly>
+                                            <input type="text" class="form-control " name="{{'satuan-'.$vdu->id}}" value="{{$vdu->detailSatuanData->SatuanData->satuan."(".$vdu->detailSatuanData->qty.")"}}" readonly>
                                         </div>
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">

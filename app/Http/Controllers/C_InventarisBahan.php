@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MDetailUsulanKebutuhan;
+use App\Models\MKartuStok;
 use App\Models\MMemberLab;
 use App\Models\MvBarangLab;
 use Illuminate\Http\Request;
@@ -25,8 +26,6 @@ class C_InventarisBahan extends Controller
             'title' => "Sistem Informasi Laboratorium",
             'subtitle' => "Data Inventaris Bahan Laboratorium",
             'npage' => 86,
-
-
         ];
 
         $Breadcrumb = array(
@@ -111,7 +110,7 @@ class C_InventarisBahan extends Controller
             $idEncrypt = Crypt::encryptString($record->id);
             $button = "";
                 if(Gate::check('inventaris-kartu-stok')){
-                    $button = $button." <a href='#'  class='btn btn-primary btn-outline btn-circle btn-md m-r-5 btnDetailClass' data-val='".$idEncrypt."'>
+                    $button = $button." <a href='#'  class='btn btn-primary btn-outline btn-circle btn-md m-r-5 btnDetailClass' data-val='".$record->id."'>
                     <i class='ri-file-list-line'></i></a>";
                 }
             $data_arr[] = array(
@@ -132,6 +131,35 @@ class C_InventarisBahan extends Controller
         echo json_encode($response);
     }
 
+
+    public function getInvent($id){ //echo $prodi."##".$semester;
+        //$barang_lab_id = Crypt::decryptString($id);
+        if($id==0){
+            $data[]=array("&nbsp;","&nbsp;","&nbsp;","&nbsp;","&nbsp;");
+        }else{
+            //$id = Crypt::decryptString($id);
+            $qr = MKartuStok::where('tr_barang_laboratorium_id',$id)->get();
+            $no=1;
+            if(count($qr)){
+                foreach($qr as $v){
+
+                    $tannggal = $v->created_at;
+                    $in = $v->is_stok_in == 1?$v->qty:0;
+                    $out = $v->is_stok_in == 0?$v->qty:0;
+                    $jumlah = $v->stok;
+                    $data[] = array($no,$tannggal, $in,$out,$jumlah);
+                    $no += 1;
+                }
+            }else{
+                $data[]=array("&nbsp;","&nbsp;","&nbsp;","&nbsp;","&nbsp;");
+            }
+        }
+
+
+    $output = array("data" => $data);
+    return json_encode($output);
+
+}
 
 
 }

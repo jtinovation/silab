@@ -9,6 +9,7 @@ use App\Models\MKartuStok;
 use App\Models\MLab;
 use App\Models\MMemberLab;
 use App\Models\MMinggu;
+use App\Models\MSatuanDetail;
 use App\Models\MUsulanKebutuhan;
 use App\Models\MvBarangLab;
 use App\Models\MvExistMK;
@@ -30,19 +31,20 @@ class C_PengadaanStokin extends Controller
         $staff_id = Auth::user()->tm_staff_id;
         $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         if(count($lab_id)){
+            $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
         $data = [
             'title' => "Sistem Informasi Laboratorium",
             'subtitle' => "Data Deliver Pengajuan Alat Bahan ACC",
             'npage' => 87,
-            "Deliver" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where([['status',5],['tm_laboratorium_id',$lab_id[0]->tm_laboratorium_id]])->get())->get(),
-            "Done" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where([['status',6],['tm_laboratorium_id',$lab_id[0]->tm_laboratorium_id]])->get())->get(),
+            "Deliver" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where([['status',5],['tm_laboratorium_id',$tm_lab_id]])->get())->get(),
+            "Done" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where([['status',6],['tm_laboratorium_id',$tm_lab_id]])->get())->get(),
 
         ];
 
         $Breadcrumb = array(
             1 => array("link" => "active", "label" => "Data Stok In Pengadaan"),
         );
-        return view('pengadaanstokin.index',compact('data','Breadcrumb'));
+        return view('pengadaanstokin.index',compact('data','Breadcrumb','tm_lab_id'));
         }else{
             return abort(403, 'Unauthorized action.');
         }
@@ -100,36 +102,42 @@ class C_PengadaanStokin extends Controller
         $konfirmasi = @$request->konfirmasi;
         if(count($konfirmasi)){
             foreach($konfirmasi as $vdu){
-                $exp = explode("-",$vdu); $id = $exp[0]; $tm_barang_id = $exp[1]; $qty = $exp[2]; $td_satuan_id = $exp[3];
+                $stokDefault=1;
+                $exp = explode("-",$vdu); $id = $exp[0]; $tm_barang_id = $exp[1]; $qty = $exp[2]; $satuan = $exp[3];
                 $tduid[]=$id;
                 $tdubr[]=$tm_barang_id;
-                $tdsat[]=$td_satuan_id;
+                $tdsat[]=$satuan;
                 $tdqty[]=$qty;
+                $qtyXsatuan= $qty * $satuan;
+                $qtySatuan = "";
 
                 $qrBarangLab = MvBarangLab::where([['tm_laboratorium_id', $lab_id],['tm_barang_id',$tm_barang_id]])->get();
                 if(count($qrBarangLab)){
+                    $qrySatuan = MSatuanDetail::where([['tm_satuan_id',],['tm_barang_id',$qrBarangLab[0]->tm_barang_id]])->get();
+                    if(count($qrySatuan)){ $stokDefault = $qrySatuan[0]->qty; }
+                    $qtySatuan = $qtyXsatuan / $stokDefault;
                     $qryKartuStok = MvKartuStok::where([['tm_barang_id',$tm_barang_id],['tr_usulan_kebutuhan_detail_id',$id]])->get();
                     if(count($qryKartuStok)){
                         //echo $qryKartuStok[0]->stok."-".$qryKartuStok[0]->qty_kartu_stok."</br>";
-                        $stokKS                   = ($qryKartuStok[0]->stok - $qryKartuStok[0]->qty_kartu_stok) + $qty;
-                        $stok                   = ($qrBarangLab[0]->stok - $qryKartuStok[0]->qty_kartu_stok) + $qty;
+                        $stokKS                   = ($qryKartuStok[0]->stok - $qryKartuStok[0]->qty_kartu_stok) + $qtySatuan;
+                        $stok                   = ($qrBarangLab[0]->stok - $qryKartuStok[0]->qty_kartu_stok) + $qtySatuan;
                         $tr_barang_laboratorium_id = $qrBarangLab[0]->id;
                         $update['stok'] = $stok;
 
                     MBarangLab::find($tr_barang_laboratorium_id)->update($update);
 
-                        $updateKS['qty']                       = $qty;
+                        $updateKS['qty']                       = $qtySatuan;
                         $updateKS['stok']                      = $stokKS;
                         $kartuStok = MKartuStok::find($qryKartuStok[0]->id)->update($updateKS);
                     }else{
-                        $stok                   = $qrBarangLab[0]->stok + $qty;
+                        $stok                   = $qrBarangLab[0]->stok + $qtySatuan;
                         $tr_barang_laboratorium_id = $qrBarangLab[0]->id;
                         $update['stok'] = $stok;
                         MBarangLab::find($tr_barang_laboratorium_id)->update($update);
 
                         $input['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
                         $input['is_stok_in']                = 1;
-                        $input['qty']                       = $qty;
+                        $input['qty']                       = $qtySatuan;
                         $input['stok']                      = $stok;
                         $input['tr_member_laboratorium_id'] = $member_id;
                         $input['tr_usulan_kebutuhan_detail_id'] = $id;
@@ -137,7 +145,7 @@ class C_PengadaanStokin extends Controller
                     }
 
                 }else{
-                    $inputBarangLab['stok'] = $qty;
+                    $inputBarangLab['stok'] = $qtySatuan;
                     $inputBarangLab['tm_laboratorium_id'] = $lab_id;
                     $inputBarangLab['tm_barang_id'] = $tm_barang_id;
                     $inputBarangLab['is_aktif'] =1;
@@ -145,8 +153,8 @@ class C_PengadaanStokin extends Controller
 
                     $input['tr_barang_laboratorium_id'] = $BarangLab->id;
                     $input['is_stok_in']                = 1;
-                    $input['qty']                       = $qty;
-                    $input['stok']                      = $qty;
+                    $input['qty']                       = $qtySatuan;
+                    $input['stok']                      = $qtySatuan;
                     $input['tr_member_laboratorium_id'] = $member_id;
                     $input['tr_usulan_kebutuhan_detail_id'] = $id;
                     $kartuStok = MKartuStok::create($input);
@@ -178,7 +186,7 @@ class C_PengadaanStokin extends Controller
                 }
             }
         }
-        //return redirect(route('pengadaanStokin.index'))->with('success','Usulan Bahan dan Alat Praktikum Telah Diterima.');
+        return redirect(route('pengadaanStokin.index'))->with('success','Usulan Bahan dan Alat Praktikum Telah Diterima.');
     }
 
     public function destroy(Request $request)

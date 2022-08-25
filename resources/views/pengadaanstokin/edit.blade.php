@@ -121,7 +121,7 @@
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 wrap" id="{{"inputCopy-".$vdu->id}}" style="margin-bottom: 10px;">
                                         <input type="hidden" name="detailUsulan[]" value="{{$vdu->id}}">
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
-                                            <input class="form-control number hit" type="text" name="{{'barang-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->barangData->nama_barang}}" readonly>
+                                            <input class="form-control " type="text" name="{{'barang-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->barangData->nama_barang}}" readonly>
                                         </div>
 
 
@@ -131,7 +131,7 @@
                                         </div> --}}
 
                                         <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
-                                               <input type="text" class="form-control jmltotalqty" name="{{'total_keb-'.$vdu->id}}" value="{{$vdu->total_keb." ".$vdu->detailSatuanData->SatuanData->satuan."(".$vdu->detailSatuanData->qty.")"}}" readonly>
+                                               <input type="text" class="form-control" name="{{'total_keb-'.$vdu->id}}" value="{{$vdu->total_keb." ".$vdu->detailSatuanData->SatuanData->satuan."(".$vdu->detailSatuanData->qty.")"}}" readonly>
                                         </div>
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
@@ -143,11 +143,11 @@
     $qty = $vdu->keb_acc?$vdu->keb_acc:0;
 @endphp
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                            <input class="form-control number" type="text" name="{{'acc-'.$vdu->id}}" value="{{$qty}}" style="padding: 8px 10px;" readonly>
+                                            <input class="form-control " type="text" name="{{'acc-'.$vdu->id}}" value="{{$qty}}" style="padding: 8px 10px;" readonly>
                                         </div>
 
                                         <div class="col-xxl-1 col-xl-1 col-lg-1 col-md-1" >
-                                            <input class="form-check-input" type="checkbox" id="formCheck{{$vdu->id}}" name="konfirmasi[]" value="{{$vdu->id."-".$vdu->tm_barang_id."-".$qty."-".$vdu->td_satuan_id->satuanData->qty}}" {{$vdu->status?"checked":""}}>
+                                            <input class="form-check-input" type="checkbox" id="formCheck{{$vdu->id}}" name="konfirmasi[]" value="{{$vdu->id."-".$vdu->tm_barang_id."-".$qty."-".$vdu->detailSatuanData->qty}}" {{$vdu->status?"checked":""}}>
                                             <label class="form-check-label" for="formCheck{{$vdu->id}}">
 
                                             </label>

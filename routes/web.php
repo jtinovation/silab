@@ -121,6 +121,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('pengadaanStokin',        C_PengadaanStokin::class);
     Route::resource('invBahan',               C_InventarisBahan::class);
     Route::get('GetInvBahan',                [C_InventarisBahan::class,'GetInvBahan'])->name('GetInvBahan');
+    Route::get('getInvent/{prodi}',          [C_InventarisBahan::class, 'getInvent']);
 
     Route::get('/manage',       [ManageController::class, 'index'])->name('manage');
     Route::get('/pendidikan',   [ManageController::class, 'pendidikan'])->name('manage.pendidikan');

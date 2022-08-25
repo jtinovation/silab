@@ -37,7 +37,7 @@
                                     <td>
                                         <a href="javascript:void(0);" class="showUsulan" data-url="{{url('getReviewUsulan')."/".$vu->kode}}" data-urls="{{url('getReviewUsulanMK')."/".Crypt::encryptString($vu->tr_matakuliah_dosen_id)}}" data-cetak="{{url('CetakOneWeek'."/".$vu->kode)}}" data-edit="{{route('deljulat.edit',$vu->kode)}}">{{"Minggu ".$vu->mingguData->minggu_ke}}</a>
                                     </td>
-                                    <td ><a href="#" class="badge badge-outline-warning stts" data-id="{{Crypt::encryptString($vu->id)}}" data-val="{{$vu->status}}" >{{$vu->stts}}</a> </td>
+                                    <td ><a href="#" class="badge badge-outline-warning showUsulan" data-url="{{url('getReviewUsulan')."/".$vu->kode}}" data-urls="{{url('getReviewUsulanMK')."/".Crypt::encryptString($vu->tr_matakuliah_dosen_id)}}" data-cetak="{{url('CetakOneWeek'."/".$vu->kode)}}" data-edit="{{route('deljulat.edit',$vu->kode)}}"" >{{$vu->stts}}</a> </td>
                                 </tr><!-- end -->
                                 @endforeach
                             </tbody><!-- end tbody -->
