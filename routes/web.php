@@ -112,6 +112,8 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('kestek',                 C_KesiapanPraktek::class);
     Route::get('getKestek',                  [C_KesiapanPraktek::class, 'getKestek'])->name('getKestek');
+    Route::get('barangLabSelect',            [C_KesiapanPraktek::class, 'barangLabSelect'])->name('barangLabSelect');
+    Route::post('kestekDetailDelete',        [C_KesiapanPraktek::class,'destroy'])->name('kestekDetailDelete');
 
     Route::resource('laboratorium',           C_Lab::class);
     Route::get('getLab',                     [C_Lab::class, 'getLab'])->name('getLab');

@@ -109,7 +109,7 @@ function initailizeSatuan() {
             delay: 250,
             data: function(params) {
                 let valBarang = $(this).parents(".wrap").find('.select2_el').val();
-                console.log(valBarang);
+                //console.log(valBarang);
                 return {
                     searchTerm: params.term,
                     valBarang: valBarang,

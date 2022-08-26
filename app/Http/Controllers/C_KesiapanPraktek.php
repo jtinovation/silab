@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MBarangLab;
+use App\Models\MDetailKesiapan;
 use App\Models\MKesiapan;
 use App\Models\MMemberLab;
+use App\Models\MMinggu;
 use App\Models\MvExistMK;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -52,6 +55,7 @@ class C_KesiapanPraktek extends Controller
             'subtitle' => "Daftar Data Kesiapan Praktek",
             'npage' => 95,
             'existMK' => MvExistMK::all(),
+            'minggu' => MMinggu::whereHas('taData', function($q){$q->where('is_aktif',1);})->get(),
         ];
 
         $Breadcrumb = array(
@@ -67,79 +71,116 @@ class C_KesiapanPraktek extends Controller
     {
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-        $member_id = $qrlab[0]->id;
-        if(count($lab_id)){
+        $lab_id = $qrlab[0]->tm_laboratorium_id;
+        if(count($qrlab)){
             $date = Carbon::now();
-        $input['tr_matakuliah_semester_prodi_id']   = $request->tr_matakuliah_semester_prodi_id;
-        $input['kode']                              = Str::random(8).$date->format('YmdHis');
-        $input['rekomendasi']                   = $request->jml_kel;
-        $input['jml_gol']                   = $request->jml_gol;
-        $input['tm_minggu_id']              = $request->tm_minggu_id;
-        $input['tr_matakuliah_dosen_id']    = $request->tr_matakuliah_dosen_id;
-        //$input['tanggal']                 = Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
-        $input['user_id']                   = Auth::user()->id;;
-        $UsulanKebutuhan = MUsulanKebutuhan::create($input);
+            $input['kode']                              = Str::random(8).$date->format('YmdHis');
+            //$input['tr_matakuliah_dosen_id']            = $request->tr_matakuliah_dosen_id;
+            $input['tr_matakuliah_semester_prodi_id']   = $request->tr_matakuliah_semester_prodi_id;
+            $input['rekomendasi']                       = $request->rekomendasi;
+            $input['tr_member_laboratorium_id']         = $qrlab[0]->id;
+            $input['tm_minggu_id']              = $request->tm_minggu_id;
+            $input['tanggal']                   = $request->tanggal;
+            $kestek = MKesiapan::create($input);
 
-        foreach($request->barang as $key => $value){
-            $detailInput['keb_kel'] = $request->kebkel[$key];
-            $detailInput['total_keb'] = $request->total_keb[$key];
-            $detailInput['tm_barang_id'] = $value;
-            $detailInput['td_satuan_id'] = $request->satuan[$key];
-            $detailInput['keterangan'] = $request->keterangan[$key];
-            $detailInput['tr_usulan_kebutuhan_id'] = $UsulanKebutuhan->id;
-            $DetailUsulanKebutuhan = MDetailUsulanKebutuhan::create($detailInput);
-        }
-        return redirect(route('pengajuanalat.index'))->with('success','Usulan Bahan dan Alat Praktikum Berhasil di Simpan.');
-
+            foreach($request->barang as $key => $value){
+                $arrV = explode("#", $value);
+                $detailInput['tr_barang_laboratorium_id'] = $arrV[0];
+                $detailInput['tr_kesiapan_praktek_id'] = $kestek->id;
+                $detailInput['jumlah'] = $request->jml[$key];
+                $detailInput['stok'] = $request->stok[$key];
+                $detailInput['keterangan'] = $request->keterangan[$key];
+                $DetailUsulanKebutuhan = MDetailKesiapan::create($detailInput);
+            }
+            return redirect(route('kestek.index'))->with('success','Usulan Bahan dan Alat Praktikum Berhasil di Simpan.');
         }else{
             return abort(403, 'Unauthorized action.');
         }
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
-        //
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $lab_id = $qrlab[0]->tm_laboratorium_id;
+
+        $idDecrypt = Crypt::decryptString($id);
+        $qrKesiapan = MKesiapan::where('id',$idDecrypt)->get();
+        $qrDetailKesiapan = MDetailKesiapan::where('tr_kesiapan_praktek_id',$qrKesiapan[0]->id)->get();
+
+        $data = [
+            'title' => "Sistem Informasi Laboratorium",
+            'subtitle' => "Daftar Data Kesiapan Praktek",
+            'npage' => 95,
+            'existMK' => MvExistMK::all(),
+            'minggu' => MMinggu::whereHas('taData', function($q){$q->where('is_aktif',1);})->get(),
+            'barang' => MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q){$q->select('nama_barang');})->get(),
+        ];
+
+        $Breadcrumb = array(
+            1 => array("link" => url("kestek"), "label" => "Daftar Data Kesiapan Praktek"),
+            2 => array("link" => "active", "label" => "Form Ubah Data Kesiapan Praktek"),
+        );
+        return view('kesiapanalat.edit', compact('data', 'Breadcrumb','qrKesiapan','qrDetailKesiapan'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
-        //
+        $update['tr_matakuliah_semester_prodi_id']   = $request->tr_matakuliah_semester_prodi_id;
+        $update['rekomendasi']                       = $request->rekomendasi;
+        $update['tm_minggu_id']              = $request->tm_minggu_id;
+        $update['tanggal']                   = $request->tanggal;
+        $kestek = MKesiapan::find($id)->update($update);
+
+        foreach($request->barang as $key => $value){
+            if($value != ""){
+                $arrV = explode("#", $value);
+                $detailInput['tr_barang_laboratorium_id'] = $arrV[0];
+                $detailInput['tr_kesiapan_praktek_id'] = $id;
+                $detailInput['jumlah'] = $request->jml[$key];
+                $detailInput['stok'] = $request->stok[$key];
+                $detailInput['keterangan'] = $request->keterangan[$key];
+                $DetailUsulanKebutuhan = MDetailKesiapan::create($detailInput);
+            }
+        }
+
+        $detailKesiapan = @$request->detailKesiapan;
+        if(count($detailKesiapan)){
+            foreach($detailKesiapan as $vdu){
+                //echo $_REQUEST['barang-'.$vdu]; ;
+                $detailInput['tr_barang_laboratorium_id'] = $_REQUEST['barang-'.$vdu];
+                $detailInput['jumlah'] =  $_REQUEST['jml-'.$vdu];
+                $detailInput['stok'] =  $_REQUEST['stok-'.$vdu];
+                $detailInput['keterangan'] =  $_REQUEST['keterangan-'.$vdu];
+                $DetailUsulanKebutuhan = MDetailKesiapan::find($vdu)->update($detailInput);
+            }
+        }
+        return redirect(route('kestek.index'))->with('success','Usulan Bahan dan Alat Praktikum Berhasil di Simpan.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+
+    public function destroy(Request $request)
     {
-        //
+        $qry = MDetailKesiapan::find(Crypt::decryptString($request->id))->delete();
+        if($qry){
+            $response = array(
+                'status' => 200,
+            );
+        }else{
+            $response = array(
+                'status' => 503,
+            );
+        }
+        echo json_encode($response);
     }
 
     public function getKestek(Request $request){
@@ -173,6 +214,7 @@ class C_KesiapanPraktek extends Controller
         $data_arr = array();
 
         $number = $start;
+
         foreach ($records as $record) { $number += 1;
             $idEncrypt = Crypt::encryptString($record->id);
 
@@ -196,9 +238,10 @@ class C_KesiapanPraktek extends Controller
             $data_arr[] = array(
                 "id"               => $number,
                 "mk"               => $record->maproditerData->mkData->matakuliah,
-                "smstr"            => $record->maproditerData->semesterData->semester."(".$record->maproditerData->semesterData->taData,
+                "smstr"            => $record->maproditerData->semesterData->semester."(".$record->maproditerData->semesterData->taData->tahun_ajaran.")",
+                "minggu"           => $record->mingguData->minggu_ke." (".$record->tanggal." )",
                 "rekomendasi"      => $record->stts,
-                /* "is_aktif"         => $span, */
+
                 "action"           => $button
             );
         }
@@ -210,5 +253,36 @@ class C_KesiapanPraktek extends Controller
             "aaData" => $data_arr,
         );
         echo json_encode($response);
+    }
+
+    public function barangLabSelect(Request $request){
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $lab_id = $qrlab[0]->tm_laboratorium_id;
+        $search = $request->searchTerm;
+        if($search != null){
+            //$q = MBarangLab::where('nama_barang','LIKE','%'.$search.'%')->get();
+            $q = MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q) use ($search) {$q->where('nama_barang','LIKE','%'.$search.'%');})->get();
+            $data= array();
+            foreach($q as $v){
+                $id=$v->id;
+                $nm=$v->BarangData->nama_barang;
+                $stok = $v->stok;
+                $idstok = $id."#".$stok;
+                $data[] = array("id"=>$idstok,"text"=>$nm);
+            }
+        }else{
+            //$q = MBarang::all();
+            $q = MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q) use ($search) {$q->where('nama_barang','LIKE','%'.$search.'%');})->get();
+            $data= array();
+            foreach($q as $v){
+                $id=$v->id;
+                $nm=$v->BarangData->nama_barang;
+                $stok = $v->stok;
+                $idstok = $id."#".$stok;
+                $data[] = array("id"=>$idstok,"text"=>$nm);
+            }
+        }
+		return json_encode($data);
     }
 }

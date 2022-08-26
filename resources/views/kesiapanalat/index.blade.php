@@ -32,6 +32,7 @@
                                     <th>Nomor</th>
                                     <th>Mata Kuliah</th>
                                     <th>Semester</th>
+                                    <th>Minggu Ke</th>
                                     <th>Rekomendasi</th>
                                     <th>Action</th>
                                 </tr>
@@ -79,9 +80,17 @@
             { data: 'id' },
             { data: 'mk' },
             { data: 'smstr' },
+            { data: 'minggu' },
             { data: 'rekomendasi' },
             { data: 'action' },
         ]
+    });
+    $("body").on("click",".btnEditClass",function(){
+        event.preventDefault();
+        let pageEdit =$(this).attr("data-href");
+        $('.tableElement').hide("slide",{direction:'left'},1000, function(){
+            window.location.href = pageEdit;
+        });
     });
 </script>
 

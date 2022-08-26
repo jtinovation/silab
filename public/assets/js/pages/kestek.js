@@ -14,25 +14,22 @@ $("body").on("keyup", "input.number", function(event) {
 new AutoNumeric.multiple('.txtNumeric', { 'digitGroupSeparator': '.', 'decimalCharacter': ',', 'decimalPlaces': '0' });
 
 $("body").on("keyup", ".hit", function() {
-    let jml_kel = parseInt($('#jml_kel').val());
-    let jml_gol = parseInt($('#jml_gol').val());
-    let keb_kel = parseInt($(this).val());
-    if (jml_kel <= 0) {
-        /*  swal.fire("Jumlah Kelompok Tidak Boleh Kosong!", "Silahkan Isi Jumlah Kelompok", "warning");
-         */
-        Swal.fire({
-            title: "Jumlah Kelompok Tidak Boleh Kosong!",
-            icon: "warning",
-            text: "Silahkan Isi Jumlah Kelompok",
-            didClose: () => {
-                $('#jml_kel').focus();
-            }
-        })
+    let jml = parseInt($(this).val());
+    let stok = $(this).parents(".wrap").find('.stok').val();
 
-    } else {
-        let Jumlah = jml_kel * keb_kel * jml_gol;
-        $(this).parents(".wrap").find('.jmltotalqty').val(Jumlah);
-        //console.log($(this).parents(".wrap").find('.jml_total').val());
+    if (jml > stok) {
+        Swal.fire({
+            title: "Jumlah Terlalu Banyak!",
+            icon: "warning",
+            text: "Jumlah tidak boleh lebih besar dari stok",
+            didClose: () => {
+                $(this).val(0);
+                $(this).focus();
+                $('#btnSubmit').hide();
+            }
+        });
+    }else{
+        $('#btnSubmit').show();
     }
 });
 
@@ -48,6 +45,15 @@ $("#SelectMinggu").change(function() {
 
     initDaterangpicker();
 });
+
+$("body").on("change", ".select2_el", function() {
+    console.log("ubah");
+    let idStok = $(this).val();
+    let arr = idStok.split("#");
+    $(this).parents(".wrap").find('.stok').val(arr[1]);
+    console.log(arr[1]);
+});
+
 $("body").on("click", ".add-more", function() {
     var html = $(".copy-fields").html();
     var rep = html.replace('abc', "input_copy");
@@ -71,7 +77,6 @@ $("body").on("click", ".add-more", function() {
     $("#place_satuan-" + num).append(satuan);
     num++;
     initailizeSelect2();
-    initailizeSatuan();
 });
 
 $("body").on("click", ".remove", function() {
@@ -84,15 +89,15 @@ function initailizeSelect2() {
             url: barangSelect,
             type: "get",
             dataType: 'json',
-            delay: 250,
+            delay: 500,
             data: function(params) {
                 return {
                     searchTerm: params.term // search term
                 };
             },
-            processResults: function(response) {
+            processResults: function(r) {
                 return {
-                    results: response
+                    results: r
                 };
             },
             cache: true
@@ -100,30 +105,7 @@ function initailizeSelect2() {
     });
 }
 
-function initailizeSatuan() {
-    $(".satuan_el").select2({
-        ajax: {
-            url: satuanSelect,
-            type: "get",
-            dataType: 'json',
-            delay: 250,
-            data: function(params) {
-                let valBarang = $(this).parents(".wrap").find('.select2_el').val();
-                console.log(valBarang);
-                return {
-                    searchTerm: params.term,
-                    valBarang: valBarang,
-                };
-            },
-            processResults: function(response) {
-                return {
-                    results: response
-                };
-            },
-            cache: true
-        }
-    });
-}
+
 
 function initDaterangpicker() {
     $('#tanggal').daterangepicker({
@@ -190,6 +172,7 @@ $("form").submit(function(event) {
             event.preventDefault();
         }
     });
+
 
 
 });
