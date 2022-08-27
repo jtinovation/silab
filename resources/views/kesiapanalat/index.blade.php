@@ -26,7 +26,7 @@
             <div class="card-body">
                 <div class="live-preview">
                     <div class="table-responsive">
-                        <table id="tableUser" class="table align-middle table-nowrap mb-0">
+                        <table id="tableUser" class="table align-middle table-nowrap mb-0" width="100%">
                             <thead class="table-light">
                                 <tr>
                                     <th>Nomor</th>

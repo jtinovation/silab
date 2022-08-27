@@ -48,7 +48,7 @@
                                     <input type="text" class="form-control" name="tanggal" id="tanggal" value="{{$qrKesiapan[0]->tanggal}}" required>
                                 </div>
                             </div>
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-2 mb-2">
                                 <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                     <label for="SelectMK" class="form-label text-right">Pilih Mata Kuliah</label></br>
                                     <select class="form-control" style="font-size: 15px;" name="tr_matakuliah_semester_prodi_id" id="SelectMK" required>

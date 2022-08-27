@@ -139,9 +139,9 @@
                                                 <input class="form-control" type="text" name="{{'keterangan-'.$vdu->id}}" readonly>
                                             </div>
                                         </div>
-@php
-    $qty = $vdu->keb_acc?$vdu->keb_acc:0;
-@endphp
+                                        @php
+                                            $qty = $vdu->keb_acc?$vdu->keb_acc:0;
+                                        @endphp
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
                                             <input class="form-control " type="text" name="{{'acc-'.$vdu->id}}" value="{{$qty}}" style="padding: 8px 10px;" readonly>
                                         </div>
