@@ -199,6 +199,13 @@
 				</li>
                 @endcan
 
+                @can('bonalat-list')
+					<a class="nav-link menu-link{{ $data['npage'] == 84 ? ' active' : '' }}" href="{{ route('bonalat.index') }}">
+						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Bon Alat Praktikum</span>
+					</a>
+				</li>
+                @endcan
+
 
 
 

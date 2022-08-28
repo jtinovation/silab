@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\C_Barang;
+use App\Http\Controllers\C_BonAlat;
 use App\Http\Controllers\C_DeliverPengajuanAlatBahan;
 use App\Http\Controllers\C_InventarisBahan;
 use App\Http\Controllers\C_Permission;
@@ -99,6 +100,15 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('barangSelect',              [C_PengajuanAlatBahan::class, 'barangSelect'])->name('barangSelect');
     Route::get('satuanSelect',              [C_PengajuanAlatBahan::class, 'satuanSelect'])->name('satuanSelect');
 
+    Route::resource('laboratorium',           C_Lab::class);
+    Route::get('getLab',                     [C_Lab::class, 'getLab'])->name('getLab');
+    Route::post('labDelete',                 [C_Lab::class,'destroy'])->name('labDelete');
+
+    Route::resource('memberLab',              C_MemberLab::class);
+    Route::get('getMemberLab/{id}',          [C_MemberLab::class, 'getMemberLab']);
+    Route::post('memberDelete',              [C_MemberLab::class,'destroy'])->name('memberDelete');
+    Route::get('memberLabSelect',            [C_MemberLab::class, 'memberLabSelect'])->name('memberLabSelect');
+
     Route::resource('reviewPengajuan',        C_ReviewPengajuanAlat::class);
     Route::get('getReviewUsulan/{id}',       [C_ReviewPengajuanAlat::class,'getReviewUsulan'])->name('getReviewUsulan');
     Route::get('reviewPengajuanCetak/{id}',  [C_ReviewPengajuanAlat::class,'getReviewUsulanCetak'])->name('reviewPengajuan.cetak');
@@ -110,24 +120,19 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('deljulat',               C_DeliverPengajuanAlatBahan::class);
 
-    Route::resource('kestek',                 C_KesiapanPraktek::class);
-    Route::get('getKestek',                  [C_KesiapanPraktek::class, 'getKestek'])->name('getKestek');
-    Route::get('barangLabSelect',            [C_KesiapanPraktek::class, 'barangLabSelect'])->name('barangLabSelect');
-    Route::post('kestekDetailDelete',        [C_KesiapanPraktek::class,'destroy'])->name('kestekDetailDelete');
-
-    Route::resource('laboratorium',           C_Lab::class);
-    Route::get('getLab',                     [C_Lab::class, 'getLab'])->name('getLab');
-    Route::post('labDelete',                 [C_Lab::class,'destroy'])->name('labDelete');
-
-    Route::resource('memberLab',              C_MemberLab::class);
-    Route::get('getMemberLab/{id}',          [C_MemberLab::class, 'getMemberLab']);
-    Route::post('memberDelete',              [C_MemberLab::class,'destroy'])->name('memberDelete');
-    Route::get('memberLabSelect',            [C_MemberLab::class, 'memberLabSelect'])->name('memberLabSelect');
 
     Route::resource('pengadaanStokin',        C_PengadaanStokin::class);
     Route::resource('invBahan',               C_InventarisBahan::class);
     Route::get('GetInvBahan',                [C_InventarisBahan::class,'GetInvBahan'])->name('GetInvBahan');
     Route::get('getInvent/{prodi}',          [C_InventarisBahan::class, 'getInvent']);
+
+    Route::resource('kestek',                 C_KesiapanPraktek::class);
+    Route::get('getKestek',                  [C_KesiapanPraktek::class, 'getKestek'])->name('getKestek');
+    Route::get('barangLabSelect',            [C_KesiapanPraktek::class, 'barangLabSelect'])->name('barangLabSelect');
+    Route::post('kestekDetailDelete',        [C_KesiapanPraktek::class,'destroy'])->name('kestekDetailDelete');
+
+    Route::resource('bonalat',                 C_BonAlat::class);
+    Route::get('getBonAlat',                  [C_BonAlat::class, 'getBonalat'])->name('getBonAlat');
 
     Route::get('/manage',       [ManageController::class, 'index'])->name('manage');
     Route::get('/pendidikan',   [ManageController::class, 'pendidikan'])->name('manage.pendidikan');
