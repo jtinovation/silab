@@ -112,6 +112,7 @@ class C_PengadaanStokin extends Controller
                 $qtySatuan = "";
 
                 $qrBarangLab = MvBarangLab::where([['tm_laboratorium_id', $lab_id],['tm_barang_id',$tm_barang_id]])->get();
+
                 if(count($qrBarangLab)){
                     $qrySatuan = MSatuanDetail::where([['tm_satuan_id',],['tm_barang_id',$qrBarangLab[0]->tm_barang_id]])->get();
                     if(count($qrySatuan)){ $stokDefault = $qrySatuan[0]->qty; }
@@ -145,7 +146,7 @@ class C_PengadaanStokin extends Controller
                     }
 
                 }else{
-                    $inputBarangLab['stok'] = $qtySatuan;
+                    $inputBarangLab['stok'] = $qtyXsatuan;
                     $inputBarangLab['tm_laboratorium_id'] = $lab_id;
                     $inputBarangLab['tm_barang_id'] = $tm_barang_id;
                     $inputBarangLab['is_aktif'] =1;
@@ -153,8 +154,8 @@ class C_PengadaanStokin extends Controller
 
                     $input['tr_barang_laboratorium_id'] = $BarangLab->id;
                     $input['is_stok_in']                = 1;
-                    $input['qty']                       = $qtySatuan;
-                    $input['stok']                      = $qtySatuan;
+                    $input['qty']                       = $qtyXsatuan;
+                    $input['stok']                      = $qtyXsatuan;
                     $input['tr_member_laboratorium_id'] = $member_id;
                     $input['tr_usulan_kebutuhan_detail_id'] = $id;
                     $kartuStok = MKartuStok::create($input);
