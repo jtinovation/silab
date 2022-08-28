@@ -1,16 +1,22 @@
 $(".cp").change(function(){
     let val = parseInt($(".cp:checked").val());
     if(val){
-        $(".mahasiswa").hide();
-        $(".pegawai").show();
+        $('.mahasiswa').hide("slide", { direction: 'down' }, 1000, function() {
+            $('.pegawai').show("slide", { direction: 'down' }, 1000);
+        });
+      /*   $(".mahasiswa").hide();
+        $(".pegawai").show(); */
         $("#SelectStaff").attr('required', true);
         $("#nim").attr('required', false);
         $("#nama").attr('required', false);
         $("#gol").attr('required', false);
         console.log("Pegawai");
     }else{
-        $(".pegawai").hide();
-        $(".mahasiswa").show();
+        $('.pegawai').hide("slide", { direction: 'down' }, 1000, function() {
+            $('.mahasiswa').show("slide", { direction: 'down' }, 1000);
+        });
+      /*   $(".pegawai").hide();
+        $(".mahasiswa").show(); */
         $("#SelectStaff").attr('required', false);
         $("#nim").attr('required', true);
         $("#nama").attr('required', true);

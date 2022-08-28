@@ -40,7 +40,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row d-flex" >
+                            <div class="row d-flex justify-content-center mt-2" >
                                 <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: block;">
                                     <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                         <label for="SelectStaff" class="form-label text-right">Pilih Pegawai</label></br>
@@ -53,15 +53,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class=" mahasiswa" style="display: none;">
+                            <div class=" mahasiswa mt-2" style="display: none;">
                                 <div class="row d-flex">
-                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="nim" class="form-label text-right">NIM</label></br>
                                             <input type="text" class="form-control" name="nim" id="nim">
                                         </div>
                                     </div>
-                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="nama" class="form-label text-right">Nama</label></br>
                                             <input type="text" class="form-control" name="nama" id="nama">
@@ -76,32 +76,32 @@
                                 </div>
                             </div>
 
-                            <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
+                            <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show mt-4" role="alert">
                                 <i class="ri-user-smile-line label-icon"></i><strong>Data Petugas </strong>
                             </div>
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <label for="selectPinjam" class="form-label text-right">Petugas Peminjaman</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_kembali" id="selectPinjam" value="{{$data['memberlab']}}" readonly>
+                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{$data['memberlab']}}" readonly>
                             </div>
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                    <label for="tanggalPinjam" class="form-label text-right">Tanggal Pinjam</label></br>
-                                    <input type="text" class="form-control" name="tanggalPinjam" id="tanggalPinjam">
+                                <label for="tanggalPinjam" class="form-label text-right">Tanggal Pinjam</label></br>
+                                <input type="text" class="form-control" name="tanggalPinjam" id="tanggalPinjam">
                             </div>
 
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
                                 <label for="selectKembali" class="form-label text-right">Petugas Pengembalian</label></br>
-
+                                <input type="text" class="form-control" name="tr_member_laboratorium_id_kembali" id="selectKembali" value="" readonly>
                             </div>
 
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
                                     <label for="tanggalKembali" class="form-label text-right">Tanggal Kembali</label></br>
-                                    <input type="text" class="form-control" name="tanggalKembali" id="tanggalKembali">
+                                    <input type="text" class="form-control" name="tanggalKembali" id="tanggalKembali" readonly>
                             </div>
 
 
-                            <div class="alert alert-info alert-dismissible alert-label-icon label-arrow fade show mt-2" role="alert">
+                            <div class="alert alert-info alert-dismissible alert-label-icon label-arrow fade show mt-5" role="alert">
                                 <i class="ri-user-smile-line label-icon"></i><strong>Berdasarkan hasil uji coba alat/mesin dan kesiapan bahan praktek dapat dilaporkan sebagai berikut :</strong>
                             </div>
 
@@ -110,7 +110,7 @@
                                     <label for="txtSatuan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Pilih Barang </label>
                                     <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Stok</label>
                                     <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Jumlah</label>
-                                    <label for="keterangan" class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-form-label text-left pl-4">Keterangan</label>
+                                    <label for="keterangan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Keterangan</label>
                                 </div>
                                 <div class="copy-fields">
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 abc wrap" style="margin-bottom: 10px;">
