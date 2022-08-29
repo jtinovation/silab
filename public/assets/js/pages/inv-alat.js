@@ -32,6 +32,7 @@ $("body").on("click",".btnEditClass",function(){
 
 $('.AddAlat').click(function(){
     initailizeSelect2();
+    initailizeSatuan();
     $('#ShowAddAlatlab').modal('show');
 });
 
@@ -65,4 +66,28 @@ function initailizeSelect2() {
         }
     });
 }
+
+function initailizeSatuan() {
+    $("#satuanDefault").select2({
+        dropdownParent: $('#ShowAddAlatlab .modal-body'),
+        ajax: {
+            url: satuanSelect,
+            type: "get",
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    searchTerm: params.term,
+                };
+            },
+            processResults: function(response) {
+                return {
+                    results: response
+                };
+            },
+            cache: true
+        }
+    });
+}
+
 

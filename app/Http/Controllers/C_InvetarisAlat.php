@@ -179,4 +179,27 @@ class C_InvetarisAlat extends Controller
         }
 		return json_encode($data);
     }
+
+    public function satuanSelect(Request $request){
+        $search = $request->searchTerm;
+        if($search != null){
+            $q = MSatuan::where('satuan','LIKE','%'.$search.'%')->get();
+            $data= array();
+            foreach($q as $v){
+                $id=$v->id;
+                $nm=$v->satuan;
+                $data[] = array("id"=>$id,"text"=>$nm);
+            }
+        }else{
+            $q = MSatuan::all();
+            $data= array();
+            foreach($q as $v){
+                $id=$v->id;
+                $nm=$v->satuan;
+                $data[] = array("id"=>$id,"text"=>$nm);
+            }
+            $data[] = array("id"=>0,"text"=>"Silahkan Pilih Barang");
+        }
+		return json_encode($data);
+    }
 }

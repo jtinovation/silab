@@ -62,6 +62,7 @@
     var getInvAlat      = "{{route('getInvAlat')}}";
     var act             = "{{route('minggu.store')}}";
     var alatSelect      = "{{route('alatSelect')}}";
+    var satuanSelect    = "{{route('alatSatuan')}}";
     var token           = "{{ csrf_token() }}";
     /*    initailizeSelect2(); */
 

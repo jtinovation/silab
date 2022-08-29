@@ -123,6 +123,7 @@ function initailizeSelect2() {
 
 
 
+
 function initDaterangpicker() {
     $('#tanggalPinjam').daterangepicker({
         singleDatePicker: true,

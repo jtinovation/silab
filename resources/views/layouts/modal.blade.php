@@ -1,3 +1,4 @@
+//USULAN ALAT
 <div id="ShowUsulanAlat" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -75,6 +76,7 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+//ADD ALAT
 <div id="ShowAddAlatlab" class="modal fade" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -123,9 +125,6 @@
                                     <label for="satuanDefault" class="form-label">Satuan</label></br>
                                     <select class="form-control" style="font-size: 15px;" name="tm_satuan_id" id="satuanDefault">
                                         <option></option>
-                                        @foreach($data['satuan'] as $v)
-                                            <option value="{{$v->id}}">{{$v->satuan}}</option>
-                                        @endforeach
                                     </select>
                                 </div>
 
