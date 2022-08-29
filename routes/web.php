@@ -136,6 +136,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('getInvAlat',                 [C_InvetarisAlat::class,'getInvAlat'])->name('getInvAlat');
     Route::get('alatSelect',                 [C_InvetarisAlat::class, 'alatSelect'])->name('alatSelect');
     Route::get('alatSatuan',                 [C_InvetarisAlat::class, 'satuanSelect'])->name('alatSatuan');
+    Route::post('saveMasterAlat',            [C_InvetarisAlat::class, 'saveMasterAlat'])->name('saveMasterAlat');
 
 
     Route::resource('bonalat',                 C_BonAlat::class);

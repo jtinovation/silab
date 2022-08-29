@@ -9,12 +9,15 @@
 <link rel="stylesheet" href="{{ asset('assets/libs/select2/select2.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/libs/select2/select2-bootstrap4.min.css') }}">
 
+<!-- Sweet Alert -->
+<link rel="stylesheet" href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}">
+
 
 <div class="row">
     <div class="col-lg-12 row mt-3 animate__animated animate__backInLeft">
         <div class="card tableElement wow fadeInLeft" id="tableCard" style="display: @if ($errors->any()) none @else block @endif">
             <div class="card-header align-items-center d-flex">
-                <h4 class="card-title mb-0 flex-grow-1">Tabel Alat Laboratorium</h4>
+                <h4 class="card-title mb-0 flex-grow-1">Tabel Alat Laboratorium {{$nm_lab}}</h4>
                 @can('inventaris-alat-create')
                 <a href="#" class="float-left AddAlat">
                     <button id="BtnAddAlat" class="btn btn-primary waves-effect waves-light" type="button">
@@ -59,11 +62,15 @@
 
 
 <script type="text/javascript">
+    var nmLab           = "{{$nm_lab}}";
     var getInvAlat      = "{{route('getInvAlat')}}";
     var act             = "{{route('minggu.store')}}";
     var alatSelect      = "{{route('alatSelect')}}";
     var satuanSelect    = "{{route('alatSatuan')}}";
+    var saveAlat        = "{{route('invAlat.store')}}";
+    var saveMasterAlat  = "{{route('saveMasterAlat')}}";
     var token           = "{{ csrf_token() }}";
+    var dataUpdate      = "";
     /*    initailizeSelect2(); */
 
 

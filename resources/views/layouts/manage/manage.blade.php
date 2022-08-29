@@ -37,10 +37,10 @@
         <!-- Begin page -->
 
         <div id="layout-wrapper">
-            @include('layouts.modal')
             @include('layouts.manage._header')
             @include('layouts.manage._sidebar')
             @include('layouts.manage._content')
+            @include('layouts.modal')
         </div>
 
         <!-- END layout-wrapper -->

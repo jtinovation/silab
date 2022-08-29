@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MBarang;
 use App\Models\MBarangLab;
+use App\Models\MKartuStok;
 use App\Models\MMemberLab;
 use App\Models\MMinggu;
 use App\Models\MSatuan;
@@ -29,6 +30,7 @@ class C_InvetarisAlat extends Controller
         $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         if(count($lab_id)){
             $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
+            $nm_lab = $lab_id[0]->LaboratoriumData->laboratorium;
             $data = [
                 'title' => "Sistem Informasi Laboratorium",
                 'subtitle' => "Daftar Inventaris Alat Laboratorium",
@@ -40,7 +42,7 @@ class C_InvetarisAlat extends Controller
             $Breadcrumb = array(
             1 => array("link" => "active", "label" => "Inventaris Alat Laboratorium"),
         );
-        return view('inventarisAlat.index',compact('data','Breadcrumb','tm_lab_id'));
+        return view('inventarisAlat.index',compact('data','Breadcrumb','nm_lab'));
         }else{
             return abort(403, 'Unauthorized action.');
         }
@@ -50,13 +52,36 @@ class C_InvetarisAlat extends Controller
 
     public function create()
     {
-        //
+
     }
 
 
     public function store(Request $request)
     {
-        //
+        $staff_id = Auth::user()->tm_staff_id;
+        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($lab_id)){
+            $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
+            $cek = MBarangLab::where([['tm_barang_id',$request->id],['tm_laboratorium_id', $tm_lab_id]])->get();
+            if(count($cek)){}
+            else{
+                $input['tm_barang_id']       = $request->id;
+                $input['tm_laboratorium_id'] = $tm_lab_id;
+                $input['stok']               = $request->jumlah;
+                $input['is_aktif']           = 1;
+                $tr_barang_lab = MBarangLab::create($input);
+
+                $inputKS['tr_member_laboratorium_id']                = $lab_id[0]->id;
+                $inputKS['tr_barang_laboratorium_id'] = $tr_barang_lab->id;
+                $inputKS['is_stok_in'] = 1;
+                $inputKS['qty'] = $request->jumlah;
+                $inputKS['stok'] = $request->jumlah;
+                $KS = MKartuStok::create($inputKS);
+            }
+
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
     }
 
 
@@ -74,7 +99,34 @@ class C_InvetarisAlat extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        $staff_id = Auth::user()->tm_staff_id;
+        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($lab_id)){
+            $id         = Crypt::decryptString($id);
+            $barangLab     = MBarangLab::find($id);
+            $oldStok = $barangLab->stok;
+            $newStok = $request->jml;
+            $inputBarang['stok']         = $newStok;
+            $barangLab->update($inputBarang);
+            $is_stok_in =0;
+            $qty = 0;
+            if($oldStok<$newStok){
+                $is_stok_in=1;
+                $qty = $newStok-$oldStok;
+            }else{
+                $is_stok_in = 0 ;
+                $qty = $oldStok - $newStok;
+            }
+
+            $inputKS['tr_member_laboratorium_id']                = $lab_id[0]->id;
+            $inputKS['tr_barang_laboratorium_id'] = $id;
+            $inputKS['is_stok_in'] = $is_stok_in;
+            $inputKS['qty'] = $qty;
+            $inputKS['stok'] = $newStok;
+            $KS = MKartuStok::create($inputKS);
+        }  else{
+            return abort(403, 'Unauthorized action.');
+        }
     }
 
 
@@ -124,7 +176,7 @@ class C_InvetarisAlat extends Controller
 
                 $button = "";
                 if(Gate::check('inventaris-alat-edit')){
-                    $button = $button."<a href='#' data-href='".route('invAlat.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
+                    $button = $button."<a href='#' data-href='".route('invAlat.update',$idEncrypt)."' data-barang='$record->nama_barang' data-jumlah='$record->stok' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
                     <i class='ri-edit-2-line'></i></a>";
                 }
                 if(Gate::check('inventaris-alat-delete')){
@@ -201,5 +253,38 @@ class C_InvetarisAlat extends Controller
             $data[] = array("id"=>0,"text"=>"Silahkan Pilih Barang");
         }
 		return json_encode($data);
+    }
+
+    public function saveMasterAlat(Request $request){
+        $request->validate([
+            'barang'                => 'required|string|max:255',
+            'satuan'                => 'required|string|max:255',
+        ]);
+
+        //cek Redudancy Barang
+        $cek = MBarang::where('nama_barang',$request->barang)->get();
+        if(count($cek)){
+            $response = array(
+                'status' => 201,
+            );
+        }else{
+            $inputBarang['nama_barang']         = $request->barang;
+            $inputBarang['tm_jenis_barang_id']  = 1;
+            $inputBarang['tm_satuan_id']        = $request->satuan;
+            $inputBarang['spesifikasi']         = $request->spesifikasi;
+            $inputBarang['user_id']             = Auth::user()->id;
+            $barang = MBarang::create($inputBarang);
+            if($barang){
+                $response = array(
+                    'status' => 304,
+                );
+                return $response;
+            }else{
+                $response = array(
+                    'status' => 400,
+                );
+                return $response;
+            }
+        }
     }
 }
