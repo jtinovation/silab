@@ -3,6 +3,7 @@ use App\Http\Controllers\C_Barang;
 use App\Http\Controllers\C_BonAlat;
 use App\Http\Controllers\C_DeliverPengajuanAlatBahan;
 use App\Http\Controllers\C_InventarisBahan;
+use App\Http\Controllers\C_InvetarisAlat;
 use App\Http\Controllers\C_Permission;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Manage\ManageController;
@@ -130,6 +131,11 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('getKestek',                  [C_KesiapanPraktek::class, 'getKestek'])->name('getKestek');
     Route::get('barangLabSelect',            [C_KesiapanPraktek::class, 'barangLabSelect'])->name('barangLabSelect');
     Route::post('kestekDetailDelete',        [C_KesiapanPraktek::class,'destroy'])->name('kestekDetailDelete');
+
+    Route::resource('invAlat',                C_InvetarisAlat::class);
+    Route::get('getInvAlat',                 [C_InvetarisAlat::class,'getInvAlat'])->name('getInvAlat');
+    Route::get('alatSelect',                 [C_InvetarisAlat::class, 'alatSelect'])->name('alatSelect');
+
 
     Route::resource('bonalat',                 C_BonAlat::class);
     Route::get('getBonAlat',                  [C_BonAlat::class, 'getBonalat'])->name('getBonAlat');

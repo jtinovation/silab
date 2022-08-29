@@ -74,3 +74,84 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div id="ShowAddAlatlab" class="modal fade" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header row">
+                <h5 class="modal-title text-center" id="myModalLabel">TAMBAH DATA ALAT LABORATORIUM</h5>
+            </div>
+            <div class="modal-body">
+                <div class="col-lg-12 ">
+
+
+                    <div class="row d-flex justify-content-center">
+                        <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
+                            <i class="ri-user-smile-line label-icon"></i><strong>Form Tambah Alat</strong>
+                        </div>
+                        <div class="wrap-alat-to-lab">
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                    <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                        <label for="selectAlat" class="form-label text-right">Pilih Alat </label></br>
+                                        <select class="form-control select2_el first" style="font-size: 15px;" name="barang[]" id="selectAlat" required>
+                                            <option value="">Pilih Alat Laboratorium</option>
+                                        </select>
+                                    </div>
+                                    <small>alat belum terdaftar? <a href="#"><span class="addMode"><strong>Tambahkan Data Alat</strong></span> </a></small>
+                                </div>
+
+
+                                @can('inventaris-alat-create')
+                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                    <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                        <label for="selectAlat" class="form-label text-right">&nbsp;</label></br>
+                                        <button type="button" id="btnAlatLab" class="btn btn-primary waves-effect waves-light ">Tambah Alat</button>
+                                    </div>
+                                </div>
+                                @endcan
+                            </div>
+                        </div>
+                        <div class="wrap-master-alat" style="display: none;">
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-xxl-4 col-md-6 mt-1">
+                                    <label for="barang" class="form-label">Barang</label>
+                                    <input class="form-control" type="text" value="" id="barang" name="nama_barang" placeholder="Masukan Barang" required="" style=" text-transform: capitalize;">
+                                </div>
+
+                                <div class="col-xxl-4 col-md-6 mt-1">
+                                    <label for="satuanDefault" class="form-label">Satuan</label></br>
+                                    <select class="form-control" style="font-size: 15px;" name="tm_satuan_id" id="satuanDefault">
+                                        <option></option>
+                                        @foreach($data['satuan'] as $v)
+                                            <option value="{{$v->id}}">{{$v->satuan}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-xxl-4 col-md-12 mt-1">
+                                    <label for="spesifikasi" class="form-label">Spesifikasi</label>
+                                    <textarea class="form-control" name="spesifikasi" id="spesifikasi"></textarea>
+                                </div>
+                                @can('inventaris-alat-create')
+                                <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 row d-flex mt-2">
+                                    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <button type="button" id="btnMasterAlat" class="btn btn-primary waves-effect waves-light ">Tambah Data Alat</button>
+                                    </div>
+                                    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <button type="button" id="btnCancel" class="btn btn-primary waves-effect waves-light ">Batal Input Data</button>
+                                    </div>
+                                </div>
+                                @endcan
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

@@ -186,10 +186,17 @@
 
                 @can('inventaris-bahan-list')
                 <li class="nav-item">
-					<a class="nav-link menu-link{{ $data['npage'] == 86 ? ' active' : '' }}" href="{{ route('invBahan.index') }}">
-						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Inventaris Bahan Lab</span>
+                    <a class="nav-link menu-link{{ $data['npage'] == 86 ? ' active' : '' }}" href="{{ route('invBahan.index') }}">
+						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Inventaris Bahan Laboratorium</span>
 					</a>
 				</li>
+                @endcan
+
+                @can('inventaris-alat-list')
+                    <a class="nav-link menu-link{{ $data['npage'] == 83 ? ' active' : '' }}" href="{{ route('invAlat.index') }}">
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Inventaris Alat Laboratorium</span>
+                    </a>
+                </li>
                 @endcan
 
                 @can('kesiapan-praktek-list')
