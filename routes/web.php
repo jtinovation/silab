@@ -121,7 +121,6 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('deljulat',               C_DeliverPengajuanAlatBahan::class);
 
-
     Route::resource('pengadaanStokin',        C_PengadaanStokin::class);
     Route::resource('invBahan',               C_InventarisBahan::class);
     Route::get('GetInvBahan',                [C_InventarisBahan::class,'GetInvBahan'])->name('GetInvBahan');
@@ -137,10 +136,12 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('alatSelect',                 [C_InvetarisAlat::class, 'alatSelect'])->name('alatSelect');
     Route::get('alatSatuan',                 [C_InvetarisAlat::class, 'satuanSelect'])->name('alatSatuan');
     Route::post('saveMasterAlat',            [C_InvetarisAlat::class, 'saveMasterAlat'])->name('saveMasterAlat');
+    Route::post('invAlat.Del',               [C_InvetarisAlat::class, 'destroy'])->name('invAlat.Del');
 
 
-    Route::resource('bonalat',                 C_BonAlat::class);
-    Route::get('getBonAlat',                  [C_BonAlat::class, 'getBonalat'])->name('getBonAlat');
+    Route::resource('bonalat',                C_BonAlat::class);
+    Route::get('getBonAlat',                 [C_BonAlat::class, 'getBonalat'])->name('getBonAlat');
+    Route::get('alatLabSelect',              [C_BonAlat::class, 'alatLabSelect'])->name('alatLabSelect');
 
     Route::get('/manage',       [ManageController::class, 'index'])->name('manage');
     Route::get('/pendidikan',   [ManageController::class, 'pendidikan'])->name('manage.pendidikan');

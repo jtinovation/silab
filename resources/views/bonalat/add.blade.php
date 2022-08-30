@@ -116,7 +116,7 @@
 
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
                                             <select class="form-control select2_el first" style="font-size: 15px;" name="barang[]" required>
-                                                <option value="">Pilih Barang</option>
+                                                <option value="">Pilih Alat</option>
                                             </select>
                                         </div>
 
@@ -173,7 +173,7 @@
 
 <script type="text/javascript">
     var txtNumeric;
-    var barangSelect  = "{{route('barangLabSelect')}}";
+    var alatLabSelect  = "{{route('alatLabSelect')}}";
     var num = 1;
     initailizeSelect2();
     initDaterangpicker();

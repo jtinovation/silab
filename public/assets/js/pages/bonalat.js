@@ -102,7 +102,7 @@ $("body").on("click", ".remove", function() {
 function initailizeSelect2() {
     $(".select2_el").select2({
         ajax: {
-            url: barangSelect,
+            url: alatLabSelect,
             type: "get",
             dataType: 'json',
             delay: 500,

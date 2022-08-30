@@ -207,6 +207,45 @@ $("body").on("keyup", "input.number", function(event) {
     }
 });
 
+$("body").on("click",".delete",function(){
+    event.preventDefault();
+    let id      = $(this).attr("data-id");
+    let href    = $(this).attr("data-href");
+    let barang    = $(this).attr("data-barang");
+
+    Swal.fire({
+        title: 'Hapus Data Barang?',
+        text: "Anda akan menghapus barang "+barang,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonClass: 'btn btn-success',
+        cancelButtonClass: 'btn btn-danger ml-2',
+        confirmButtonText: 'Yes, delete it!'
+    }).then(function (result) {
+        if (result.value) {
+            $.ajax({
+                type: "POST",
+                url: href,
+                data: { id:id , _token: token},
+                dataType: "html",
+                success: function (data) {
+                    Swal.fire({
+                        title: "Hapus Data Berhasil!",
+                        text: "",
+                        icon: "success"
+                    }).then(function(){
+                        table.ajax.reload();
+                    });
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    Swal.fire("Error deleting!", "Please try again", "error");
+                }
+            });
+        }
+    });
+
+});
+
 
 
 

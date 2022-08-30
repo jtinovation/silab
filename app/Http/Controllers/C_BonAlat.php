@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\M_Staff;
+use App\Models\MBarangLab;
 use App\Models\MBonalat;
 use App\Models\MMemberLab;
 use Illuminate\Http\Request;
@@ -180,5 +181,36 @@ class C_BonAlat extends Controller
             "aaData" => $data_arr,
         );
         echo json_encode($response);
+    }
+
+    public function alatLabSelect(Request $request){
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $lab_id = $qrlab[0]->tm_laboratorium_id;
+        $search = $request->searchTerm;
+        if($search != null){
+            //$q = MBarangLab::where('nama_barang','LIKE','%'.$search.'%')->get();
+            $q = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereHas('BarangData', function($q) use ($search) {$q->where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',1]]);})->get();
+            $data= array();
+            foreach($q as $v){
+                $id=$v->id;
+                $nm=$v->BarangData->nama_barang;
+                $stok = $v->stok;
+                $idstok = $id."#".$stok;
+                $data[] = array("id"=>$idstok,"text"=>$nm);
+            }
+        }else{
+            //$q = MBarang::all();
+            $q = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereHas('BarangData', function($q) use ($search) {$q->where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',1]]);})->get();
+            $data= array();
+            foreach($q as $v){
+                $id=$v->id;
+                $nm=$v->BarangData->nama_barang;
+                $stok = $v->stok;
+                $idstok = $id."#".$stok;
+                $data[] = array("id"=>$idstok,"text"=>$nm);
+            }
+        }
+		return json_encode($data);
     }
 }

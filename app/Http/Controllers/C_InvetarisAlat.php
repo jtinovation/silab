@@ -130,9 +130,11 @@ class C_InvetarisAlat extends Controller
     }
 
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $barangLab = MBarangLab::find(Crypt::decryptString($request->id));
+        $up['is_aktif'] = 0;
+        $barangLab->update($up);
     }
 
     public function getInvAlat(Request $request){
@@ -156,13 +158,13 @@ class C_InvetarisAlat extends Controller
             $searchValue = $search_arr['value']; // Search value
 
             // Total records
-            $totalRecords = MvBarangLab::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id],['tm_jenis_barang_id',1]])->count();
-            $totalRecordswithFilter = MvBarangLab::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id],['nama_barang', 'like', '%' . $searchValue . '%'],['tm_jenis_barang_id',1]])->count();
+            $totalRecords = MvBarangLab::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id],['tm_jenis_barang_id',1],['is_aktif_lab',1]])->count();
+            $totalRecordswithFilter = MvBarangLab::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id],['nama_barang', 'like', '%' . $searchValue . '%'],['tm_jenis_barang_id',1],['is_aktif_lab',1]])->count();
 
 
             // Get records, also we have included search filter as well
             $records = MvBarangLab::orderBy($columnName, $columnSortOrder)
-            ->where([['tm_laboratorium_id',$lab_id[0]->tm_laboratorium_id],['nama_barang', 'like', '%' . $searchValue . '%'],['tm_jenis_barang_id',1]])
+            ->where([['tm_laboratorium_id',$lab_id[0]->tm_laboratorium_id],['nama_barang', 'like', '%' . $searchValue . '%'],['tm_jenis_barang_id',1],['is_aktif_lab',1]])
             ->select('v_barang_laboratorium.*')
             ->skip($start)
             ->take($rowperpage)
@@ -180,7 +182,7 @@ class C_InvetarisAlat extends Controller
                     <i class='ri-edit-2-line'></i></a>";
                 }
                 if(Gate::check('inventaris-alat-delete')){
-                    $button = $button." <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete' data-id='".$idEncrypt."' >
+                    $button = $button." <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete' data-barang='$record->nama_barang' data-id='".$idEncrypt."' data-href='".route('invAlat.Del')."' >
                     <i class='ri-delete-bin-2-line'></i></a>";
                 }
                 /* $span="";
@@ -211,9 +213,13 @@ class C_InvetarisAlat extends Controller
     }
 
     public function alatSelect(Request $request){
-        $search = $request->searchTerm;
+        $staff_id = Auth::user()->tm_staff_id;
+        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($lab_id)){
+            $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
+            $search = $request->searchTerm;
         if($search != null){
-            $q = MBarang::where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',1]])->get();
+            $q = MBarang::where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',1]])->whereNotIn('id',MBarangLab::select('tm_barang_id')->where('tm_laboratorium_id',$tm_lab_id)->get())->get();
             $data= array();
             foreach($q as $v){
                 $id=$v->id;
@@ -221,7 +227,7 @@ class C_InvetarisAlat extends Controller
                 $data[] = array("id"=>$id,"text"=>$nm);
             }
         }else{
-            $q = MBarang::where('tm_jenis_barang_id',1)->get();
+            $q = MBarang::where('tm_jenis_barang_id',1)->whereNotIn('id',MBarangLab::select('tm_barang_id')->where('tm_laboratorium_id',$tm_lab_id)->get())->get();
             $data= array();
             foreach($q as $v){
                 $id=$v->id;
@@ -230,6 +236,8 @@ class C_InvetarisAlat extends Controller
             }
         }
 		return json_encode($data);
+
+        }
     }
 
     public function satuanSelect(Request $request){
