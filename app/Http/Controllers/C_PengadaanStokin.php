@@ -123,18 +123,29 @@ class C_PengadaanStokin extends Controller
                         $stokKS                   = ($qryKartuStok[0]->stok - $qryKartuStok[0]->qty_kartu_stok) + $qtySatuan;
                         $stok                   = ($qrBarangLab[0]->stok - $qryKartuStok[0]->qty_kartu_stok) + $qtySatuan;
                         $tr_barang_laboratorium_id = $qrBarangLab[0]->id;
-                        $update['stok'] = $stok;
+                        $updateStokLab['stok'] = $stok;
+                        $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
+                        $tr_barang_laboratorium->update($updateStokLab);
 
-                    MBarangLab::find($tr_barang_laboratorium_id)->update($update);
+                        $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
+                        $stokBarang = $tr_barang->qty;
+                        $updateStokBarang['qty'] = ($stokBarang - $qryKartuStok[0]->qty_kartu_stok) + $qtySatuan;
+                        $tr_barang->update($updateStokBarang);
 
                         $updateKS['qty']                       = $qtySatuan;
                         $updateKS['stok']                      = $stokKS;
                         $kartuStok = MKartuStok::find($qryKartuStok[0]->id)->update($updateKS);
                     }else{
-                        $stok                   = $qrBarangLab[0]->stok + $qtySatuan;
-                        $tr_barang_laboratorium_id = $qrBarangLab[0]->id;
-                        $update['stok'] = $stok;
-                        MBarangLab::find($tr_barang_laboratorium_id)->update($update);
+                        $stok                       = $qrBarangLab[0]->stok + $qtySatuan;
+                        $tr_barang_laboratorium_id  = $qrBarangLab[0]->id;
+                        $updateStokLab['stok'] = $stok;
+                        $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
+                        $tr_barang_laboratorium->update($updateStokLab);
+
+                        $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
+                        $stokBarang = $tr_barang->qty;
+                        $updateStokBarang['qty'] = $stokBarang + $qtySatuan;
+                        $tr_barang->update($updateStokBarang);
 
                         $input['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
                         $input['is_stok_in']                = 1;
@@ -151,6 +162,11 @@ class C_PengadaanStokin extends Controller
                     $inputBarangLab['tm_barang_id'] = $tm_barang_id;
                     $inputBarangLab['is_aktif'] =1;
                     $BarangLab = MBarangLab::create($inputBarangLab);
+
+                    $tr_barang = MBarang::find($tm_barang_id);
+                    $stokBarang = $tr_barang->qty;
+                    $updateStokBarang['qty'] = $stokBarang + $qtyXsatuan;
+                    $tr_barang->update($updateStokBarang);
 
                     $input['tr_barang_laboratorium_id'] = $BarangLab->id;
                     $input['is_stok_in']                = 1;
@@ -178,8 +194,15 @@ class C_PengadaanStokin extends Controller
                     //echo "</br>".$qrBarangLab->stok."-" .$qryKartuStok[0]->qty_kartu_stok;
                     $stok                   = ($qrBarangLab->stok - $qryKartuStok[0]->qty_kartu_stok);
 
-                    $update['stok'] = $stok;
-                    MBarangLab::find($qryKartuStok[0]->tr_barang_laboratorium_id)->update($update);
+                    $updateStokLab['stok'] = $stok;
+                    $tr_barang_laboratorium = MBarangLab::find($qryKartuStok[0]->tr_barang_laboratorium_id);
+                    $tr_barang_laboratorium->update($updateStokLab);
+
+                    $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
+                    $stokBarang = $tr_barang->qty;
+                    $updateStokBarang['qty'] = $stokBarang + $qryKartuStok[0]->qty_kartu_stok;
+                    $tr_barang->update($updateStokBarang);
+
 
                     $updateKS['qty']                       = 0;
                     $updateKS['stok']                      = $stokKS;

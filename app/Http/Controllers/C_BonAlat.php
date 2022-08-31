@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\M_Staff;
+use App\Models\MBarang;
 use App\Models\MBarangLab;
 use App\Models\MBonalat;
 use App\Models\MDetailBonAlat;
+use App\Models\MKartuStok;
 use App\Models\MMemberLab;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -100,18 +102,38 @@ class C_BonAlat extends Controller
                 $input['nim']                      = $request->nim;
                 $input['golongan_kelompok']        = $request->gol;
             }
-            $input['tanggal_pinjam']                    = $request->tanggalPinjam;
-            $input['tr_member_laboratorium_id_pinjam']  = $request->tr_member_laboratorium_id_pinjam;
+            $input['tanggal_pinjam']                    = $request->tanggalPinjam.":00";
+            $input['tr_member_laboratorium_id_pinjam']  = $qrlab[0]->id;
             $input['status']                            = 1;
             $bonalat = MBonalat::create($input);
 
             foreach($request->barang as $key => $value){
                 $arrV = explode("#", $value);
-                $detailInput['tr_barang_laboratorium_id'] = $arrV[0];
+                $tr_barang_laboratorium_id = $arrV[0];
+                $stokKeluar = $request->jml[$key];
+                $detailInput['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
                 $detailInput['tr_bon_alat_id'] = $bonalat->id;
                 $detailInput['jumlah'] = $request->jml[$key];
                 $detailInput['keterangan'] = $request->keterangan[$key];
                 $DetailBonAlat = MDetailBonAlat::create($detailInput);
+
+                $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
+                $stokLab = $tr_barang_laboratorium->stok;
+                $updateStokLab['stok'] = $stokLab - $stokKeluar;
+                $tr_barang_laboratorium->update($updateStokLab);
+
+                $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                $ks['is_stok_id'] = 0;
+                $ks['qty'] = $stokKeluar;
+                $ks['stok'] = $stokLab - $stokKeluar;
+                $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
+                MKartuStok::create($ks);
+
+                $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
+                $stokBarang = $tr_barang->qty;
+                $updateStokBarang['qty'] = $stokBarang - $stokKeluar;
+                $tr_barang->update($updateStokBarang);
+
             }
             return redirect(route('bonalat.index'))->with('success','Bon Alat Berhasil di Simpan.');
         }else{

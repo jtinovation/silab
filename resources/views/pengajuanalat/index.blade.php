@@ -3,7 +3,6 @@
 <!-- Animate V4 -->
 <link rel="stylesheet" href="{{ asset('assets/libs/animate/animate_v4.css') }}">
 
-
 <div class="row">
     <div class="col-lg-12 row mt-3 animate__animated animate__backInLeft">
         <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
@@ -45,7 +44,7 @@
                                             $badge = "primary";
                                         }
                                     @endphp
-                                    <td ><a href="#" class="badge badge-outline-{{$badge}} stts" data-id="{{Crypt::encryptString($vu->id)}}" data-val="{{$vu->status}}" >{{$vu->stts}}</a> </td>
+                                    <td ><span class="badge badge-outline-{{$badge}} stts" data-id="{{Crypt::encryptString($vu->id)}}" data-val="{{$vu->status}}" >{{$vu->stts}}</span> </td>
                                     <td >
                                         @if ($vu->status == 1)
                                         <a href="{{route('pengajuanalat.edit',$vu->kode)}}" class="btn btn-info btn-icon waves-effect waves-light" data-id="{{$vu->kode}}"><i class="ri-edit-2-line"></i></a>

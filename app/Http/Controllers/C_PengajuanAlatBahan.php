@@ -183,102 +183,14 @@ class C_PengajuanAlatBahan extends Controller
                         ->with('success','Data Staff Deleted Successfully');
     }
 
-    public function getStaff(Request $request){
-        $user_id = Auth::user()->tm_staff_id;
-        $draw = $request->get('draw');
-        $start = $request->get("start");
-        $rowperpage = $request->get("length"); // total number of rows per page
-
-        $columnIndex_arr = $request->get('order');
-        $columnName_arr = $request->get('columns');
-        $order_arr = $request->get('order');
-        $search_arr = $request->get('search');
-
-        $columnIndex = $columnIndex_arr[0]['column']; // Column index
-        $columnName = $columnName_arr[$columnIndex]['data']; // Column name
-        $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-        $searchValue = $search_arr['value']; // Search value
-
-        if (Gate::check('all-staff-list')) {
-            // Total records
-            $totalRecords = M_Staff::select('count(*) as allcount')->where('is_aktif', '=', '1')->count();
-            $totalRecordswithFilter = M_Staff::select('count(*) as allcount')->where('is_aktif', '=', '1')->where('nama', 'like', '%' . $searchValue . '%')->count();
-
-            // Get records, also we have included search filter as well
-            $records = M_Staff::orderBy($columnName, $columnSortOrder)
-                ->where('nama', 'like', '%' . $searchValue . '%')
-                ->where('is_aktif', '=', '1')
-                ->select('tm_staff.*')
-                ->skip($start)
-                ->take($rowperpage)
-                ->get();
-            $data_arr = array();
-        } else {
-            // Total records
-            $totalRecords = M_Staff::select('count(*) as allcount')->where('is_aktif', '=', '1')->where('id', $user_id)->count();
-            $totalRecordswithFilter = M_Staff::select('count(*) as allcount')->where('is_aktif', '=', '1')->where('nama', 'like', '%' . $searchValue . '%')->where('id', $user_id)->count();
-
-            // Get records, also we have included search filter as well
-            $records = M_Staff::orderBy($columnName, $columnSortOrder)
-                ->where('nama', 'like', '%' . $searchValue . '%')
-                ->where('is_aktif', '=', '1')
-                ->where('id', $user_id)
-                ->select('tm_staff.*')
-                ->skip($start)
-                ->take($rowperpage)
-                ->get();
-            $data_arr = array();
-        }
-
-
-        $number = $start;
-        foreach ($records as $record) { $number += 1;
-            $idEncrypt = Crypt::encryptString($record->id);
-            $button = "";
-            $imgPath  =  "img/users/".$record->foto;
-            if (!file_exists($imgPath) || $record->foto == "") {
-                $imgPath = "img/system/anonymous.jpg";
-            }
-            if(Gate::check('staff-edit')){
-                $button = $button."<a href='#' data-href='".route('staff.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
-                ubah
-            </a>";
-            }
-            if(Gate::check('staff-delete')){
-                $button = $button." <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete' data-id='".$idEncrypt."' >
-                Hapus
-              </a>";
-            }
-
-            $foto = "<img src='" . asset($imgPath) . "'  class='img-rounded'  width='150' height='150'>";
-
-            $data_arr[] = array(
-                "id"               => $number,
-                "nama"             => $record->nama,
-                "email"            => $record->email,
-                "foto"             => $foto,
-                "action"           => $button
-            );
-        }
-
-        $response = array(
-            "draw" => intval($draw),
-            "iTotalRecords" => $totalRecords,
-            "iTotalDisplayRecords" => $totalRecordswithFilter,
-            "aaData" => $data_arr,
-        );
-        echo json_encode($response);
-    }
-
     public function createPengajuan($id){
         echo $id;
-
     }
 
     public function barangSelect(Request $request){
         $search = $request->searchTerm;
         if($search != null){
-            $q = MBarang::where('nama_barang','LIKE','%'.$search.'%')->get();
+            $q = MBarang::where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',2]])->get();
             $data= array();
             foreach($q as $v){
                 $id=$v->id;
@@ -286,7 +198,7 @@ class C_PengajuanAlatBahan extends Controller
                 $data[] = array("id"=>$id,"text"=>$nm);
             }
         }else{
-            $q = MBarang::all();
+            $q = MBarang::where('tm_jenis_barang_id',2)->get();
             $data= array();
             foreach($q as $v){
                 $id=$v->id;
