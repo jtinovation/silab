@@ -77,7 +77,7 @@ class C_InventarisBahan extends Controller
     public function GetInvBahan(Request $request){
         $staff_id = Auth::user()->tm_staff_id;
         $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-
+        $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
         $draw = $request->get('draw');
         $start = $request->get("start");
         $rowperpage = $request->get("length"); // total number of rows per page
@@ -93,12 +93,12 @@ class C_InventarisBahan extends Controller
         $searchValue = $search_arr['value']; // Search value
 
         // Total records
-        $totalRecords = MvBarangLab::select('count(*) as allcount')->where('tm_laboratorium_id',$lab_id[0]->tm_laboratorium_id)->count();
-        $totalRecordswithFilter = MvBarangLab::select('count(*) as allcount')->where([['tm_laboratorium_id',$lab_id[0]->tm_laboratorium_id],['nama_barang', 'like', '%' . $searchValue . '%']])->count();
+        $totalRecords = MvBarangLab::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id],['tm_jenis_barang_id',2],['is_aktif_lab',1]])->count();
+        $totalRecordswithFilter = MvBarangLab::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id],['nama_barang', 'like', '%' . $searchValue . '%'],['tm_jenis_barang_id',2],['is_aktif_lab',1]])->count();
 
         // Get records, also we have included search filter as well
         $records = MvBarangLab::orderBy($columnName, $columnSortOrder)
-            ->where([['tm_laboratorium_id',$lab_id[0]->tm_laboratorium_id],['nama_barang', 'like', '%' . $searchValue . '%']])
+            ->where([['tm_laboratorium_id',$lab_id[0]->tm_laboratorium_id],['nama_barang', 'like', '%' . $searchValue . '%'],['tm_jenis_barang_id',2],['is_aktif_lab',1]])
             ->select('v_barang_laboratorium.*')
             ->skip($start)
             ->take($rowperpage)

@@ -262,7 +262,7 @@ class C_KesiapanPraktek extends Controller
         $search = $request->searchTerm;
         if($search != null){
             //$q = MBarangLab::where('nama_barang','LIKE','%'.$search.'%')->get();
-            $q = MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q) use ($search) {$q->where('nama_barang','LIKE','%'.$search.'%');})->get();
+            $q = MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q) use ($search) {$q->where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',2]]);})->get();
             $data= array();
             foreach($q as $v){
                 $id=$v->id;
@@ -273,7 +273,7 @@ class C_KesiapanPraktek extends Controller
             }
         }else{
             //$q = MBarang::all();
-            $q = MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q) use ($search) {$q->where('nama_barang','LIKE','%'.$search.'%');})->get();
+            $q = MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q) use ($search) {$q->where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',2]]);})->get();
             $data= array();
             foreach($q as $v){
                 $id=$v->id;
