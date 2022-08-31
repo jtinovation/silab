@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\M_Staff;
 use App\Models\MBarangLab;
 use App\Models\MBonalat;
+use App\Models\MDetailBonAlat;
 use App\Models\MMemberLab;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -85,7 +86,37 @@ class C_BonAlat extends Controller
 
     public function store(Request $request)
     {
-        //
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $lab_id = $qrlab[0]->tm_laboratorium_id;
+        if(count($qrlab)){
+            $date = Carbon::now();
+            $input['kode']                         = Str::random(8).$date->format('YmdHis');
+            if($request->has('is_pegawai')){
+                $input['is_pegawai']               = $request->is_pegawai;
+                $input['tm_staff_id']              = $request->tm_staff_id;
+            }else{
+                $input['nama']                     = $request->nama;
+                $input['nim']                      = $request->nim;
+                $input['golongan_kelompok']        = $request->gol;
+            }
+            $input['tanggal_pinjam']                    = $request->tanggalPinjam;
+            $input['tr_member_laboratorium_id_pinjam']  = $request->tr_member_laboratorium_id_pinjam;
+            $input['status']                            = 1;
+            $bonalat = MBonalat::create($input);
+
+            foreach($request->barang as $key => $value){
+                $arrV = explode("#", $value);
+                $detailInput['tr_barang_laboratorium_id'] = $arrV[0];
+                $detailInput['tr_bon_alat_id'] = $bonalat->id;
+                $detailInput['jumlah'] = $request->jml[$key];
+                $detailInput['keterangan'] = $request->keterangan[$key];
+                $DetailBonAlat = MDetailBonAlat::create($detailInput);
+            }
+            return redirect(route('bonalat.index'))->with('success','Bon Alat Berhasil di Simpan.');
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
     }
 
 

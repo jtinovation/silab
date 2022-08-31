@@ -136,24 +136,12 @@ function initDaterangpicker() {
 }
 
 $("form").submit(function(event) {
-    if ($("#jml_kel").val() <= 0) {
-        Swal.fire({
-            title: "Jumlah Kelompok Tidak Boleh Kosong!",
-            icon: "warning",
-            text: "Silahkan Isi Jumlah Kelompok",
-            didClose: () => {
-                $('#jml_kel').focus();
-            }
-        })
-        event.preventDefault();
-    }
-
     $('.hit').each(function(i, obj) {
         if (obj.value <= 0) {
             Swal.fire({
-                title: "Silahkan Isi Kebutuhan Kelompok!",
+                title: "Jumlah Tidak Boleh Kosong!",
                 icon: "warning",
-                text: "Jumlah Kebutuhan Kelompok Tidak Boleh Kurang dari atau sama dengan nol",
+                text: "Jumlah Harus Di isi",
                 didClose: () => {
                     obj.focus();
                 }
@@ -163,11 +151,12 @@ $("form").submit(function(event) {
     });
 
     $('.select2_el').each(function(i, obj) {
-        if (obj.value <= 0) {
+        console.log(obj.value);
+        if (obj.value == " ") {
             Swal.fire({
-                title: "Silahkan Pilih Barang!",
+                title: "Silahkan Pilih alat!",
                 icon: "warning",
-                text: "Barang Harus dipilih terlebih dahulu",
+                text: "Data Alat Harus dipilih terlebih dahulu",
                 didClose: () => {
                     obj.focus();
                 }
@@ -175,21 +164,5 @@ $("form").submit(function(event) {
             event.preventDefault();
         }
     });
-
-    $('.select2_el').each(function(i, obj) {
-        if (obj.value <= 0) {
-            Swal.fire({
-                title: "Silahkan Pilih Satuan!",
-                icon: "warning",
-                text: "Satuan Harus dipilih terlebih dahulu",
-                didClose: () => {
-                    obj.focus();
-                }
-            });
-            event.preventDefault();
-        }
-    });
-
-
 
 });
