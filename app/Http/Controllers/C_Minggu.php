@@ -48,23 +48,25 @@ class C_Minggu extends Controller
         return view('admin.minggu_add',compact('data'));
     }
 
-    public function store(){
-        $postMinggu = str_replace(' ','',request('tanggal'));
+    public function store(Request $request){
+        $postMinggu = str_replace(' ','',$request->tanggal);
         $minggu    = explode("-",$postMinggu);
-        /*$data = array(
-            "1" => strtotime(str_replace('/','-',$minggu[0])),
-            "2" => strtotime("23/11/2020")
-        );
-        dd($data);
-        */
+
         MMinggu::create([
-            'minggu_ke'             => request('minggu_ke'),
+            'minggu_ke'             => $request->minggu_ke,
             'start_date'            => Carbon::createFromFormat('d/m/Y', $minggu[0])->format('Y-m-d'),
             'end_date'              => Carbon::createFromFormat('d/m/Y', $minggu[1])->format('Y-m-d'),
-            'tm_tahun_ajaran_id'    => request('tahun_ajaran'),
-            'keterangan'            => request('keterangan')
+            'tm_tahun_ajaran_id'    => $request->tahun_ajaran,
+            'keterangan'            => $request->keterangan
         ]);
-            return redirect(route('minggu.index'));
+        return redirect(route('minggu.index'));
+
+      /*   $data = $request->except('_token');
+        foreach ($data as $key => $value) {
+            $qry[] = array($key,"=",$value);
+        }
+        return $qry; */
+
     }
 
     public function show($id)
