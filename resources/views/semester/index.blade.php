@@ -35,7 +35,7 @@
                         <div class="col-xxl-4 col-md-6">
                             <div>
                                 <label for="SelectTahunAjaran" class="form-label text-right">Pilih Tahun Ajaran</label>
-                                <select class="form-control" style="font-size: 15px;"  name="tahun_ajaran" id="tahun_ajaran">
+                                <select class="form-control" style="font-size: 15px;"  name="tahun_ajaran" id="SelectTahunAjaran">
                                     <option>Pilih Tahun Ajaran</option>
                                     @foreach($data['tahun_ajaran'] as $v)
                                         <option value="{{$v->id}}">{{$v->tahun_ajaran}}</option>
