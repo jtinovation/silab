@@ -3,6 +3,8 @@
 
 <!-- Select2 -->
 <link rel="stylesheet" href="{{ asset('assets/libs/select2/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/libs/select2/select2-bootstrap4.min.css') }}">
+
 
 <!-- Responsive Datatables -->
 <link rel="stylesheet" href="{{ asset('assets/libs/datatables-bs4/css/dataTables.bootstrap4.min.css') }}" />
@@ -52,7 +54,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-6 col-md-6">
+                            <div class="col-xxl-4 col-md-4">
                                 <div>
                                     <label for="SelectTahunAjaran" class="form-label text-right">Pilih Tahun Ajaran</label></br>
                                     <select class="form-control" style="font-size: 15px;"  name="tm_semester_tahun_ajaran" id="SelectTahunAjaran">
@@ -64,12 +66,19 @@
                                 </div>
                             </div>
 
-                            <div class="col-xxl-6 col-md-6">
+                            <div class="col-xxl-4 col-md-4">
                                 <div>
                                     <label for="SelectSemester" class="form-label text-right">Pilih Semester</label></br>
                                     <select class="form-control" style="font-size: 15px;"  name="tm_semester_semester" id="SelectSemester">
                                         <option></option>
                                     </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-4 col-md-4">
+                                <div>
+                                    <label for="jumlah_golongan" class="form-label text-right">Jumlah Golongan</label></br>
+                                    <input type="text" class="form-control number" style="font-size: 15px;"  name="jumlah_golongan" id="jumlah_golongan" value="0" required />
                                 </div>
                             </div>
 
@@ -191,11 +200,15 @@
                     console.log("no data found");
                     $("#txtMatakuliahId").prop('selectedIndex',-1);
                     demo1.bootstrapDualListbox('refresh', true);
+                    $("#jumlah_golongan").val(0);
                 }else{
                     $("#txtMatakuliahId").prop('selectedIndex',-1);
+                    let jml_gol;
                     $.each(response,function(key, value){
+                        jml_gol=value.jml_gol;
                         $("#txtMatakuliahId option[value='" + value.id + "']").prop("selected", true);
                     });
+                    $("#jumlah_golongan").val(jml_gol);
                     demo1.bootstrapDualListbox('refresh', true);
                 }
             }
@@ -203,6 +216,18 @@
     });
 
     $("#btnSubmit").click(function() {
+        if ($("#jumlah_golongan").val() <= 0){
+            Swal.fire({
+                title: "Jumlah Gologan Tidak Boleh Kosong!",
+                icon: "warning",
+                text: "Silahkan Isi Jumlah Golongan",
+                didClose: () => {
+                    $('#jumlah_golongan').focus();
+                }
+            })
+            event.preventDefault();
+        }else{
+
         let formData = $("#frmJurusan").serialize();
         $.ajax({
             url : "{{route('SetMatkuliahTiapProdi')}}",
@@ -215,7 +240,7 @@
                 Swal.fire({
                     type: 'success',
                     title: 'Berhasil',
-                    text: 'Data Prodi Berhasil Di Simpan',
+                    text: 'Data Pengaturan Mata Kuliah Berhasil Di Simpan',
                 });
             },
             error: function(){
@@ -223,11 +248,12 @@
                 Swal.fire({
                     type: 'error',
                     title: 'ERROR',
-                    text: 'Data Prodi Gagal Di Simpan',
+                    text: 'Pengaturan Mata Kulah Gagal Di Simpan',
                 });
             }
         });
 
+    }
     });
 
     $(function(){
@@ -235,6 +261,14 @@
 	        $(".alert-dismissable").hide('blind', {}, 500)
 		},3000);
 	});
+
+    $("body").on("keyup", "input.number", function(event) {
+    if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57) {
+        $(this).val(function(index, value) {
+            return value.replace(/\D/g, "");
+        });
+    }
+});
 
     </script>
 

@@ -141,6 +141,7 @@
         responsive:true,
         processing: true,
         serverSide: true,
+        searchDelay: 1000,
         ajax: "{{route('getMatakuliah')}}",
         columns: [
             { data: 'id' },

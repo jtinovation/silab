@@ -63,6 +63,7 @@ class C_Maproditer extends Controller
                 if(!in_array(@$v,$Old_tm_matakuliah_id)){
                     $input['tm_program_studi_id']   = $tm_program_studi_id;
                     $input['tm_semester_id']        = $tm_semester_semester;
+                    $input['jumlah_golongan']       = $request->jumlah_golongan;
                     $input['tm_matakuliah_id']      = $v;
                     $input['user_id'] = Auth::user()->id;
                     MMaproditer::create($input);
@@ -107,7 +108,8 @@ class C_Maproditer extends Controller
 		$data= array();
 		foreach($q as $v){
 			$id=$v['tm_matakuliah_id'];
-			$data[] = array("id"=>$id);
+			$jml_gol=$v['jumlah_golongan'];
+			$data[] = array("id"=>$id,"jml_gol"=>$jml_gol);
 		}
 		return json_encode($data);
 	}
