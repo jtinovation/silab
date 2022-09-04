@@ -306,6 +306,10 @@ class C_ReviewPengajuanAlat extends Controller
         ];
 
         $qrUsulan = MUsulanKebutuhan::where('kode',$id)->get();
+        $qrUsulanId = $qrUsulan[0]->id;
+            if($qrUsulan[0]->status == 1){
+                MUsulanKebutuhan::find($qrUsulanId)->update(array('status' => '3'));
+            }
         $nama = "";
         $mk = "";
         $qrExist = MvExistMK::where('tr_matakuliah_dosen_id',$qrUsulan[0]->tr_matakuliah_dosen_id)->get();
@@ -364,6 +368,10 @@ class C_ReviewPengajuanAlat extends Controller
     public function CetakPengajuan(Request $request){
         foreach($request->usulan as $v){
             $qrUsulan = MUsulanKebutuhan::where('kode',$v)->get();
+            $qrUsulanId = $qrUsulan[0]->id;
+            if($qrUsulan[0]->status == 1){
+                MUsulanKebutuhan::find($qrUsulanId)->update(array('status' => '3'));
+            }
             $nama = "";
             $mk = "";
             $qrExist = MvExistMK::where('tr_matakuliah_dosen_id',$qrUsulan[0]->tr_matakuliah_dosen_id)->get();
@@ -380,28 +388,27 @@ class C_ReviewPengajuanAlat extends Controller
                 $dataDukung[]=array('mk'=>$mk, 'smst'=>$smst, 'prodi'=>$prodi, 'jurusan'=>$jurusan, 'tahun'=>$tahun, 'nama'=>$nama, 'nip'=>$nip, 'tanggal'=>$tanggal);
             }
 
+            foreach($qrUsulan as $vu){
+                $mingguke   = $vu->mingguData->minggu_ke;
+                $tanggal    = $vu->tanggal;
+                $acaraPraktek = $vu->acara_praktek;
+                $qrDetailUsulan = MDetailUsulanKebutuhan::where('tr_usulan_kebutuhan_id',$vu->id)->get();
+                if(count($qrDetailUsulan)){
+                    foreach($qrDetailUsulan as $vdu){
+                        $nmbrg       = $vdu->BarangData->nama_barang;
+                        $spesifikasi = $vdu->spesifikasi;
+                        $kebkel      = $vdu->keb_kel;
+                        $jmlkel      = $vu->jml_kel;
+                        $jmlgol      = $vu->jml_gol;
+                        $jml         = $vdu->total_keb;
+                        $satuan      = $vdu->detailSatuanData->satuanData->satuan;
+                        //$satuan      = $vdu->detailSatuanData->satuanData->satuan."(".$vdu->detailSatuanData->qty.")";
+                        $keterangan  = $vdu->keterangan;
 
-                foreach($qrUsulan as $vu){
-                    $mingguke   = $vu->mingguData->minggu_ke;
-                    $tanggal    = $vu->tanggal;
-                    $acaraPraktek = $vu->acara_praktek;
-                    $qrDetailUsulan = MDetailUsulanKebutuhan::where('tr_usulan_kebutuhan_id',$vu->id)->get();
-                    if(count($qrDetailUsulan)){
-                        foreach($qrDetailUsulan as $vdu){
-                            $nmbrg       = $vdu->BarangData->nama_barang;
-                            $spesifikasi = $vdu->spesifikasi;
-                            $kebkel      = $vdu->keb_kel;
-                            $jmlkel      = $vu->jml_kel;
-                            $jmlgol      = $vu->jml_gol;
-                            $jml         = $vdu->total_keb;
-                            $satuan      = $vdu->detailSatuanData->satuanData->satuan;
-                            //$satuan      = $vdu->detailSatuanData->satuanData->satuan."(".$vdu->detailSatuanData->qty.")";
-                            $keterangan  = $vdu->keterangan;
-
-                            $data[]=array($mingguke,$tanggal,$acaraPraktek,$nmbrg,$spesifikasi,$kebkel,$jmlkel,$jmlgol,$jml,$satuan,$keterangan);
-                            $mingguke   = "";
-                            $tanggal    = "";
-                            $acaraPraktek = "";
+                        $data[]=array($mingguke,$tanggal,$acaraPraktek,$nmbrg,$spesifikasi,$kebkel,$jmlkel,$jmlgol,$jml,$satuan,$keterangan);
+                        $mingguke   = "";
+                        $tanggal    = "";
+                        $acaraPraktek = "";
                         }
                     }else{
                         $data[]=array($mingguke,$tanggal,$acaraPraktek,"","","","","","","","");
@@ -411,10 +418,8 @@ class C_ReviewPengajuanAlat extends Controller
 
         }
 
-
         $pdf = PDF::loadView('cetak.cetak',compact('data','qrUsulan','dataDukung'))->setPaper('a4', 'landscape')->setWarnings(false)->save('myfile.pdf');
         return $pdf->download($nama." ".$mk.".pdf");
-
     }
 
     public function statusPengajuan(){

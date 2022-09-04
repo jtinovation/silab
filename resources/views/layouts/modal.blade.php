@@ -1,4 +1,4 @@
-//USULAN ALAT
+{{-- USULAN ALAT --}}
 <div id="ShowUsulanAlat" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -77,7 +77,7 @@
 </div><!-- /.modal -->
 
 
-//ADD ALAT
+{{-- ADD ALAT --}}
 @can('inventaris-alat-create')
 <div id="ShowAddAlatlab" class="modal fade" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-md">

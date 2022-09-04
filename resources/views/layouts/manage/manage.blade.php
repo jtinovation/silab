@@ -37,8 +37,8 @@
         <!-- Begin page -->
 
         <div id="layout-wrapper">
-            @include('layouts.manage._header')
             @include('layouts.modal')
+            @include('layouts.manage._header')
             @include('layouts.manage._sidebar')
             @include('layouts.manage._content')
         </div>

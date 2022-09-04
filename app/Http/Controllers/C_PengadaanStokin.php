@@ -200,13 +200,15 @@ class C_PengadaanStokin extends Controller
 
                     $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
                     $stokBarang = $tr_barang->qty;
-                    $updateStokBarang['qty'] = $stokBarang + $qryKartuStok[0]->qty_kartu_stok;
+                    $updateStokBarang['qty'] = $stokBarang - $qryKartuStok[0]->qty_kartu_stok;
                     $tr_barang->update($updateStokBarang);
 
 
                     $updateKS['qty']                       = 0;
                     $updateKS['stok']                      = $stokKS;
                     $kartuStok = MKartuStok::find($qryKartuStok[0]->id)->update($updateKS);
+
+                    MDetailUsulanKebutuhan::find($qni->id)->update(array("status"=>0));
                 }
             }
         }

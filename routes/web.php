@@ -60,6 +60,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('tahunajaran',           C_TahunAjaran::class);
     Route::get('getTahunAjaran',            [C_TahunAjaran::class, 'getTahunAjaran'])->name('getTahunAjaran');
     Route::post('tahunajaranDelete',        [C_TahunAjaran::class,'destroy'])->name('tahunajaranDelete');
+    Route::get('statusTA',                  [C_TahunAjaran::class,'statusTA'])->name('statusTA');
 
     Route::resource('minggu',                C_Minggu::class);
     Route::get('getMinggu',                 [C_Minggu::class, 'getMinggu'])->name('getMinggu');

@@ -1,4 +1,4 @@
-$('#tableUser').DataTable({
+var table = $('#tableUser').DataTable({
     responsive: true,
     processing: true,
     serverSide: true,
@@ -7,7 +7,7 @@ $('#tableUser').DataTable({
         { data: 'id' },
         { data: 'tahun_ajaran' },
         { data: 'semester' },
-        /* { data: 'is_aktif' }, */
+        { data: 'is_aktif' },
         { data: 'action' },
     ]
 });
@@ -81,15 +81,15 @@ $("body").on("click", ".stts", function() {
         //$(this).attr("data-id", pk);
         $(this).text("Non Aktif");
     }
-    var curl = url + pk + "/" + status;
+    //var curl = url + pk + "/" + status;
     $.ajax({
-        url: "statusMK",
+        url: "statusTA",
         method: "GET",
         data: { status: status, id: pk },
         dataType: 'json',
         success: function(response) {
             if (response) {
-
+                table.ajax.reload();
             } else {
 
             }

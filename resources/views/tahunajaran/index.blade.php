@@ -83,7 +83,7 @@
                                     <th>Nomor</th>
                                     <th>Tahun Ajaran</th>
                                     <th>Semester</th>
-                                   {{--  <th>is_aktif</th> --}}
+                                    <th>is_aktif</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>

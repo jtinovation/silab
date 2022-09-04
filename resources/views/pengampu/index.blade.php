@@ -4,6 +4,7 @@
 
 <!-- Select2 -->
 <link rel="stylesheet" href="{{ asset('assets/libs/select2/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/libs/select2/select2-bootstrap4.min.css') }}">
 
 <!-- Responsive Datatables -->
 <link rel="stylesheet" href="{{ asset('assets/libs/datatables-bs4/css/dataTables.bootstrap4.min.css') }}" />
@@ -60,7 +61,7 @@
                                     <select class="form-control" style="font-size: 15px;"  name="tm_semester_tahun_ajaran" id="SelectTahunAjaran">
                                         <option></option>
                                         @foreach($data['tahun_ajaran'] as $v)
-                                            <option value="{{$v->id}}">{{$v->tahun_ajaran}}</option>
+                                            <option value="{{$v->id}}">{{$v->tahun_ajaran." (".$v->OddEven.")"}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -87,9 +88,9 @@
                                             <input class="form-control" type="hidden" name="xyz" id="gantiMtkl">
                                         </div>
                                         <div class="col-md-8 ">
-                                            <div class="input-group control-group">
+                                            <div class="col-12 input-group control-group">
                                                 <div>
-                                                    <select class="custom-select js-example-basic-single form-control" style="font-size: 15px;" name="gantiPengampu" id="gantiTxtPengampu" multiple="">
+                                                    <select class="col-12 custom-select js-example-basic-single form-control" style="font-size: 15px;" name="gantiPengampu" id="gantiTxtPengampu" multiple="">
                                                         @foreach($data['pegawai'] as $v)
                                                             <option value="{{$v->id}}">{{$v->nama}}</option>
                                                         @endforeach

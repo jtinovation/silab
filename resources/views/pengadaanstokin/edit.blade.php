@@ -272,60 +272,10 @@
 
 
 $("form").submit(function(event) {
-    if ($("#jml_kel").val() <= 0) {
-        Swal.fire({
-            title: "Jumlah Kelompok Tidak Boleh Kosong!",
-            icon: "warning",
-            text: "Silahkan Isi Jumlah Kelompok",
-            didClose: () => {
-                $('#jml_kel').focus();
-            }
-        })
-        event.preventDefault();
-    }
 
-    $('.hit').each(function(i, obj) {
-        if (obj.value <= 0) {
-            Swal.fire({
-                title: "Silahkan Isi Kebutuhan Kelompok!",
-                icon: "warning",
-                text: "Jumlah Kebutuhan Kelompok Tidak Boleh Kurang dari atau sama dengan nol",
-                didClose: () => {
-                    obj.focus();
-                }
-            });
-            event.preventDefault();
-        }
-    });
 
-    $('.select2_el').each(function(i, obj) {
 
-        if (obj.value <= 0) {
-            Swal.fire({
-                title: "Silahkan Pilih Barang!",
-                icon: "warning",
-                text: "Barang Harus dipilih terlebih dahulu",
-                didClose: () => {
-                    obj.focus();
-                }
-            });
-            event.preventDefault();
-        }
-    });
 
-    $('.satuan_el').each(function(i, obj) {
-        if (obj.value <= 0) {
-            Swal.fire({
-                title: "Silahkan Pilih Satuan!",
-                icon: "warning",
-                text: "Satuan Harus dipilih terlebih dahulu",
-                didClose: () => {
-                    obj.focus();
-                }
-            });
-            event.preventDefault();
-        }
-    });
 
 
 });

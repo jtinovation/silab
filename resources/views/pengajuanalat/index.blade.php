@@ -8,11 +8,13 @@
         <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
             <i class="ri-user-smile-line label-icon"></i><strong>Koordinator Matakuliah (Matakuliah Aktif)</strong>
         </div>
+     {{--    {{dd($data['MKExist'])}} --}}
         @foreach ($data['MKExist'] as $MK)
         <div class="col-xl-6 col-lg-6 col-md-6">
             <div class="card card-height-100">
-                <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">{{"(".$MK->kode.") ".$MK->matakuliah}}</h4>
+                <div class="card-header align-items-center">
+                    <h4 class="card-title mb-0 flex-grow-1 text-center">{{"(".$MK->kode.") ".$MK->matakuliah}}</h4>
+                    <h4 class="text-center text-danger">{{$MK->prodiData->program_studi}}</h4>
                 </div><!-- end card header -->
                 <div class="card-body">
                     <div class="table-responsive table-card">
@@ -54,7 +56,7 @@
                                 </tr><!-- end -->
                                 @empty
                                 <tr>
-                                    <td colspan="2"><strong>Belum Melakukan Pengajuan Alat & Bahan</strong></td>
+                                    <td colspan="3" align="center" valign="middle"><strong>Belum Melakukan Pengajuan Alat & Bahan</strong></td>
                                 </tr>
                                 @endforelse
                             </tbody><!-- end tbody -->

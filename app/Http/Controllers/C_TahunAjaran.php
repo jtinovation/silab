@@ -6,6 +6,7 @@ use App\Models\MTahunAjaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class C_TahunAjaran extends Controller
@@ -107,18 +108,18 @@ class C_TahunAjaran extends Controller
                 $button = $button." <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete' data-id='".$idEncrypt."' >
                 <i class='ri-delete-bin-2-line'></i></a>";
             }
-            /* $span="";
+            $span="";
             if($record->is_aktif){
                 $span = "<span data-val='$record->is_aktif' data-id='$idEncrypt' class='btn btn-rouded btn-info stts'>Aktif</span>";
             }else{
                 $span = "<span data-val='$record->is_aktif' data-id='$idEncrypt' class='btn btn-rouded btn-danger stts'>Non Aktif</span>";
-            } */
+            }
 
             $data_arr[] = array(
                 "id"               => $number,
                 "tahun_ajaran"     => $record->tahun_ajaran,
                 "semester"         => $record->is_genap ? 'Genap' : 'Ganjil' ,
-                /* "is_aktif"         => $span, */
+                "is_aktif"         => $span,
                 "action"           => $button
             );
         }
@@ -130,6 +131,17 @@ class C_TahunAjaran extends Controller
             "aaData" => $data_arr,
         );
         echo json_encode($response);
+    }
+
+    public function statusTA(){
+        $input['is_aktif']        = $_REQUEST['status'];
+        $id                     =  Crypt::decryptString($_REQUEST['id']);
+        $tahunajaran             = MTahunAjaran::find($id);
+        if($tahunajaran){
+            DB::table('tm_tahun_ajaran')->update( [ 'is_aktif' => 0] );
+            $data = $tahunajaran->update($input);
+        }
+        return response()->json($data);
     }
 
 }

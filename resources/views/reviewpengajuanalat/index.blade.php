@@ -14,9 +14,9 @@
         @foreach ($data['MKExist'] as $MK)
         <div class="col-xl-6 col-lg-6 col-md-6">
             <div class="card card-height-100">
-                <div class="card-header align-items-center d-flex">
+                <div class="card-header align-items-center">
                     <h4 class="card-title mb-0 flex-grow-1 text-center">{{"(".$MK->kode.") ".$MK->matakuliah}}</h4>
-
+                    <h4 class="text-center mb-0 text-danger mt-2">{{$MK->prodiData->program_studi}}</h4>
                 </div><!-- end card header -->
                 <div class="card-body">
                     <div class="table-responsive table-card">
@@ -37,7 +37,10 @@
                                     <td>
                                         <a href="javascript:void(0);" class="showUsulan" data-url="{{url('getReviewUsulan')."/".$vu->kode}}" data-urls="{{url('getReviewUsulanMK')."/".Crypt::encryptString($vu->tr_matakuliah_dosen_id)}}" data-cetak="{{url('CetakOneWeek'."/".$vu->kode)}}" data-edit="{{route('reviewPengajuan.edit',$vu->kode)}}">{{"Minggu ".$vu->mingguData->minggu_ke}}</a>
                                     </td>
-                                    <td ><a href="#" class="badge badge-outline-warning stts" data-id="{{Crypt::encryptString($vu->id)}}" data-val="{{$vu->status}}" >{{$vu->stts}}</a> </td>
+                                    <td>
+                                        <span class="badge badge-outline-warning" data-id="{{Crypt::encryptString($vu->id)}}" data-val="{{$vu->status}}" >{{$vu->stts}}</span>
+                                        {{-- <a href="#" class="badge badge-outline-warning stts" data-id="{{Crypt::encryptString($vu->id)}}" data-val="{{$vu->status}}" >{{$vu->stts}}</a> --}}
+                                    </td>
                                 </tr><!-- end -->
                                 @endforeach
                             </tbody><!-- end tbody -->
@@ -170,6 +173,7 @@
             //window.location.href = pageCetak;
             window.open(pageCetak,'_blank');
             $('#ShowUsulanAlat').modal('hide');
+            window.location.reload();
         });
     });
 
@@ -232,11 +236,11 @@
         var status = $(this).attr("data-val");
         var pk = $(this).attr("data-id");
         if(status==3){status =4;
-            $(this).removeClass().addClass("badge badge-outline-primary stts");
+            $(this).removeClass().addClass("badge badge-outline-primary sttsCetak");
 		    $(this).attr("data-val", "4");
             $(this).text("ACC");
         }else if(status==4){status =3
-            $(this).removeClass().addClass("badge badge-outline-success stts");
+            $(this).removeClass().addClass("badge badge-outline-success sttsCetak");
             $(this).attr("data-val", "3");
             $(this).text("Cetak Tim Bahan");
         }
