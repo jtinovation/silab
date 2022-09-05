@@ -12,11 +12,11 @@ class MBonalat extends Model
     protected $table = 'tr_bon_alat';
     protected $guarded = ['id'];
 
-    public function memberLabOut(){
+    public function memberLabIn(){
         return $this->belongsTo(MMemberLab::class,'tr_member_laboratorium_id_pinjam');//table class,fk
     }
 
-    public function memberLabIn(){
+    public function memberLabOut(){
         return $this->belongsTo(MMemberLab::class,'tr_member_laboratorium_id_kembali');//table class,fk
     }
 

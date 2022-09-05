@@ -41,6 +41,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="row d-flex justify-content-center mt-2" >
                                 <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: block;">
                                     <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
@@ -48,7 +49,7 @@
                                         <select class="form-control" style="font-size: 15px;" name="tm_staff_id" id="SelectStaff" required>
                                             <option></option>
                                             @foreach($data['staff'] as $v)
-                                                <option value="{{$v->id}}">{{$v->nama}}</option>
+                                                <option value="{{$v->id}}" {{$v->id == $qrBonAlat[0]->tm_staff_id ? 'selected':''}} >{{$v->nama}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -83,12 +84,12 @@
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <label for="selectPinjam" class="form-label text-right">Petugas Peminjaman</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{$data['memberlab']}}" readonly>
+                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{$qrBonAlat[0]->memberLabIn->StaffData->nama}}" readonly>
                             </div>
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <label for="tanggalPinjam" class="form-label text-right">Tanggal Pinjam</label></br>
-                                <input type="text" class="form-control" name="tanggalPinjam" id="tanggalPinjam">
+                                <input type="text" class="form-control" name="tanggalPinjam" id="tanggalPinjam" value="{{\Carbon\Carbon::parse($qrBonAlat[0]->tanggal_pinjam)->translatedFormat('d F Y H:i:s') }}" readonly>
                             </div>
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
@@ -112,12 +113,42 @@
                                     <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Jumlah</label>
                                     <label for="keterangan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Keterangan</label>
                                 </div>
-                                <div class="copy-fields">
+                                @foreach ($qrDetailBonAlat as $vdu)
+                                <div class="wrapper">
+                                    <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 wrap" id="{{"inputCopy-".$vdu->id}}" style="margin-bottom: 10px;">
+                                        <input type="hidden" name="detailKesiapan[]" value="{{$vdu->id}}">
+                                        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
+                                            <select class="form-control select2_el first" style="font-size: 15px;" name="{{'barang-'.$vdu->id}}" required>
+                                            @foreach ($data['barang'] as $vb)
+                                                <option value="{{$vb->id}}" {{$vb->id == $vdu->tr_barang_laboratorium_id ? 'selected':'' }} > {{$vb->BarangData->nama_barang}}</option>
+                                            @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
+                                            <input class="form-control stok " type="text" name="{{'stok-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->barangLabData->stok}}" readonly>
+                                        </div>
+                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
+                                            <input class="form-control  hit" type="text" name="{{'jml-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah}}">
+                                        </div>
+
+
+                                        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
+                                            <div class="hstack gap-3">
+                                                <input class="form-control" type="text" name="{{'keterangan-'.$vdu->id}}">
+                                                <button class="btn btn-danger removeKesiapan" data-remove="{{Crypt::encryptString($vdu->id)}}" data-id="{{$vdu->id}}" type="button"><i class=" bx bx-trash"></i></button>
+                                                <button class="btn btn-success add-more" type="button"><i class=" bx bx-plus"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+                                <div class="copy-fields" style="display: none;">
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 abc wrap" style="margin-bottom: 10px;">
 
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
-                                            <select class="form-control select2_el first" style="font-size: 15px;" name="barang[]" required>
-                                                <option value="">Pilih Alat</option>
+                                            <select class="form-control select2_el first" style="font-size: 15px;" name="barang[]" aa>
+                                                <option value="">Pilih Barang</option>
                                             </select>
                                         </div>
 
@@ -126,7 +157,7 @@
                                         </div>
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                               <input type="text" class="form-control hit" name="jml[]" >
+                                               <input type="text" class="form-control hit" name="jml[]" ab>
                                         </div>
 
 
@@ -171,133 +202,91 @@
 <script src="{{asset('assets/libs/daterangepicker/moment.min.js')}}"></script>
 <script src="{{asset('assets/libs/daterangepicker/daterangepicker.js')}}"></script>
 
-
 <script type="text/javascript">
     var txtNumeric;
-    var barangSelect  = "{{route('barangLabSelect')}}";
+    var alatLabSelect  = "{{route('alatLabSelects')}}";
     var kestekDetailDelete = "{{route('kestekDetailDelete')}}";
     var token = "{{ csrf_token() }}";
     var num = 1;
-    let tselectMinggu = $("#SelectMinggu").find(":selected").text();
-        let tmyArray = tselectMinggu.split(" ");
-        let twaktu = tmyArray[1].split("-");
-        min = twaktu[0].replace('(', '');
-        max = twaktu[1].replace(')', '');
-    /* var min = '';
-    var max = ''; */
-    initailizeSelect2();
-    initDaterangpicker();
+    var arrBarang=[];
+    $(".cp").change(function(){
+    let val = parseInt($(".cp:checked").val());
+    if(val){
+        $('.mahasiswa').hide("slide", { direction: 'down' }, 1000, function() {
+            $('.pegawai').show("slide", { direction: 'down' }, 1000);
+        });
+      /*   $(".mahasiswa").hide();
+        $(".pegawai").show(); */
+        $("#SelectStaff").attr('required', true);
+        $("#nim").attr('required', false);
+        $("#nama").attr('required', false);
+        $("#gol").attr('required', false);
+        console.log("Pegawai");
+    }else{
+        $('.pegawai').hide("slide", { direction: 'down' }, 1000, function() {
+            $('.mahasiswa').show("slide", { direction: 'down' }, 1000);
+        });
+      /*   $(".pegawai").hide();
+        $(".mahasiswa").show(); */
+        $("#SelectStaff").attr('required', false);
+        $("#nim").attr('required', true);
+        $("#nama").attr('required', true);
+        $("#gol").attr('required', true);
+        console.log("Mahasiswa");
+    }
+});
 
-    $("#SelectMinggu").select2({
-        placeholder: "Pilih Minggu Ke",
-        allowClear: true
-    });
+$("#SelectStaff").select2({
+    placeholder: "Pilih Pegawai",
+    allowClear: true
+});
 
-    $("body").on("keyup", "input.number", function(event) {
-        if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57) {
-            $(this).val(function(index, value) {
-                return value.replace(/\D/g, "");
-            });
-        }
-    });
+$("body").on("keyup", "input.number", function(event) {
+    if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57) {
+        $(this).val(function(index, value) {
+            return value.replace(/\D/g, "");
+        });
+    }
+});
 
-    new AutoNumeric.multiple('.txtNumeric', { 'digitGroupSeparator': '.', 'decimalCharacter': ',', 'decimalPlaces': '0' });
+new AutoNumeric.multiple('.txtNumeric', { 'digitGroupSeparator': '.', 'decimalCharacter': ',', 'decimalPlaces': '0' });
 
-    $("#SelectMinggu").change(function() {
-        let selectMinggu = $(this).find(":selected").text();
-        let myArray = selectMinggu.split(" ");
-        let waktu = myArray[1].split("-");
-        min = waktu[0].replace('(', '');
-        max = waktu[1].replace(')', '');
-        initDaterangpicker();
-    });
+$("body").on("keyup", ".hit", function() {
+    let jml = parseInt($(this).val());
+    let stok = $(this).parents(".wrap").find('.stok').val();
 
-    $("body").on("change", ".select2_el", function() {
-        console.log("ubah");
-        let idStok = $(this).val();
-        let arr = idStok.split("#");
-        $(this).parents(".wrap").find('.stok').val(arr[1]);
-        console.log(arr[1]);
-    });
-
-    $("body").on("click", ".remove", function() {
-        $(this).parents(".input_copy").remove();
-    });
-
-    $("body").on("click", ".removeKesiapan", function() {
-        var id = $(this).attr("data-remove");
-        var rid = $(this).attr("data-id");
-        swal.fire({
-            title: 'Yakin, Hapus Barang?',
-            text: "Data yang di hapus tidak bisa dikembalikan",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger ml-2',
-            confirmButtonText: 'Yes, delete it!'
-        }).then(function(result) {
-            if (result.value) {
-                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-                $.ajax({
-                    type: "POST",
-                    url: kestekDetailDelete,
-                    data: { id: id, _token: token },
-                    dataType: "html",
-                    success: function(data) {
-                        swal.fire({
-                            title: "Hapus Data Berhasil!",
-                            text: "",
-                            icon: "success"
-                        }).then(function() {
-                            //location.reload();
-                            $('#inputCopy-'+rid).remove();
-                        });
-                    },
-                    error: function(xhr, ajaxOptions, thrownError) {
-                        swal.fire("Error deleting!", "Please try again", "error");
-                    }
-                });
+    if (jml > stok) {
+        Swal.fire({
+            title: "Jumlah Terlalu Banyak!",
+            icon: "warning",
+            text: "Jumlah tidak boleh lebih besar dari stok",
+            didClose: () => {
+                $(this).val(0);
+                $(this).focus();
+                $('#btnSubmit').hide();
             }
-        })
-    });
+        });
+    }else{
+        $('#btnSubmit').show();
+    }
+});
 
-function initailizeSelect2() {
-    $(".select2_el").select2({
-        ajax: {
-            url: barangSelect,
-            type: "get",
-            dataType: 'json',
-            delay: 250,
-            data: function(params) {
-                return {
-                    searchTerm: params.term // search term
-                };
-            },
-            processResults: function(response) {
-                return {
-                    results: response
-                };
-            },
-            cache: true
-        }
-    });
-
-}
-
-
-
-function initDaterangpicker() {
-    $('#tanggal').daterangepicker({
-        singleDatePicker: true,
-        minDate: min,
-        maxDate: max,
-        locale: {
-            format: 'D/M/Y',
-        }
-    });
-}
+$("body").on("change", ".select2_el", function() {
+    console.log("ubah");
+    let idStok = $(this).val();
+    let arr = idStok.split("#");
+    $(this).parents(".wrap").find('.stok').val(arr[1]);
+    console.log(arr[1]);
+});
 
 $("body").on("click", ".add-more", function() {
+    arrBarang=[];
+    $('.select2_el').each(function(i, obj) {
+        arrBarang.push(obj.value);
+    });
+    arrBarang = arrBarang.filter(e => String(e).trim());
+    //console.log(arrBarang );
+
     var html = $(".copy-fields").html();
     var rep = html.replace('none', "block");
     var rep = rep.replace('abc', "input_copy");
@@ -323,33 +312,78 @@ $("body").on("click", ".add-more", function() {
     initailizeSelect2();
 });
 
-$("form").submit(function(event) {
-
+$("body").on("click", ".remove", function() {
+    $(this).parents(".input_copy").remove();
 });
 
-$("body").on("keyup", ".hit", function() {
-    let jml = parseInt($(this).val());
-    let stok = $(this).parents(".wrap").find('.stok').val();
+function initailizeSelect2() {
+    $(".select2_el").select2({
+        ajax: {
+            url: alatLabSelect,
+            type: "get",
+            dataType: 'json',
+            delay: 500,
+            data: function(params) {
 
-    if (jml > stok) {
-        Swal.fire({
-            title: "Jumlah Terlalu Banyak!",
-            icon: "warning",
-            text: "Jumlah tidak boleh lebih besar dari stok",
-            didClose: () => {
-                $(this).val(0);
-                $(this).focus();
-                $('#btnSubmit').hide();
-            }
-        });
-    }else{
-        $('#btnSubmit').show();
-    }
-});
-
-$("#selectRekomendasi").select2({
-        placeholder: "Pilih Rekomendasi Dosen",
-        allowClear: true
+                return {
+                    searchTerm: params.term,
+                    valBarang: arrBarang,
+                };
+            },
+            processResults: function(r) {
+                return {
+                    results: r
+                };
+            },
+            cache: true
+        }
     });
+}
+
+
+
+
+function initDaterangpicker() {
+    $('#tanggalPinjam').daterangepicker({
+        singleDatePicker: true,
+        timePicker:true,
+        timePicker24Hour: true,
+        locale: {
+            format: 'D/M/Y H:mm',
+        }
+    });
+}
+
+$("form").submit(function(event) {
+    $('.hit').each(function(i, obj) {
+        if (obj.value <= 0) {
+            Swal.fire({
+                title: "Jumlah Tidak Boleh Kosong!",
+                icon: "warning",
+                text: "Jumlah Harus Di isi",
+                didClose: () => {
+                    obj.focus();
+                }
+            });
+            event.preventDefault();
+        }
+    });
+
+    $('.select2_el').each(function(i, obj) {
+        console.log(obj.value);
+        if (obj.value == " ") {
+            Swal.fire({
+                title: "Silahkan Pilih alat!",
+                icon: "warning",
+                text: "Data Alat Harus dipilih terlebih dahulu",
+                didClose: () => {
+                    obj.focus();
+                }
+            });
+            event.preventDefault();
+        }
+    });
+
+});
 </script>
 @endsection

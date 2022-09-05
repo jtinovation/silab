@@ -143,6 +143,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('bonalat',                C_BonAlat::class);
     Route::get('getBonAlat',                 [C_BonAlat::class, 'getBonalat'])->name('getBonAlat');
     Route::get('alatLabSelect',              [C_BonAlat::class, 'alatLabSelect'])->name('alatLabSelect');
+    Route::get('alatLabSelects',             [C_BonAlat::class, 'alatLabSelects'])->name('alatLabSelects');
 
     Route::get('/manage',       [ManageController::class, 'index'])->name('manage');
     Route::get('/pendidikan',   [ManageController::class, 'pendidikan'])->name('manage.pendidikan');

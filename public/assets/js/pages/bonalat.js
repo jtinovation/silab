@@ -60,8 +60,6 @@ $("body").on("keyup", ".hit", function() {
     }
 });
 
-
-
 $("body").on("change", ".select2_el", function() {
     console.log("ubah");
     let idStok = $(this).val();
