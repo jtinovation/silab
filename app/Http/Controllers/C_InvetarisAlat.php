@@ -71,6 +71,10 @@ class C_InvetarisAlat extends Controller
                 $input['is_aktif']           = 1;
                 $tr_barang_lab = MBarangLab::create($input);
 
+                $tmBarang = MBarang::find($request->id);
+                $tmStokNew = $tmBarang->qty + $request->jumlah;
+                $tmBarang->update(array('qty'=>$tmStokNew));
+
                 $inputKS['tr_member_laboratorium_id']                = $lab_id[0]->id;
                 $inputKS['tr_barang_laboratorium_id'] = $tr_barang_lab->id;
                 $inputKS['is_stok_in'] = 1;
@@ -104,6 +108,7 @@ class C_InvetarisAlat extends Controller
         if(count($lab_id)){
             $id         = Crypt::decryptString($id);
             $barangLab     = MBarangLab::find($id);
+            $tmBarang = MBarang::find($barangLab->tm_barang_id);
             $oldStok = $barangLab->stok;
             $newStok = $request->jml;
             $inputBarang['stok']         = $newStok;
@@ -113,9 +118,13 @@ class C_InvetarisAlat extends Controller
             if($oldStok<$newStok){
                 $is_stok_in=1;
                 $qty = $newStok-$oldStok;
+                $tmStokNew = $tmBarang->qty + $qty;
+                $tmBarang->update(array('qty'=>$tmStokNew));
             }else{
                 $is_stok_in = 0 ;
                 $qty = $oldStok - $newStok;
+                $tmStokNew = $tmBarang->qty - $qty;
+                $tmBarang->update(array('qty'=>$tmStokNew));
             }
 
             $inputKS['tr_member_laboratorium_id']                = $lab_id[0]->id;

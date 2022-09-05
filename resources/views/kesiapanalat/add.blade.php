@@ -47,7 +47,7 @@
                                     <input type="text" class="form-control" name="tanggal" id="tanggal" required>
                                 </div>
                             </div>
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 mt-2">
                                 <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                     <label for="SelectMK" class="form-label text-right">Pilih Mata Kuliah</label></br>
                                     <select class="form-control" style="font-size: 15px;" name="tr_matakuliah_semester_prodi_id" id="SelectMK" required>
@@ -56,13 +56,13 @@
                                             @php
                                                 $voe = $v->is_genap?"Genap":"Ganjil";
                                             @endphp
-                                            <option value="{{$v->tr_matakuliah_semester_prodi_id}}">{{$v->matakuliah." (".$v->semester." - ".$v->tahun_ajaran." -".$voe.")"}}</option>
+                                            <option value="{{$v->tr_matakuliah_semester_prodi_id}}">{{$v->matakuliah." (".$v->prodiData->program_studi." - ".$v->semester." - ".$v->tahun_ajaran." -".$voe.")"}}</option>
                                             {{-- <option value="{{$v->tr_matakuliah_dosen_id}}">{{$v->matakuliah." (".$v->semester."-".$v->tahun_ajaran.$v->is_genap?"Genap":"Ganjil".")"}}</option> --}}
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-2 mb-2">
+                            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12 mt-2 mb-2">
                                 <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                     <label for="selectRekomendasi" class="form-label text-right">Rekomendasi Dosen</label></br>
                                     <select class="form-control" style="font-size: 15px;" name="rekomendasi" id="selectRekomendasi" >

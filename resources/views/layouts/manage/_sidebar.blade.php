@@ -38,6 +38,7 @@
 						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Beranda</span>
 					</a>
 				</li>
+                @if(Auth::user()->can('staff-list') || Auth::user()->can('role-list')|| Auth::user()->can('permission-list')|| Auth::user()->can('jurusan-list')|| Auth::user()->can('satuan-list')|| Auth::user()->can('barang-list') || Auth::user()->can('lab-list'))
                 <li class="nav-item">
 					<a class="nav-link menu-link{{ in_array($data['npage'], [1, 2, 3, 90, 98, 99, 89]) ? ' active' : '' }}" href="#sidebarMaster" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
 						<i class="ri-book-line"></i> <span data-key="t-master">Master</span>
@@ -72,7 +73,6 @@
 								</a>
 							</li>
                             @endcan
-
                             @can('satuan-list')
 							<li class="nav-item">
 								<a class="nav-link menu-link{{ $data['npage'] == 98 ? ' active' : '' }}" href="{{ route('satuan.index') }}">
@@ -97,7 +97,9 @@
 						</ul>
 					</div>
 				</li> <!-- end Dashboard Menu -->
+                @endif
 
+                @if(Auth::user()->can('tahunajaran-list') || Auth::user()->can('minggu-list')|| Auth::user()->can('semester-list')|| Auth::user()->can('matakuliah-list')|| Auth::user()->can('setmatakuliah-list')|| Auth::user()->can('setpengampu-list'))
                 <li class="nav-item">
 					<a class="nav-link menu-link{{ in_array($data['npage'], [91, 92, 93, 94, 96, 97]) ? ' active' : '' }}" href="#sidebarAkademik" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
 						<i class="ri-book-line"></i> <span data-key="t-master">Akademik</span>
@@ -151,6 +153,7 @@
 						</ul>
 					</div>
 				</li> <!-- end Dashboard Menu -->
+                @endif
 
                 @can('pengajuan-alat-bahan-list')
                 <li class="nav-item">

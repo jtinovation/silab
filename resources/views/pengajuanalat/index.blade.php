@@ -14,7 +14,7 @@
             <div class="card card-height-100">
                 <div class="card-header align-items-center">
                     <h4 class="card-title mb-0 flex-grow-1 text-center">{{"(".$MK->kode.") ".$MK->matakuliah}}</h4>
-                    <h4 class="text-center text-danger">{{$MK->prodiData->program_studi}}</h4>
+                    <h4 class="card-title text-center text-danger mt-2">{{$MK->prodiData->program_studi}}</h4>
                 </div><!-- end card header -->
                 <div class="card-body">
                     <div class="table-responsive table-card">

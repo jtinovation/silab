@@ -123,7 +123,7 @@ class C_BonAlat extends Controller
                 $tr_barang_laboratorium->update($updateStokLab);
 
                 $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                $ks['is_stok_id'] = 0;
+                $ks['is_stok_in'] = 0;
                 $ks['qty'] = $stokKeluar;
                 $ks['stok'] = $stokLab - $stokKeluar;
                 $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
@@ -150,7 +150,36 @@ class C_BonAlat extends Controller
 
     public function edit($id)
     {
-        //
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($qrlab)){
+            $lab_id = $qrlab[0]->tm_laboratorium_id;
+            $tm_lab_id = $qrlab[0]->tm_laboratorium_id;
+            $lab = $qrlab[0]->LaboratoriumData->laboratorium;
+            $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
+            $idDecrypt = Crypt::decryptString($id);
+            $qrBonAlat = MBonalat::where('id',$idDecrypt)->get();
+            $qrDetailBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$qrBonAlat[0]->id)->get();
+
+            $data = [
+                'title' => "Sistem Informasi Laboratorium",
+                'subtitle'  => "Bon Alat Laboratorium",
+                'npage'     => 84,
+                'lab_id'    => $tm_lab_id,
+                'lab'       => $lab,
+                'jurusan'   => $jurusan,
+                //'memberlab' => MMemberLab::where([['tm_laboratorium_id',$tm_lab_id],['is_aktif',1]])->get(),
+                'memberlab' => $qrlab[0]->staffData->nama,
+                'staff'     => M_Staff::where('is_aktif',1)->orderBy('nama','ASC')->get(),];
+
+            $Breadcrumb = array(
+                1 => array("link" => url("kestek"), "label" => "Daftar Data Kesiapan Praktek"),
+                2 => array("link" => "active", "label" => "Form Ubah Data Kesiapan Praktek"),
+            );
+            return view('bonalat.edit', compact('data', 'Breadcrumb','qrBonAlat','qrDetailBonAlat'));
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
     }
 
 
@@ -196,7 +225,7 @@ class C_BonAlat extends Controller
         $data_arr = array();
 
         $number = $start;
-
+        //dd($records);
         foreach ($records as $record) { $number += 1;
             $idEncrypt = Crypt::encryptString($record->id);
 
@@ -216,12 +245,16 @@ class C_BonAlat extends Controller
             }else{
                 $nama = $record->nim." - ".$record->nama;
             }
+            $kembali = "";
+            if($record->status == 2){
+                $kembali = $record->Kembali;
+            }
 
             $data_arr[] = array(
                 "id"               => $number,
                 "nm"               => $nama,
                 "tglpinjam"        => $record->TanggalPinjam,
-                "tglkembali"       => $record->TanggalKembali,
+                "tglkembali"       => $kembali,
                 "status"           => $record->stts,
                 "action"           => $button
             );
