@@ -6,6 +6,9 @@
 <link rel="stylesheet" href="{{ asset('assets/libs/datatables-bs4/css/dataTables.bootstrap4.min.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/libs/datatables-responsive/css/responsive.bootstrap4.min.css') }}" />
 
+<!-- Sweet Alert -->
+<link rel="stylesheet" href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}">
+
 <div class="row">
     <div class="col-lg-12 row mt-3 animate__animated animate__backInLeft">
 
@@ -65,6 +68,8 @@
 <script type="text/javascript">
     var getBonAlat      = "{{route('getBonAlat')}}";
     var BonAlatCreate   = "{{route('bonalat.create')}}";
+    var bonAlatDelete    = "{{url('bonAlatDelete')}}";
+    var token = "{{ csrf_token() }}";
 
     $('#tableBonAlat').DataTable({
         responsive: true,
@@ -95,6 +100,42 @@
             window.location.href = BonAlatCreate;
         });
     });
+    $("body").on("click", ".delete", function() {
+        event.preventDefault();
+        var id = $(this).attr("data-id");
+        swal.fire({
+            title: 'Yakin, Hapus Data Bon Alat?',
+            text: "Data yang di hapus tidak bisa dikembalikan",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger ml-2',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(function(result) {
+            if (result.value) {
+                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    type: "POST",
+                    url: bonAlatDelete,
+                    data: { id: id, _token: token },
+                    dataType: "html",
+                    success: function(data) {
+                        swal.fire({
+                            title: "Hapus Data Berhasil!",
+                            text: "",
+                            icon: "success"
+                        }).then(function() {
+                            location.reload();
+                        });
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        swal.fire("Error deleting!", "Please try again", "error");
+                    }
+                });
+            }
+        })
+    });
+
 </script>
 
 

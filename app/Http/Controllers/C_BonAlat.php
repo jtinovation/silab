@@ -111,11 +111,6 @@ class C_BonAlat extends Controller
                 $arrV = explode("#", $value);
                 $tr_barang_laboratorium_id = $arrV[0];
                 $stokKeluar = $request->jml[$key];
-                $detailInput['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                $detailInput['tr_bon_alat_id'] = $bonalat->id;
-                $detailInput['jumlah'] = $request->jml[$key];
-                $detailInput['keterangan'] = $request->keterangan[$key];
-                $DetailBonAlat = MDetailBonAlat::create($detailInput);
 
                 $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
                 $stokLab = $tr_barang_laboratorium->stok;
@@ -127,7 +122,14 @@ class C_BonAlat extends Controller
                 $ks['qty'] = $stokKeluar;
                 $ks['stok'] = $stokLab - $stokKeluar;
                 $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
-                MKartuStok::create($ks);
+                $kartusStok = MKartuStok::create($ks);
+
+                $detailInput['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                $detailInput['tr_bon_alat_id'] = $bonalat->id;
+                $detailInput['jumlah'] = $request->jml[$key];
+                $detailInput['keterangan'] = $request->keterangan[$key];
+                $detailInput['tr_kartu_stok_id'] = $kartusStok->id;
+                $DetailBonAlat = MDetailBonAlat::create($detailInput);
 
                 $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
                 $stokBarang = $tr_barang->qty;
@@ -186,13 +188,113 @@ class C_BonAlat extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+
+        /* if($request->has('is_pegawai')){
+            $update['tm_staff_id']              = $request->tm_staff_id;
+        }else{
+            $update['nama']                     = $request->nama;
+            $update['nim']                      = $request->nim;
+            $update['golongan_kelompok']        = $request->gol;
+        }*/
+        $bonalat = MBonalat::find($id);
+
+        foreach($request->barang as $key => $value){
+            $arrV = explode("#", $value);
+            $tr_barang_laboratorium_id = $arrV[0];
+            $stokKeluar = $request->jml[$key];
+
+            $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
+            $stokLab = $tr_barang_laboratorium->stok;
+            $updateStokLab['stok'] = $stokLab - $stokKeluar;
+            $tr_barang_laboratorium->update($updateStokLab);
+
+            $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+            $ks['is_stok_in'] = 0;
+            $ks['qty'] = $stokKeluar;
+            $ks['stok'] = $stokLab - $stokKeluar;
+            $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
+            $kartustok = MKartuStok::create($ks);
+
+            $detailInput['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+            $detailInput['tr_bon_alat_id'] = $bonalat->id;
+            $detailInput['jumlah'] = $request->jml[$key];
+            $detailInput['keterangan'] = $request->keterangan[$key];
+            $detailInput['tr_kartu_stok_id'] = $kartustok->id;
+            $DetailBonAlat = MDetailBonAlat::create($detailInput);
+
+            $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
+            $stokBarang = $tr_barang->qty;
+            $updateStokBarang['qty'] = $stokBarang - $stokKeluar;
+            $tr_barang->update($updateStokBarang);
+
+        }
+
+        $detailBonAlat = @$request->detailBonAlat;
+        if(count($detailBonAlat)){
+           /*  foreach($detailBonAlat as $vdu){
+                //echo $_REQUEST['barang-'.$vdu]; ;
+                $detailBonalat = MDetailBonAlat::find($vdu);
+                $oldJml = $detailBonalat->jumlah;
+                $newJml = $_REQUEST['jml-'.$vdu];
+                $qty = 0;
+                if($oldJml<$newJml){
+                    $selisihJml = $newJml-$newJml;
+                    $tmStokNew = $tmBarang->qty + $qty;
+                    $tmBarang->update(array('qty'=>$tmStokNew));
+                }else{
+                    $is_stok_in = 0 ;
+                    $qty = $oldStok - $newStok;
+                    $tmStokNew = $tmBarang->qty - $qty;
+                    $tmBarang->update(array('qty'=>$tmStokNew));
+                }
+
+                $detailInput['tr_barang_laboratorium_id'] = $_REQUEST['barang-'.$vdu];
+                $detailInput['jumlah'] =  ;
+                $detailInput['stok'] = $_REQUEST['stok-'.$vdu];
+                $detailInput['keterangan'] =  $_REQUEST['keterangan-'.$vdu];
+            } */
+        }
+        return redirect(route('kestek.index'))->with('success','Usulan Bahan dan Alat Praktikum Berhasil di Simpan.');
     }
 
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+
+        $id = Crypt::decryptString($request->id);
+        $bonalat = MBonalat::find($id);
+        $tdBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$id)->get();
+        if(count($tdBonAlat)){
+            foreach($tdBonAlat as $vba){
+                $tr_barang_laboratorium_id = $vba->tr_barang_laboratorium_id;
+                $jumlah = $vba->jumlah;
+
+                $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
+                $stokLab = $tr_barang_laboratorium->stok;
+                $updateStokLab['stok'] = $stokLab + $jumlah;
+                $tr_barang_laboratorium->update($updateStokLab);
+
+                $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                $ks['is_stok_in'] = 1;
+                $ks['qty'] = $jumlah;
+                $ks['stok'] = $stokLab + $jumlah;
+                $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
+                $ks['keterangan'] = $vba->tr_kartu_stok_id."# was deleted";
+                $kartustok = MKartuStok::create($ks);
+
+                $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
+                $stokBarang = $tr_barang->qty;
+                $updateStokBarang['qty'] = $stokBarang + $jumlah;
+                $tr_barang->update($updateStokBarang);
+
+                MDetailBonAlat::find($vba->id)->delete();
+            }
+        }
+        $bonalat->delete();
     }
 
     public function getBonalat(Request $request){

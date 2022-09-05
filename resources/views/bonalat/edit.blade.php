@@ -33,29 +33,25 @@
                             <div class=" row col-12 justify-content-center " >
                                 <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="col-12 btn-group" role="group" aria-label="Basic radio toggle button group">
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai1" value="1" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"checked":""}}  >
+                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai1" value="1" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"checked":"disabled"}}   >
                                         <label class="btn btn-outline-primary" for="is_pegawai1">&nbsp;&nbsp;&nbsp;&nbsp;Pegawai&nbsp;&nbsp;&nbsp;</label>
 
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai2" value="0" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"":"checked"}}>
+                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai2" value="0" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"disabled":"checked"}}  >
                                         <label class="btn btn-outline-dark" for="is_pegawai2">Mahasiswa</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="row d-flex justify-content-center mt-2" >
+                            <div class="row d-flex justify-content-center mt-2" style="display:  {{$qrBonAlat[0]->is_pegawai?"block":"none"}} " >
                                 <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: block;">
                                     <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                         <label for="SelectStaff" class="form-label text-right">Pilih Pegawai</label></br>
-                                        <select class="form-control" style="font-size: 15px;" name="tm_staff_id" id="SelectStaff" required>
-                                            <option></option>
-                                            @foreach($data['staff'] as $v)
-                                                <option value="{{$v->id}}" {{$v->id == $qrBonAlat[0]->tm_staff_id ? 'selected':''}} >{{$v->nama}}</option>
-                                            @endforeach
-                                        </select>
+                                        <input type="text" class="form-control" name="tm_staff_id" id="SelectStaff" value="{{$qrBonAlat[0]->StaffData->nama}}" readonly>
+
                                     </div>
                                 </div>
                             </div>
-                            <div class=" mahasiswa mt-2" style="display: none;">
+                            <div class=" mahasiswa mt-2" style="display:  {{$qrBonAlat[0]->is_pegawai?"none":"block"}} ;">
                                 <div class="row d-flex">
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
@@ -116,17 +112,14 @@
                                 @foreach ($qrDetailBonAlat as $vdu)
                                 <div class="wrapper">
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 wrap" id="{{"inputCopy-".$vdu->id}}" style="margin-bottom: 10px;">
-                                        <input type="hidden" name="detailKesiapan[]" value="{{$vdu->id}}">
+                                        <input type="hidden" name="detailBonAlat[]" value="{{$vdu->id}}">
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
-                                            <select class="form-control select2_el first" style="font-size: 15px;" name="{{'barang-'.$vdu->id}}" required>
-                                            @foreach ($data['barang'] as $vb)
-                                                <option value="{{$vb->id}}" {{$vb->id == $vdu->tr_barang_laboratorium_id ? 'selected':'' }} > {{$vb->BarangData->nama_barang}}</option>
-                                            @endforeach
-                                            </select>
+                                            <input class="form-control" type="text" name="{{'barang-'.$vdu->id}}" value="{{$vdu->barangLabData->BarangData->nama_barang}}" readonly>
+
                                         </div>
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                            <input class="form-control stok " type="text" name="{{'stok-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->barangLabData->stok}}" readonly>
+                                            <input class="form-control stok " type="text" name="{{'stok-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->barangLabData->stok + $vdu->jumlah}}" readonly>
                                         </div>
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
                                             <input class="form-control  hit" type="text" name="{{'jml-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah}}">
