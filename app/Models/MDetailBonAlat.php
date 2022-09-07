@@ -19,4 +19,8 @@ class MDetailBonAlat extends Model
         return $this->belongsTo(MBarangLab::class,'tr_barang_laboratorium_id');//table class,fk
     }
 
+    public function kartuStokData(){
+        return $this->belongsTo(MKartuStok::class,'tr_kartu_stok_id');//table class,fk
+    }
+
 }

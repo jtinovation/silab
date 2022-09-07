@@ -201,11 +201,14 @@ class C_BonAlat extends Controller
         $bonalat = MBonalat::find($id);
 
         foreach($request->barang as $key => $value){
+            dd($value);
             $arrV = explode("#", $value);
+            //dd($arrV);
             $tr_barang_laboratorium_id = $arrV[0];
             $stokKeluar = $request->jml[$key];
 
             $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
+           // dd($tr_barang_laboratorium);
             $stokLab = $tr_barang_laboratorium->stok;
             $updateStokLab['stok'] = $stokLab - $stokKeluar;
             $tr_barang_laboratorium->update($updateStokLab);
@@ -233,30 +236,48 @@ class C_BonAlat extends Controller
 
         $detailBonAlat = @$request->detailBonAlat;
         if(count($detailBonAlat)){
-           /*  foreach($detailBonAlat as $vdu){
+            foreach($detailBonAlat as $vdu){
                 //echo $_REQUEST['barang-'.$vdu]; ;
-                $detailBonalat = MDetailBonAlat::find($vdu);
-                $oldJml = $detailBonalat->jumlah;
+                $qrDetailBonalat = MDetailBonAlat::find($vdu);
+                $tr_barang_laboratorium_id = $detailBonAlat->tr_barang_laboratorium_id;
+                $oldJml = $qrDetailBonalat->jumlah;
                 $newJml = $_REQUEST['jml-'.$vdu];
                 $qty = 0;
                 if($oldJml<$newJml){
-                    $selisihJml = $newJml-$newJml;
-                    $tmStokNew = $tmBarang->qty + $qty;
-                    $tmBarang->update(array('qty'=>$tmStokNew));
-                }else{
-                    $is_stok_in = 0 ;
-                    $qty = $oldStok - $newStok;
-                    $tmStokNew = $tmBarang->qty - $qty;
-                    $tmBarang->update(array('qty'=>$tmStokNew));
+                    $selisihJml = $newJml-$oldJml;
+                    $updateKS['qty'] = $qrDetailBonalat->kartuStokData->qty + $selisihJml;
+                    $updateKS['stok'] = $qrDetailBonalat->kartuStokData->stok - $selisihJml;
+                    $qrKartuStok = MKartuStok::find($qrDetailBonalat->tr_kartu_stok_id);
+                    $qrBarangLab = MBarangLab::find($qrKartuStok->tr_barang_laboratorium_id);
+                        $qrBarang    = MBarang::find($qrBarangLab->tm_barang_id);
+                            $updateQrBarang['qty']= $qrBarang->qty - $selisihJml;
+                            $qrBarang->update($updateQrBarang);
+
+                        $updateQrBarangLab['stok'] = $qrBarangLab->stok - $selisihJml;
+                        $qrBarangLab->update($updateQrBarangLab);
+                    $qrKartuStok->update($updateKS);
+                }elseif($oldJml>$newJml){
+                    $selisihJml = $oldJml-$newJml;
+                    $updateKS['qty'] = $qrDetailBonalat->kartuStokData->qty - $selisihJml;
+                    $updateKS['stok'] = $qrDetailBonalat->kartuStokData->stok + $selisihJml;
+                    $qrKartuStok = MKartuStok::find($qrDetailBonalat->tr_kartu_stok_id);
+                    $qrBarangLab = MBarangLab::find($qrKartuStok->tr_barang_laboratorium_id);
+                        $qrBarang    = MBarang::find($qrBarangLab->tm_barang_id);
+                            $updateQrBarang['qty']= $qrBarang->qty + $selisihJml;
+                            $qrBarang->update($updateQrBarang);
+
+                        $updateQrBarangLab['stok'] = $qrBarangLab->stok + $selisihJml;
+                        $qrBarangLab->update($updateQrBarangLab);
+                    $qrKartuStok->update($updateKS);
                 }
 
-                $detailInput['tr_barang_laboratorium_id'] = $_REQUEST['barang-'.$vdu];
-                $detailInput['jumlah'] =  ;
+                $detailInput['jumlah'] = $newJml ;
                 $detailInput['stok'] = $_REQUEST['stok-'.$vdu];
                 $detailInput['keterangan'] =  $_REQUEST['keterangan-'.$vdu];
-            } */
+                $qrDetailBonalat->update($detailInput);
+            }
         }
-        return redirect(route('kestek.index'))->with('success','Usulan Bahan dan Alat Praktikum Berhasil di Simpan.');
+        return redirect(route('bonalat.index'))->with('success','Permintaan Bon Alat Berhasil Di Ubah.');
     }
 
 

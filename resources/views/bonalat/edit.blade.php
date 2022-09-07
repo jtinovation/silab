@@ -113,6 +113,7 @@
                                 <div class="wrapper">
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 wrap" id="{{"inputCopy-".$vdu->id}}" style="margin-bottom: 10px;">
                                         <input type="hidden" name="detailBonAlat[]" value="{{$vdu->id}}">
+                                        <input type="hidden" name="tr_barang_laboratorium_id[]" value="{{$vdu->tr_barang_laboratorium_id}}" class="getBarang">
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
                                             <input class="form-control" type="text" name="{{'barang-'.$vdu->id}}" value="{{$vdu->barangLabData->BarangData->nama_barang}}" readonly>
 
@@ -150,9 +151,10 @@
                                         </div>
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                               <input type="text" class="form-control hit" name="jml[]" ab>
+                                               <input type="text" class="form-control hi" name="jml[]" b12>
                                         </div>
 
+                                        <input type="hidden" name="tr_barang_laboratorium[]" class="xxxxx"/>
 
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
                                             <div class="hstack gap-3">
@@ -229,10 +231,10 @@
     }
 });
 
-$("#SelectStaff").select2({
+/* $("#SelectStaff").select2({
     placeholder: "Pilih Pegawai",
     allowClear: true
-});
+}); */
 
 $("body").on("keyup", "input.number", function(event) {
     if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57) {
@@ -269,26 +271,27 @@ $("body").on("change", ".select2_el", function() {
     let idStok = $(this).val();
     let arr = idStok.split("#");
     $(this).parents(".wrap").find('.stok').val(arr[1]);
+    $(this).parents(".wrap").find('.getBarang').val(arr[0]);
     console.log(arr[1]);
 });
 
 $("body").on("click", ".add-more", function() {
     arrBarang=[];
-    $('.select2_el').each(function(i, obj) {
+    $('.getBarang').each(function(i, obj) {
         arrBarang.push(obj.value);
     });
     arrBarang = arrBarang.filter(e => String(e).trim());
-    //console.log(arrBarang );
+    console.log(arrBarang );
 
     var html = $(".copy-fields").html();
     var rep = html.replace('none', "block");
     var rep = rep.replace('abc', "input_copy");
     var rep = rep.replace('aa', "required");
-    var rep = rep.replace('ab', "required");
-    var rep = rep.replace('select2_e', "select2_el");
+    var rep = rep.replace('b12', "required");
     var rep = rep.replace('hi', "hit");
+    var rep = rep.replace('xxxxx', "getBarang");
+    var rep = rep.replace('select2_e', "select2_el");
     var rep = rep.replace('place_barang', "place_barang-" + num);
-    var rep = rep.replace('place_satuan', "place_satuan-" + num);
     var rep = rep.replace('first', "first-" + num);
     var rep = rep.replace('success', "danger");
     var rep = rep.replace('add-more', "remove");
