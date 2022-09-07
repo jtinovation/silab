@@ -178,7 +178,7 @@ class C_InvetarisAlat extends Controller
             ->skip($start)
             ->take($rowperpage)
             ->get();
-        $data_arr = array();
+            $data_arr = array();
 
             $number = $start;
 

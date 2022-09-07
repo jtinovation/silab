@@ -130,7 +130,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('kestek',                 C_KesiapanPraktek::class);
     Route::get('getKestek',                  [C_KesiapanPraktek::class, 'getKestek'])->name('getKestek');
     Route::get('barangLabSelect',            [C_KesiapanPraktek::class, 'barangLabSelect'])->name('barangLabSelect');
-    Route::post('kestekDetailDelete',        [C_KesiapanPraktek::class,'destroy'])->name('kestekDetailDelete');
+    Route::post('kestekDetailDelete',        [C_KesiapanPraktek::class, 'destroy'])->name('kestekDetailDelete');
+    Route::post('kestekDelete',              [C_KesiapanPraktek::class, 'delete'])->name('kestekDelete');
 
     Route::resource('invAlat',                C_InvetarisAlat::class);
     Route::get('getInvAlat',                 [C_InvetarisAlat::class,'getInvAlat'])->name('getInvAlat');
@@ -142,9 +143,12 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('bonalat',                C_BonAlat::class);
     Route::get('getBonAlat',                 [C_BonAlat::class, 'getBonalat'])->name('getBonAlat');
-    Route::post('bonAlatDelete',             [C_BonAlat::class,'destroy'])->name('bonAlatDelete');
+    Route::post('bonAlatDelete',             [C_BonAlat::class, 'destroy'])->name('bonAlatDelete');
     Route::get('alatLabSelect',              [C_BonAlat::class, 'alatLabSelect'])->name('alatLabSelect');
     Route::get('alatLabSelects',             [C_BonAlat::class, 'alatLabSelects'])->name('alatLabSelects');
+    Route::post('bonAlatDetailDelete',       [C_BonAlat::class, 'delete'])->name('bonAlatDetailDelete');
+    Route::get('bonalat/{bonalat}/kembali',  [C_BonAlat::class, 'kembali'])->name('bonalat.kembali');
+    Route::put('bonalat/{bonalat}',          [C_BonAlat::class, 'kembaliUpdate'])->name('bonalat.kembaliUpdate');
 
     Route::get('/manage',       [ManageController::class, 'index'])->name('manage');
     Route::get('/pendidikan',   [ManageController::class, 'pendidikan'])->name('manage.pendidikan');

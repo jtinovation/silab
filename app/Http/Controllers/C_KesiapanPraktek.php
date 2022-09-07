@@ -183,6 +183,21 @@ class C_KesiapanPraktek extends Controller
         echo json_encode($response);
     }
 
+    public function delete(Request $request)
+    {
+        $qry = MDetailKesiapan::find(Crypt::decryptString($request->id))->delete();
+        if($qry){
+            $response = array(
+                'status' => 200,
+            );
+        }else{
+            $response = array(
+                'status' => 503,
+            );
+        }
+        echo json_encode($response);
+    }
+
     public function getKestek(Request $request){
         $draw = $request->get('draw');
         $start = $request->get("start");

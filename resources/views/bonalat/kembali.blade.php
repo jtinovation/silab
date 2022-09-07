@@ -20,11 +20,12 @@
     <div class="row col-md-12 col-lg-12 col-sm-12 animate__animated animate__backInLeft">
             <div class="card">
                 <div class="card-body ">
-                    <h4 class="mt-0 header-title text-center" style="">Form Bon Alat Laboratorium</h4>
+                    <h4 class="mt-0 header-title text-center" style="">Ubah Form Bon Alat Laboratorium</h4>
                     <hr>
 
-                    <form action="{{route('bonalat.store')}}" class="form-horizontal" id="frmBonalat" method="post" enctype="multipart/form-data">
+                    <form action="{{route('bonalat.kembaliUpdate',$id)}}" class="form-horizontal" id="frmPengajuanAlat" method="post" enctype="multipart/form-data">
                         @csrf
+                        @method('PUT')
                         <div class="row d-flex justify-content-center">
                             <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
                                 <i class="ri-user-smile-line label-icon"></i><strong>Informasi Peminjam</strong>
@@ -32,28 +33,25 @@
                             <div class=" row col-12 justify-content-center " >
                                 <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="col-12 btn-group" role="group" aria-label="Basic radio toggle button group">
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai1" value="1" autocomplete="off" checked>
+                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai1" value="1" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"checked":"disabled"}}   >
                                         <label class="btn btn-outline-primary" for="is_pegawai1">&nbsp;&nbsp;&nbsp;&nbsp;Pegawai&nbsp;&nbsp;&nbsp;</label>
 
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai2" value="0" autocomplete="off">
+                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai2" value="0" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"disabled":"checked"}}  >
                                         <label class="btn btn-outline-dark" for="is_pegawai2">Mahasiswa</label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row d-flex justify-content-center mt-2" >
+
+                            <div class="row d-flex justify-content-center mt-2" style="display:  {{$qrBonAlat[0]->is_pegawai?"block":"none"}} " >
                                 <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: block;">
                                     <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                         <label for="SelectStaff" class="form-label text-right">Pilih Pegawai</label></br>
-                                        <select class="form-control" style="font-size: 15px;" name="tm_staff_id" id="SelectStaff" required>
-                                            <option></option>
-                                            @foreach($data['staff'] as $v)
-                                                <option value="{{$v->id}}">{{$v->nama}}</option>
-                                            @endforeach
-                                        </select>
+                                        <input type="text" class="form-control" name="tm_staff_id" id="SelectStaff" value="{{$qrBonAlat[0]->StaffData->nama}}" readonly>
+
                                     </div>
                                 </div>
                             </div>
-                            <div class=" mahasiswa mt-2" style="display: none;">
+                            <div class=" mahasiswa mt-2" style="display:  {{$qrBonAlat[0]->is_pegawai?"none":"block"}} ;">
                                 <div class="row d-flex">
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
@@ -82,22 +80,22 @@
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <label for="selectPinjam" class="form-label text-right">Petugas Peminjaman</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{$data['memberlab']}}" readonly>
+                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{$qrBonAlat[0]->memberLabIn->StaffData->nama}}" readonly>
                             </div>
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <label for="tanggalPinjam" class="form-label text-right">Tanggal Pinjam</label></br>
-                                <input type="text" class="form-control" name="tanggalPinjam" id="tanggalPinjam">
+                                <input type="text" class="form-control" name="tanggalPinjam" id="tanggalPinjam" value="{{$qrBonAlat[0]->tanggal_pinjam}}" readonly>
                             </div>
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
-                                <label for="selectKembali" class="form-label text-right">Petugas Pengembalian</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_kembali" id="selectKembali" value="" readonly>
+                                <label for="petugasKembali" class="form-label text-right">Petugas Pengembalian</label></br>
+                                <input type="text" class="form-control" name="tr_member_laboratorium_id_kembali" id="petugasKembali" value="{{$staff_nm}}" readonly>
                             </div>
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
                                     <label for="tanggalKembali" class="form-label text-right">Tanggal Kembali</label></br>
-                                    <input type="text" class="form-control" name="tanggalKembali" id="tanggalKembali" readonly>
+                                    <input type="text" class="form-control" name="tanggalKembali" id="tanggalKembali">
                             </div>
 
                             <div class="alert alert-info alert-dismissible alert-label-icon label-arrow fade show mt-5" role="alert">
@@ -107,43 +105,42 @@
                             <div class="col-lg-12 ">
                                 <div class="row form-group form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                     <label for="txtSatuan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Pilih Barang </label>
-                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Stok</label>
-                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Jumlah</label>
+                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Jumlah Pinjam</label>
+                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Jumlah Kembali</label>
                                     <label for="keterangan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Keterangan</label>
                                 </div>
-                                <div class="copy-fields">
-                                    <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 abc wrap" style="margin-bottom: 10px;">
-
+                                @foreach ($qrDetailBonAlat as $vdu)
+                                <div class="wrapper">
+                                    <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 wrap" id="{{"inputCopy-".$vdu->id}}" style="margin-bottom: 10px;">
+                                        <input type="hidden" name="detailBonAlat[]" value="{{$vdu->id}}">
+                                        <input type="hidden" name="tr_barang_laboratorium_id[]" value="{{$vdu->tr_barang_laboratorium_id}}" class="getBarang">
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
-                                            <select class="form-control select2_el first" style="font-size: 15px;" name="barang[]" required>
-                                                <option value="">Pilih Alat</option>
-                                            </select>
+                                            <input class="form-control" type="text" name="{{'barang-'.$vdu->id}}" value="{{$vdu->barangLabData->BarangData->nama_barang}}" readonly>
+
                                         </div>
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                            <input type="text" class="form-control stok" name="stok[]" readonly >
+                                            <input class="form-control pinjam" type="text" name="{{'jmlpinjam-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah}}" readonly>
                                         </div>
-
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                               <input type="text" class="form-control number hit" name="jml[]" >
+                                            <input class="form-control number hit" type="text" name="{{'jmlkembali-'.$vdu->id}}" style="padding: 8px 10px;" value="">
                                         </div>
 
 
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
                                             <div class="hstack gap-3">
-                                                <input class="form-control" type="text" name="keterangan[]">
-                                                <button class="btn btn-success add-more" type="button"><i class=" bx bx-plus"></i></button>
+                                                <input class="form-control" type="text" name="{{'keterangan-'.$vdu->id}}">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                    <div class="core-ans"></div>
+                                @endforeach
                             </div>
 
                             @can('kesiapan-praktek-create')
                             <div class="col-md-12 row button-items justify-content-center gap-3" style="margin-top: 10px;">
-                                <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Permintaaan Bon Alat</button>
-                                <a href="{{route('kestek.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Permintaaan Bon Alat</a>
+                                <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Pengembalian Bon Alat</button>
+                                <a href="{{route('bonalat.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Pengembalian Bon Alat</a>
                             </div>
                             @endcan
 
@@ -162,7 +159,7 @@
 
 <!-- Select 2 -->
 <script src="{{ asset('assets/libs/select2/select2.min.js') }}"></script>
-<script src="{{ asset('assets/js/pages/bonalat.js') }}"></script>
+{{-- <script src="{{ asset('assets/js/pages/kestek.js') }}"></script> --}}
 
 <!-- Daterangepicker -->
 <script src="{{asset('assets/libs/daterangepicker/moment.min.js')}}"></script>
@@ -170,40 +167,74 @@
 <script src="{{asset('assets/libs/daterangepicker/moment.min.js')}}"></script>
 <script src="{{asset('assets/libs/daterangepicker/daterangepicker.js')}}"></script>
 
-
 <script type="text/javascript">
     var txtNumeric;
-    var alatLabSelect  = "{{route('alatLabSelect')}}";
+    var token = "{{ csrf_token() }}";
     var num = 1;
-    initailizeSelect2();
-    initDaterangpicker();
+    var arrBarang=[];
 
-
-
-
-   /*  $("#SelectMinggu").select2({
-        placeholder: "Pilih Minggu Ke",
-        allowClear: true
+    $('#tanggalKembali').daterangepicker({
+        singleDatePicker: true,
+        timePicker:true,
+        timePicker24Hour: true,
+        locale: {
+            format: 'D/M/Y H:mm',
+        }
     });
 
-    $("#SelectMinggu").change(function() {
-        let selectMinggu = $(this).find(":selected").text();
-        let myArray = selectMinggu.split(" ");
-        let waktu = myArray[1].split("-");
-        min = waktu[0].replace('(', '');
-        max = waktu[1].replace(')', '');
-        initDaterangpicker();
+    $("body").on("keyup", "input.number", function(event) {
+        if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57) {
+            $(this).val(function(index, value) {
+                return value.replace(/\D/g, "");
+            });
+        }
     });
-    function initDaterangpicker() {
-        $('#tanggal').daterangepicker({
-            singleDatePicker: true,
-            minDate: min,
-            maxDate: max,
-            locale: {
-                format: 'D/M/Y',
+
+new AutoNumeric.multiple('.txtNumeric', { 'digitGroupSeparator': '.', 'decimalCharacter': ',', 'decimalPlaces': '0' });
+
+$("body").on("keyup", ".hit", function() {
+    let jml = parseInt($(this).val());
+    let pinjam = $(this).parents(".wrap").find('.pinjam').val();
+
+    if (jml > pinjam) {
+        Swal.fire({
+            title: "Pengembalian Terlalu Banyak",
+            icon: "warning",
+            text: "Jumlah Pengembalian Terlalu Banyak.",
+            didClose: () => {
+                //$(this).val(0);
+                $(this).focus();
+                //$('#btnSubmit').hide();
             }
         });
-    } */
+    }else if(pinjam > jml){
+        Swal.fire({
+            title: "Pengembalian Kurang",
+            icon: "warning",
+            text: "Jumlah Pengembalian Kurang dari Jumlah Pinjaman",
+            didClose: () => {
+                //$(this).val(0);
+                $(this).focus();
+                //$('#btnSubmit').hide();
+            }
+        });
+    }
+});
 
+$("form").submit(function(event) {
+    $('.hit').each(function(i, obj) {
+        if (obj.value <= 0) {
+            Swal.fire({
+                title: "Jumlah Tidak Boleh Kosong!",
+                icon: "warning",
+                text: "Jumlah Harus Di isi",
+                didClose: () => {
+                    obj.focus();
+                }
+            });
+            event.preventDefault();
+        }
+    });
+});
 </script>
 @endsection

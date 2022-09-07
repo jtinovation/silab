@@ -93,6 +93,15 @@
             window.location.href = pageEdit;
         });
     });
+
+    $("body").on("click",".btnKembaliClass",function(){
+        event.preventDefault();
+        let pageEdit =$(this).attr("data-href");
+        $('.tableElement').hide("slide",{direction:'left'},1000, function(){
+            window.location.href = pageEdit;
+        });
+    });
+
     $("body").on("click",".BtnAddBonAlat",function(){
         event.preventDefault();
         let pageEdit =$(this).attr("data-href");

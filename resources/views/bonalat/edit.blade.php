@@ -130,7 +130,7 @@
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
                                             <div class="hstack gap-3">
                                                 <input class="form-control" type="text" name="{{'keterangan-'.$vdu->id}}">
-                                                <button class="btn btn-danger removeKesiapan" data-remove="{{Crypt::encryptString($vdu->id)}}" data-id="{{$vdu->id}}" type="button"><i class=" bx bx-trash"></i></button>
+                                                <button class="btn btn-danger removeBonAlatDetail" data-remove="{{Crypt::encryptString($vdu->id)}}" data-id="{{$vdu->id}}" type="button"><i class=" bx bx-trash"></i></button>
                                                 <button class="btn btn-success add-more" type="button"><i class=" bx bx-plus"></i></button>
                                             </div>
                                         </div>
@@ -170,7 +170,7 @@
                             @can('kesiapan-praktek-create')
                             <div class="col-md-12 row button-items justify-content-center gap-3" style="margin-top: 10px;">
                                 <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Permintaaan Bon Alat</button>
-                                <a href="{{route('kestek.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Permintaaan Bon Alat</a>
+                                <a href="{{route('bonalat.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Permintaaan Bon Alat</a>
                             </div>
                             @endcan
 
@@ -200,7 +200,7 @@
 <script type="text/javascript">
     var txtNumeric;
     var alatLabSelect  = "{{route('alatLabSelects')}}";
-    var kestekDetailDelete = "{{route('kestekDetailDelete')}}";
+    var bonAlatDetailDelete = "{{route('bonAlatDetailDelete')}}";
     var token = "{{ csrf_token() }}";
     var num = 1;
     var arrBarang=[];
@@ -231,10 +231,42 @@
     }
 });
 
-/* $("#SelectStaff").select2({
-    placeholder: "Pilih Pegawai",
-    allowClear: true
-}); */
+$("body").on("click", ".removeBonAlatDetail", function() {
+        var id = $(this).attr("data-remove");
+        var rid = $(this).attr("data-id");
+        swal.fire({
+            title: 'Yakin, Hapus Barang?',
+            text: "Data yang di hapus tidak bisa dikembalikan",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger ml-2',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(function(result) {
+            if (result.value) {
+                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    type: "POST",
+                    url: bonAlatDetailDelete,
+                    data: { id: id, _token: token },
+                    dataType: "html",
+                    success: function(data) {
+                        swal.fire({
+                            title: "Hapus Data Berhasil!",
+                            text: "",
+                            icon: "success"
+                        }).then(function() {
+                            //location.reload();
+                            $('#inputCopy-'+rid).remove();
+                        });
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        swal.fire("Error deleting!", "Please try again", "error");
+                    }
+                });
+            }
+        })
+    });
 
 $("body").on("keyup", "input.number", function(event) {
     if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57) {
@@ -336,9 +368,6 @@ function initailizeSelect2() {
     });
 }
 
-
-
-
 function initDaterangpicker() {
     $('#tanggalPinjam').daterangepicker({
         singleDatePicker: true,
@@ -381,5 +410,10 @@ $("form").submit(function(event) {
     });
 
 });
+
+
+
+
+
 </script>
 @endsection

@@ -54,7 +54,6 @@ class C_BonAlat extends Controller
 
     }
 
-
     public function create()
     {
         $staff_id = Auth::user()->tm_staff_id;
@@ -85,7 +84,6 @@ class C_BonAlat extends Controller
         }
     }
 
-
     public function store(Request $request)
     {
         $staff_id = Auth::user()->tm_staff_id;
@@ -102,6 +100,7 @@ class C_BonAlat extends Controller
                 $input['nim']                      = $request->nim;
                 $input['golongan_kelompok']        = $request->gol;
             }
+            $input['tm_laboratorium_id']                = $lab_id;
             $input['tanggal_pinjam']                    = $request->tanggalPinjam.":00";
             $input['tr_member_laboratorium_id_pinjam']  = $qrlab[0]->id;
             $input['status']                            = 1;
@@ -143,12 +142,10 @@ class C_BonAlat extends Controller
         }
     }
 
-
     public function show($id)
     {
         //
     }
-
 
     public function edit($id)
     {
@@ -161,77 +158,110 @@ class C_BonAlat extends Controller
             $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
             $idDecrypt = Crypt::decryptString($id);
             $qrBonAlat = MBonalat::where('id',$idDecrypt)->get();
-            $qrDetailBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$qrBonAlat[0]->id)->get();
+            if(count($qrBonAlat)){
+                $qrDetailBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$qrBonAlat[0]->id)->get();
 
-            $data = [
-                'title' => "Sistem Informasi Laboratorium",
-                'subtitle'  => "Bon Alat Laboratorium",
-                'npage'     => 84,
-                'lab_id'    => $tm_lab_id,
-                'lab'       => $lab,
-                'jurusan'   => $jurusan,
-                //'memberlab' => MMemberLab::where([['tm_laboratorium_id',$tm_lab_id],['is_aktif',1]])->get(),
-                'memberlab' => $qrlab[0]->staffData->nama,
-                'barang' => MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q){$q->select('nama_barang');})->get(),
-                'staff'     => M_Staff::where('is_aktif',1)->orderBy('nama','ASC')->get(),];
+                $data = [
+                    'title' => "Sistem Informasi Laboratorium",
+                    'subtitle'  => "Bon Alat Laboratorium",
+                    'npage'     => 84,
+                    'lab_id'    => $tm_lab_id,
+                    'lab'       => $lab,
+                    'jurusan'   => $jurusan,
+                    //'memberlab' => MMemberLab::where([['tm_laboratorium_id',$tm_lab_id],['is_aktif',1]])->get(),
+                    'memberlab' => $qrlab[0]->staffData->nama,
+                    'barang' => MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q){$q->select('nama_barang');})->get(),
+                    'staff'     => M_Staff::where('is_aktif',1)->orderBy('nama','ASC')->get(),];
 
-            $Breadcrumb = array(
-                1 => array("link" => url("kestek"), "label" => "Daftar Data Kesiapan Praktek"),
-                2 => array("link" => "active", "label" => "Form Ubah Data Kesiapan Praktek"),
-            );
-            return view('bonalat.edit', compact('data', 'Breadcrumb','qrBonAlat','qrDetailBonAlat'));
+                $Breadcrumb = array(
+                    1 => array("link" => url("kestek"), "label" => "Daftar Data Kesiapan Praktek"),
+                    2 => array("link" => "active", "label" => "Form Ubah Data Kesiapan Praktek"),
+                );
+                return view('bonalat.edit', compact('data', 'Breadcrumb','qrBonAlat','qrDetailBonAlat'));
+            }else{
+                return abort(403, 'Unauthorized action.');
+            }
         }else{
             return abort(403, 'Unauthorized action.');
         }
     }
 
+    public function kembali($id)
+    {
+        $staff_id = Auth::user()->tm_staff_id;
+        $staff_nm = Auth::user()->staffData->nama;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($qrlab)){
+            $lab_id = $qrlab[0]->tm_laboratorium_id;
+            $tm_lab_id = $qrlab[0]->tm_laboratorium_id;
+            $lab = $qrlab[0]->LaboratoriumData->laboratorium;
+            $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
+            $idDecrypt = Crypt::decryptString($id);
+            $qrBonAlat = MBonalat::where('id',$idDecrypt)->get();
+            //dd($qrBonAlat);
+            if(count($qrBonAlat)){
+                $qrDetailBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$qrBonAlat[0]->id)->get();
+
+                $data = [
+                    'title' => "Sistem Informasi Laboratorium",
+                    'subtitle'  => "Bon Alat Laboratorium",
+                    'npage'     => 84,
+                    'lab_id'    => $tm_lab_id,
+                    'lab'       => $lab,
+                    'jurusan'   => $jurusan,
+                    //'memberlab' => MMemberLab::where([['tm_laboratorium_id',$tm_lab_id],['is_aktif',1]])->get(),
+                    'memberlab' => $qrlab[0]->staffData->nama,
+                    'barang' => MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q){$q->select('nama_barang');})->get(),
+                    'staff'     => M_Staff::where('is_aktif',1)->orderBy('nama','ASC')->get(),];
+
+                $Breadcrumb = array(
+                    1 => array("link" => url("kestek"), "label" => "Daftar Data Kesiapan Praktek"),
+                    2 => array("link" => "active", "label" => "Form Ubah Data Kesiapan Praktek"),
+                );
+                return view('bonalat.kembali', compact('data', 'Breadcrumb','qrBonAlat','qrDetailBonAlat','staff_nm','id'));
+            }else{
+                return abort(403, 'Unauthorized action.');
+            }
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
+    }
 
     public function update(Request $request, $id)
     {
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-
-        /* if($request->has('is_pegawai')){
-            $update['tm_staff_id']              = $request->tm_staff_id;
-        }else{
-            $update['nama']                     = $request->nama;
-            $update['nim']                      = $request->nim;
-            $update['golongan_kelompok']        = $request->gol;
-        }*/
         $bonalat = MBonalat::find($id);
-
         foreach($request->barang as $key => $value){
-            dd($value);
-            $arrV = explode("#", $value);
-            //dd($arrV);
-            $tr_barang_laboratorium_id = $arrV[0];
-            $stokKeluar = $request->jml[$key];
+            if($value != ""){
+                $arrV = explode("#", $value);
+                $tr_barang_laboratorium_id = $arrV[0];
+                $stokKeluar = $request->jml[$key];
 
-            $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
-           // dd($tr_barang_laboratorium);
-            $stokLab = $tr_barang_laboratorium->stok;
-            $updateStokLab['stok'] = $stokLab - $stokKeluar;
-            $tr_barang_laboratorium->update($updateStokLab);
+                $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
+                $stokLab                = $tr_barang_laboratorium->stok;
+                $updateStokLab['stok']  = $stokLab - $stokKeluar;
+                $tr_barang_laboratorium->update($updateStokLab);
 
-            $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-            $ks['is_stok_in'] = 0;
-            $ks['qty'] = $stokKeluar;
-            $ks['stok'] = $stokLab - $stokKeluar;
-            $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
-            $kartustok = MKartuStok::create($ks);
+                $ks['tr_barang_laboratorium_id']    = $tr_barang_laboratorium_id;
+                $ks['is_stok_in']                   = 0;
+                $ks['qty']                          = $stokKeluar;
+                $ks['stok']                         = $stokLab - $stokKeluar;
+                $ks['tr_member_laboratorium_id']    = $qrlab[0]->id;
+                $kartustok = MKartuStok::create($ks);
 
-            $detailInput['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-            $detailInput['tr_bon_alat_id'] = $bonalat->id;
-            $detailInput['jumlah'] = $request->jml[$key];
-            $detailInput['keterangan'] = $request->keterangan[$key];
-            $detailInput['tr_kartu_stok_id'] = $kartustok->id;
-            $DetailBonAlat = MDetailBonAlat::create($detailInput);
+                $detailInput['tr_barang_laboratorium_id']   = $tr_barang_laboratorium_id;
+                $detailInput['tr_bon_alat_id']              = $bonalat->id;
+                $detailInput['jumlah']                      = $request->jml[$key];
+                $detailInput['keterangan']                  = $request->keterangan[$key];
+                $detailInput['tr_kartu_stok_id']            = $kartustok->id;
+                $DetailBonAlat = MDetailBonAlat::create($detailInput);
 
-            $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
-            $stokBarang = $tr_barang->qty;
-            $updateStokBarang['qty'] = $stokBarang - $stokKeluar;
-            $tr_barang->update($updateStokBarang);
-
+                $tr_barang                  = MBarang::find($tr_barang_laboratorium->tm_barang_id);
+                $stokBarang                 = $tr_barang->qty;
+                $updateStokBarang['qty']    = $stokBarang - $stokKeluar;
+                $tr_barang->update($updateStokBarang);
+            }
         }
 
         $detailBonAlat = @$request->detailBonAlat;
@@ -239,7 +269,7 @@ class C_BonAlat extends Controller
             foreach($detailBonAlat as $vdu){
                 //echo $_REQUEST['barang-'.$vdu]; ;
                 $qrDetailBonalat = MDetailBonAlat::find($vdu);
-                $tr_barang_laboratorium_id = $detailBonAlat->tr_barang_laboratorium_id;
+                $tr_barang_laboratorium_id = $qrDetailBonalat->tr_barang_laboratorium_id;
                 $oldJml = $qrDetailBonalat->jumlah;
                 $newJml = $_REQUEST['jml-'.$vdu];
                 $qty = 0;
@@ -280,6 +310,56 @@ class C_BonAlat extends Controller
         return redirect(route('bonalat.index'))->with('success','Permintaan Bon Alat Berhasil Di Ubah.');
     }
 
+    public function kembaliUpdate(Request $request, $id)
+    {
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $idDecrypt = Crypt::decryptString($id);
+        $bonalat = MBonalat::find($idDecrypt);
+        $detailBonAlat = @$request->detailBonAlat;
+        if(count($detailBonAlat)){
+            foreach($detailBonAlat as $vdu){
+                //echo "</br>".$vdu;
+                $qrDetailBonalat = MDetailBonAlat::find($vdu);
+                $tr_barang_laboratorium_id = $qrDetailBonalat->tr_barang_laboratorium_id;
+                $oldJml = $qrDetailBonalat->jumlah;
+                $newJml = $_REQUEST['jmlkembali-'.$vdu];
+                $status = 1;
+                if($oldJml>$newJml){
+                    $status = 0;
+                }
+                $ks['qty'] = $newJml;
+                $ks['stok'] = $qrDetailBonalat->kartuStokData->stok + $newJml;
+                $qrKartuStok = MKartuStok::find($qrDetailBonalat->tr_kartu_stok_id);
+                $qrBarangLab = MBarangLab::find($qrKartuStok->tr_barang_laboratorium_id);
+                    $qrBarang    = MBarang::find($qrBarangLab->tm_barang_id);
+                        $updateQrBarang['qty']= $qrBarang->qty + $newJml;
+                        $qrBarang->update($updateQrBarang);
+                        //echo "</br>Update TM Barang "; var_dump($updateQrBarang);
+
+                    $updateQrBarangLab['stok'] = $qrBarangLab->stok + $newJml;
+                    $qrBarangLab->update($updateQrBarangLab);
+                    //echo "</br> Update Barang Lab "; var_dump($updateQrBarangLab);
+                $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                $ks['is_stok_in'] = 1;
+                $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
+                $ks['keterangan'] = $idDecrypt."#bon alat - kembali";
+                $kartustok = MKartuStok::create($ks);
+
+                $detailInput['jumlah_kembali']          = $newJml ;
+                $detailInput['status']                  = $status;
+                $detailInput['keterangan']              = $_REQUEST['keterangan-'.$vdu];
+                $detailInput['tr_kartu_stok_id_kembali']= $kartustok->id;
+                $qrDetailBonalat->update($detailInput);
+            }
+        }
+        $updateBonAlat['tr_member_laboratorium_id_kembali'] = $qrlab[0]->id;
+        $updateBonAlat['tanggal_kembali']                   = $request->tanggalKembali.":00";
+        $updateBonAlat['status']                            = 2;
+        $bonalat->update($updateBonAlat);
+
+        return redirect(route('bonalat.index'))->with('success','Pengembalian Bon Alat Berhasil Di Simpan.');
+    }
 
     public function destroy(Request $request)
     {
@@ -318,7 +398,53 @@ class C_BonAlat extends Controller
         $bonalat->delete();
     }
 
+    public function delete(Request $request)
+    {
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+
+        $id = Crypt::decryptString($request->id);
+        $tdBonAlat = MDetailBonAlat::find($id);
+
+                $tr_barang_laboratorium_id = $tdBonAlat->tr_barang_laboratorium_id;
+                $jumlah = $tdBonAlat->jumlah;
+
+                $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
+                $stokLab = $tr_barang_laboratorium->stok;
+                $updateStokLab['stok'] = $stokLab + $jumlah;
+                $tr_barang_laboratorium->update($updateStokLab);
+
+                $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                $ks['is_stok_in'] = 1;
+                $ks['qty'] = $jumlah;
+                $ks['stok'] = $stokLab + $jumlah;
+                $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
+                $ks['keterangan'] = $tdBonAlat->tr_kartu_stok_id."# was deleted";
+                $kartustok = MKartuStok::create($ks);
+
+                $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
+                $stokBarang = $tr_barang->qty;
+                $updateStokBarang['qty'] = $stokBarang + $jumlah;
+                $tr_barang->update($updateStokBarang);
+
+
+        if($tdBonAlat->delete()){
+            $response = array(
+                'status' => 200,
+            );
+        }else{
+            $response = array(
+                'status' => 503,
+            );
+        }
+        echo json_encode($response);
+    }
+
     public function getBonalat(Request $request){
+        $staff_id = Auth::user()->tm_staff_id;
+        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($lab_id)){
+        $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
         $draw = $request->get('draw');
         $start = $request->get("start");
         $rowperpage = $request->get("length"); // total number of rows per page
@@ -335,13 +461,13 @@ class C_BonAlat extends Controller
         $searchValue = $search_arr['value']; // Search value
 
         // Total records
-        $totalRecords = MBonalat::select('count(*) as allcount')->count();
-        $totalRecordswithFilter = MBonalat::select('count(*) as allcount')
+        $totalRecords = MBonalat::select('count(*) as allcount')->where('tm_laboratorium_id',$tm_lab_id)->count();
+        $totalRecordswithFilter = MBonalat::select('count(*) as allcount')->where('tm_laboratorium_id',$tm_lab_id)
         ->orWhere('kode', 'like', '%' . $searchValue . '%')->count();
 
         // Get records, also we have included search filter as well
         $records = MBonalat::orderBy($columnName, $columnSortOrder)
-            ->orWhere('kode', 'like', '%' . $searchValue . '%')
+            ->where('tm_laboratorium_id',$tm_lab_id)
             ->select('tr_bon_alat.*')
             ->skip($start)
             ->take($rowperpage)
@@ -358,6 +484,10 @@ class C_BonAlat extends Controller
                 $button = $button."<a href='#' data-href='".route('bonalat.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
                 <i class='ri-edit-2-line'></i></a>";
             }
+
+            $button = $button."<a href='#' data-href='".route('bonalat.kembali',$idEncrypt)."' class='btn btn-success btn-outline btn-circle btn-md m-r-5 btnKembaliClass'>
+            <i class=' ri-install-line'></i></a>";
+
             if(Gate::check('bonalat-delete')){
                 $button = $button." <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete' data-id='".$idEncrypt."' >
                 <i class='ri-delete-bin-2-line'></i></a>";
@@ -372,6 +502,7 @@ class C_BonAlat extends Controller
             $kembali = "";
             if($record->status == 2){
                 $kembali = $record->Kembali;
+                $button = "";
             }
 
             $data_arr[] = array(
@@ -391,6 +522,7 @@ class C_BonAlat extends Controller
             "aaData" => $data_arr,
         );
         echo json_encode($response);
+        }
     }
 
     public function alatLabSelect(Request $request){
