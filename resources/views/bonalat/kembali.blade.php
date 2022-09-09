@@ -28,15 +28,15 @@
                         @method('PUT')
                         <div class="row d-flex justify-content-center">
                             <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Informasi Peminjam</strong>
+                                <i class="ri-user-smile-line label-icon"></i><strong>Informasi Pengembali</strong>
                             </div>
                             <div class=" row col-12 justify-content-center " >
                                 <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="col-12 btn-group" role="group" aria-label="Basic radio toggle button group">
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai1" value="1" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"checked":"disabled"}}   >
+                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai1" value="1" autocomplete="off"    >
                                         <label class="btn btn-outline-primary" for="is_pegawai1">&nbsp;&nbsp;&nbsp;&nbsp;Pegawai&nbsp;&nbsp;&nbsp;</label>
 
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai2" value="0" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"disabled":"checked"}}  >
+                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai2" value="0" autocomplete="off"  >
                                         <label class="btn btn-outline-dark" for="is_pegawai2">Mahasiswa</label>
                                     </div>
                                 </div>
@@ -46,8 +46,12 @@
                                 <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: block;">
                                     <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                         <label for="SelectStaff" class="form-label text-right">Pilih Pegawai</label></br>
-                                        <input type="text" class="form-control" name="tm_staff_id" id="SelectStaff" value="{{$qrBonAlat[0]->StaffData->nama}}" readonly>
-
+                                        <select class="form-control" style="font-size: 15px;" name="tm_staff_id" id="SelectStaff" {{$qrBonAlat[0]->is_pegawai?"required":""}}>
+                                            <option></option>
+                                            @foreach($data['staff'] as $v)
+                                                <option value="{{$v->id}}">{{$v->nama}}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -56,19 +60,19 @@
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="nim" class="form-label text-right">NIM</label></br>
-                                            <input type="text" class="form-control" name="nim" id="nim">
+                                            <input type="text" class="form-control" name="nim" id="nim" {{$qrBonAlat[0]->is_pegawai?"required":""}}>
                                         </div>
                                     </div>
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="nama" class="form-label text-right">Nama</label></br>
-                                            <input type="text" class="form-control" name="nama" id="nama">
+                                            <input type="text" class="form-control" name="nama" id="nama" {{$qrBonAlat[0]->is_pegawai?"required":""}}>
                                         </div>
                                     </div>
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="gol" class="form-label text-right">Golongan / Kelompok</label></br>
-                                            <input type="text" class="form-control" name="gol" id="gol">
+                                            <input type="text" class="form-control" name="gol" id="gol" {{$qrBonAlat[0]->is_pegawai?"required":""}}>
                                         </div>
                                     </div>
                                 </div>
@@ -80,7 +84,7 @@
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <label for="selectPinjam" class="form-label text-right">Petugas Peminjaman</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{$qrBonAlat[0]->memberLabIn->StaffData->nama}}" readonly>
+                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{@$qrBonAlat[0]->memberLabOut->StaffData->nama}}" readonly>
                             </div>
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -235,6 +239,33 @@ $("form").submit(function(event) {
             event.preventDefault();
         }
     });
+});
+
+$(".cp").change(function(){
+    let val = parseInt($(".cp:checked").val());
+    if(val){
+        $('.mahasiswa').hide("slide", { direction: 'down' }, 1000, function() {
+            $('.pegawai').show("slide", { direction: 'down' }, 1000);
+        });
+      /*   $(".mahasiswa").hide();
+        $(".pegawai").show(); */
+        $("#SelectStaff").attr('required', true);
+        $("#nim").attr('required', false);
+        $("#nama").attr('required', false);
+        $("#gol").attr('required', false);
+        console.log("Pegawai");
+    }else{
+        $('.pegawai').hide("slide", { direction: 'down' }, 1000, function() {
+            $('.mahasiswa').show("slide", { direction: 'down' }, 1000);
+        });
+      /*   $(".pegawai").hide();
+        $(".mahasiswa").show(); */
+        $("#SelectStaff").attr('required', false);
+        $("#nim").attr('required', true);
+        $("#nama").attr('required', true);
+        $("#gol").attr('required', true);
+        console.log("Mahasiswa");
+    }
 });
 </script>
 @endsection

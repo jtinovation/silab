@@ -144,7 +144,43 @@ class C_BonAlat extends Controller
 
     public function show($id)
     {
-        //
+        $staff_id = Auth::user()->tm_staff_id;
+        $staff_nm = Auth::user()->staffData->nama;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($qrlab)){
+            $lab_id = $qrlab[0]->tm_laboratorium_id;
+            $tm_lab_id = $qrlab[0]->tm_laboratorium_id;
+            $lab = $qrlab[0]->LaboratoriumData->laboratorium;
+            $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
+            $idDecrypt = Crypt::decryptString($id);
+            $qrBonAlat = MBonalat::where('id',$idDecrypt)->get();
+            //dd($qrBonAlat);
+            if(count($qrBonAlat)){
+                $qrDetailBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$qrBonAlat[0]->id)->get();
+
+                $data = [
+                    'title' => "Sistem Informasi Laboratorium",
+                    'subtitle'  => "Bon Alat Laboratorium",
+                    'npage'     => 84,
+                    'lab_id'    => $tm_lab_id,
+                    'lab'       => $lab,
+                    'jurusan'   => $jurusan,
+                    //'memberlab' => MMemberLab::where([['tm_laboratorium_id',$tm_lab_id],['is_aktif',1]])->get(),
+                    'memberlab' => $qrlab[0]->staffData->nama,
+                    'barang' => MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q){$q->select('nama_barang');})->get(),
+                    'staff'     => M_Staff::where('is_aktif',1)->orderBy('nama','ASC')->get(),];
+
+                $Breadcrumb = array(
+                    1 => array("link" => url("kestek"), "label" => "Daftar Data Kesiapan Praktek"),
+                    2 => array("link" => "active", "label" => "Form Ubah Data Kesiapan Praktek"),
+                );
+                return view('bonalat.detail', compact('data', 'Breadcrumb','qrBonAlat','qrDetailBonAlat','staff_nm','id'));
+            }else{
+                return abort(403, 'Unauthorized action.');
+            }
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
     }
 
     public function edit($id)
@@ -485,7 +521,7 @@ class C_BonAlat extends Controller
                 <i class='ri-edit-2-line'></i></a>";
             }
 
-            $button = $button."<a href='#' data-href='".route('bonalat.kembali',$idEncrypt)."' class='btn btn-success btn-outline btn-circle btn-md m-r-5 btnKembaliClass'>
+            $button = $button." <a href='#' data-href='".route('bonalat.kembali',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnKembaliClass'>
             <i class=' ri-install-line'></i></a>";
 
             if(Gate::check('bonalat-delete')){
@@ -503,6 +539,8 @@ class C_BonAlat extends Controller
             if($record->status == 2){
                 $kembali = $record->Kembali;
                 $button = "";
+                $button = $button."<a href='#' data-href='".route('bonalat.show',$idEncrypt)."' class='btn btn-success btn-outline btn-circle btn-md m-r-5 btnDetailClass'>
+                <i class=' ri-install-line'></i></a>";
             }
 
             $data_arr[] = array(

@@ -23,7 +23,7 @@
                     <h4 class="mt-0 header-title text-center" style="">Ubah Form Bon Alat Laboratorium</h4>
                     <hr>
 
-                    <form action="{{route('bonalat.kembaliUpdate',$id)}}" class="form-horizontal" id="frmPengajuanAlat" method="post" enctype="multipart/form-data">
+                    <form action="" class="form-horizontal" id="frmPengajuanAlat" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="row d-flex justify-content-center">
@@ -56,19 +56,19 @@
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="nim" class="form-label text-right">NIM</label></br>
-                                            <input type="text" class="form-control" name="nim" id="nim">
+                                            <input type="text" class="form-control" name="nim" id="nim" value="{{@$qrBonAlat[0]->nim}}">
                                         </div>
                                     </div>
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="nama" class="form-label text-right">Nama</label></br>
-                                            <input type="text" class="form-control" name="nama" id="nama">
+                                            <input type="text" class="form-control" name="nama" id="nama" value="{{@$qrBonAlat[0]->nama}}">
                                         </div>
                                     </div>
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="gol" class="form-label text-right">Golongan / Kelompok</label></br>
-                                            <input type="text" class="form-control" name="gol" id="gol">
+                                            <input type="text" class="form-control" name="gol" id="gol" value="{{@$qrBonAlat[0]->golongan_kelompok}}">
                                         </div>
                                     </div>
                                 </div>
@@ -80,7 +80,7 @@
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <label for="selectPinjam" class="form-label text-right">Petugas Peminjaman</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{$qrBonAlat[0]->memberLabIn->StaffData->nama}}" readonly>
+                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{$qrBonAlat[0]->memberLabOut->StaffData->nama}}" readonly>
                             </div>
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -90,12 +90,12 @@
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
                                 <label for="petugasKembali" class="form-label text-right">Petugas Pengembalian</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_kembali" id="petugasKembali" value="{{$staff_nm}}" readonly>
+                                <input type="text" class="form-control" name="tr_member_laboratorium_id_kembali" id="petugasKembali" value="{{$qrBonAlat[0]->memberLabIn->StaffData->nama}}" readonly>
                             </div>
 
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
                                     <label for="tanggalKembali" class="form-label text-right">Tanggal Kembali</label></br>
-                                    <input type="text" class="form-control" name="tanggalKembali" id="tanggalKembali">
+                                    <input type="text" class="form-control" name="tanggalKembali" id="tanggalKembali" value="{{$qrBonAlat[0]->tanggal_kembali}}" readonly>
                             </div>
 
                             <div class="alert alert-info alert-dismissible alert-label-icon label-arrow fade show mt-5" role="alert">
@@ -116,35 +116,22 @@
                                         <input type="hidden" name="tr_barang_laboratorium_id[]" value="{{$vdu->tr_barang_laboratorium_id}}" class="getBarang">
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
                                             <input class="form-control" type="text" name="{{'barang-'.$vdu->id}}" value="{{$vdu->barangLabData->BarangData->nama_barang}}" readonly>
-
                                         </div>
-
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
                                             <input class="form-control pinjam" type="text" name="{{'jmlpinjam-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah}}" readonly>
                                         </div>
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                            <input class="form-control number hit" type="text" name="{{'jmlkembali-'.$vdu->id}}" style="padding: 8px 10px;" value="">
+                                            <input class="form-control number hit" type="text" name="{{'jmlkembali-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah_kembali}}">
                                         </div>
-
-
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
                                             <div class="hstack gap-3">
-                                                <input class="form-control" type="text" name="{{'keterangan-'.$vdu->id}}">
+                                                <input class="form-control" type="text" name="{{'keterangan-'.$vdu->keterangan}}">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 @endforeach
                             </div>
-
-                            @can('kesiapan-praktek-create')
-                            <div class="col-md-12 row button-items justify-content-center gap-3" style="margin-top: 10px;">
-                                <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Pengembalian Bon Alat</button>
-                                <a href="{{route('bonalat.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Pengembalian Bon Alat</a>
-                            </div>
-                            @endcan
-
-
                         </div>
                     </form>
 

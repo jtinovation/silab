@@ -13,11 +13,11 @@ class MBonalat extends Model
     protected $guarded = ['id'];
 
     public function memberLabIn(){
-        return $this->belongsTo(MMemberLab::class,'tr_member_laboratorium_id_pinjam');//table class,fk
+        return $this->belongsTo(MMemberLab::class,'tr_member_laboratorium_id_kembali');//table class,fk
     }
 
     public function memberLabOut(){
-        return $this->belongsTo(MMemberLab::class,'tr_member_laboratorium_id_kembali');//table class,fk
+        return $this->belongsTo(MMemberLab::class,'tr_member_laboratorium_id_pinjam');//table class,fk
     }
 
     public function StaffData(){
