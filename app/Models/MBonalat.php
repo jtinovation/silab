@@ -24,6 +24,10 @@ class MBonalat extends Model
         return $this->belongsTo(M_Staff::class,'tm_staff_id');//table class,fk
     }
 
+    public function StaffDataKembali(){
+        return $this->belongsTo(M_Staff::class,'kembali_tm_staff_id');//table class,fk
+    }
+
     public function mingguData(){
         return $this->belongsTo(MMinggu::class,'tm_minggu_id');//table class,fk
     }

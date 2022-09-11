@@ -20,7 +20,7 @@
     <div class="row col-md-12 col-lg-12 col-sm-12 animate__animated animate__backInLeft">
             <div class="card">
                 <div class="card-body ">
-                    <h4 class="mt-0 header-title text-center" style="">Ubah Form Bon Alat Laboratorium</h4>
+                    <h4 class="mt-0 header-title text-center" style="">Detail Informasi Bon Alat</h4>
                     <hr>
 
                     <form action="" class="form-horizontal" id="frmPengajuanAlat" method="post" enctype="multipart/form-data">
@@ -28,25 +28,53 @@
                         @method('PUT')
                         <div class="row d-flex justify-content-center">
                             <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Informasi Peminjam</strong>
+                                <i class="ri-user-smile-line label-icon"></i><strong>Peminjam</strong>
                             </div>
-                            <div class=" row col-12 justify-content-center " >
-                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="col-12 btn-group" role="group" aria-label="Basic radio toggle button group">
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai1" value="1" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"checked":"disabled"}}   >
-                                        <label class="btn btn-outline-primary" for="is_pegawai1">&nbsp;&nbsp;&nbsp;&nbsp;Pegawai&nbsp;&nbsp;&nbsp;</label>
+                            <div class="row d-flex justify-content-center mt-2" style="display:  {{$qrBonAlat[0]->is_pegawai?"block":"none"}} " >
+                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: block;">
+                                    <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                        <label for="SelectStaff" class="form-label text-right">Peminjam</label></br>
+                                        <input type="text" class="form-control" name="tm_staff_id" id="SelectStaff" value="{{$qrBonAlat[0]->StaffData->nama}}" readonly>
 
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai2" value="0" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"disabled":"checked"}}  >
-                                        <label class="btn btn-outline-dark" for="is_pegawai2">Mahasiswa</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="row d-flex justify-content-center mt-2" style="display:  {{$qrBonAlat[0]->is_pegawai?"block":"none"}} " >
+                            <div class=" mahasiswa mt-2" style="display:  {{$qrBonAlat[0]->is_pegawai?"none":"block"}} ;">
+                                <div class="row d-flex">
+                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
+                                        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                            <label for="nim" class="form-label text-right">NIM</label></br>
+                                            <input type="text" class="form-control" name="nim" id="nim" value="{{@$qrBonAlat[0]->nim}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
+                                        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                            <label for="nama" class="form-label text-right">Nama</label></br>
+                                            <input type="text" class="form-control" name="nama" id="nama" value="{{@$qrBonAlat[0]->nama}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                            <label for="gol" class="form-label text-right">Golongan / Kelompok</label></br>
+                                            <input type="text" class="form-control" name="gol" id="gol" value="{{@$qrBonAlat[0]->golongan_kelompok}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
+                                <i class="ri-user-smile-line label-icon"></i><strong>Pengembali</strong>
+                            </div>
+
+
+
+                            <div class="row d-flex justify-content-center mt-2" style="display:  {{$qrBonAlat[0]->kembali_is_pegawai?"block":"none"}} " >
                                 <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: block;">
                                     <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                        <label for="SelectStaff" class="form-label text-right">Pilih Pegawai</label></br>
-                                        <input type="text" class="form-control" name="tm_staff_id" id="SelectStaff" value="{{$qrBonAlat[0]->StaffData->nama}}" readonly>
+                                        <label for="SelectStaff" class="form-label text-right">Pengembali</label></br>
+                                        <input type="text" class="form-control" name="tm_staff_id" id="SelectStaff" value="{{$qrBonAlat[0]->StaffDataKembali->nama}}" readonly>
 
                                     </div>
                                 </div>
@@ -121,11 +149,11 @@
                                             <input class="form-control pinjam" type="text" name="{{'jmlpinjam-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah}}" readonly>
                                         </div>
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                            <input class="form-control number hit" type="text" name="{{'jmlkembali-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah_kembali}}">
+                                            <input class="form-control number hit" type="text" name="{{'jmlkembali-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah_kembali}}" readonly>
                                         </div>
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
                                             <div class="hstack gap-3">
-                                                <input class="form-control" type="text" name="{{'keterangan-'.$vdu->keterangan}}">
+                                                <input class="form-control" type="text" name="{{'keterangan-'.$vdu->keterangan}}" readonly>
                                             </div>
                                         </div>
                                     </div>

@@ -19,24 +19,30 @@
 <div class="container-fluid ">
     <div class="row col-md-12 col-lg-12 col-sm-12 animate__animated animate__backInLeft">
             <div class="card">
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">Form Pengembalian Alat Laboratorium {{$data['lab']}}</h4>
+                    @can('inventaris-alat-create')
+                    <a href="#" class="float-left">
+                       <h4 class="card-title"> Peminjam : {{$qrBonAlat[0]->is_pegawai?$qrBonAlat[0]->StaffData->nama:$qrBonAlat->nama}}</h4>
+                    </a>
+                    @endcan
+                </div>
                 <div class="card-body ">
-                    <h4 class="mt-0 header-title text-center" style="">Ubah Form Bon Alat Laboratorium</h4>
-                    <hr>
-
                     <form action="{{route('bonalat.kembaliUpdate',$id)}}" class="form-horizontal" id="frmPengajuanAlat" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="row d-flex justify-content-center">
                             <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
                                 <i class="ri-user-smile-line label-icon"></i><strong>Informasi Pengembali</strong>
+
                             </div>
                             <div class=" row col-12 justify-content-center " >
                                 <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="col-12 btn-group" role="group" aria-label="Basic radio toggle button group">
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai1" value="1" autocomplete="off"    >
+                                        <input type="radio" class="btn-check cp" name="kembali_is_pegawai" id="is_pegawai1" value="1" autocomplete="off" checked   >
                                         <label class="btn btn-outline-primary" for="is_pegawai1">&nbsp;&nbsp;&nbsp;&nbsp;Pegawai&nbsp;&nbsp;&nbsp;</label>
 
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai2" value="0" autocomplete="off"  >
+                                        <input type="radio" class="btn-check cp" name="kembali_is_pegawai" id="is_pegawai2" value="0" autocomplete="off"  >
                                         <label class="btn btn-outline-dark" for="is_pegawai2">Mahasiswa</label>
                                     </div>
                                 </div>
@@ -46,7 +52,7 @@
                                 <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: block;">
                                     <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                         <label for="SelectStaff" class="form-label text-right">Pilih Pegawai</label></br>
-                                        <select class="form-control" style="font-size: 15px;" name="tm_staff_id" id="SelectStaff" {{$qrBonAlat[0]->is_pegawai?"required":""}}>
+                                        <select class="form-control" style="font-size: 15px;" name="kembali_tm_staff_id" id="SelectStaff" {{$qrBonAlat[0]->is_pegawai?"required":""}}>
                                             <option></option>
                                             @foreach($data['staff'] as $v)
                                                 <option value="{{$v->id}}">{{$v->nama}}</option>
@@ -60,19 +66,19 @@
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="nim" class="form-label text-right">NIM</label></br>
-                                            <input type="text" class="form-control" name="nim" id="nim" {{$qrBonAlat[0]->is_pegawai?"required":""}}>
+                                            <input type="text" class="form-control" name="kembali_nim" id="nim" {{$qrBonAlat[0]->is_pegawai?"":"required"}}>
                                         </div>
                                     </div>
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="nama" class="form-label text-right">Nama</label></br>
-                                            <input type="text" class="form-control" name="nama" id="nama" {{$qrBonAlat[0]->is_pegawai?"required":""}}>
+                                            <input type="text" class="form-control" name="kembali_nama" id="nama" {{$qrBonAlat[0]->is_pegawai?"":"required"}}>
                                         </div>
                                     </div>
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="gol" class="form-label text-right">Golongan / Kelompok</label></br>
-                                            <input type="text" class="form-control" name="gol" id="gol" {{$qrBonAlat[0]->is_pegawai?"required":""}}>
+                                            <input type="text" class="form-control" name="kembali_gol" id="gol" {{$qrBonAlat[0]->is_pegawai?"":"required"}}>
                                         </div>
                                     </div>
                                 </div>
@@ -244,8 +250,8 @@ $("form").submit(function(event) {
 $(".cp").change(function(){
     let val = parseInt($(".cp:checked").val());
     if(val){
-        $('.mahasiswa').hide("slide", { direction: 'down' }, 1000, function() {
-            $('.pegawai').show("slide", { direction: 'down' }, 1000);
+        $('.mahasiswa').hide("slide", { direction: 'down' }, 500, function() {
+            $('.pegawai').show("slide", { direction: 'down' }, 500);
         });
       /*   $(".mahasiswa").hide();
         $(".pegawai").show(); */
@@ -255,8 +261,8 @@ $(".cp").change(function(){
         $("#gol").attr('required', false);
         console.log("Pegawai");
     }else{
-        $('.pegawai').hide("slide", { direction: 'down' }, 1000, function() {
-            $('.mahasiswa').show("slide", { direction: 'down' }, 1000);
+        $('.pegawai').hide("slide", { direction: 'down' }, 100, function() {
+            $('.mahasiswa').show("slide", { direction: 'down' }, 500);
         });
       /*   $(".pegawai").hide();
         $(".mahasiswa").show(); */
@@ -266,6 +272,11 @@ $(".cp").change(function(){
         $("#gol").attr('required', true);
         console.log("Mahasiswa");
     }
+});
+
+$("#SelectStaff").select2({
+    placeholder: "Pilih Pegawai",
+    allowClear: true
 });
 </script>
 @endsection

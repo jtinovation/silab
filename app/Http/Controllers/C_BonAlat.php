@@ -389,11 +389,20 @@ class C_BonAlat extends Controller
                 $qrDetailBonalat->update($detailInput);
             }
         }
+
+        if($request->has('kembali_is_pegawai')){
+            $updateBonAlat['kembali_is_pegawai']               = $request->kembali_is_pegawai;
+            $updateBonAlat['kembali_tm_staff_id']              = $request->kembali_tm_staff_id;
+        }else{
+            $updateBonAlat['kembali_nama']                     = $request->kembali_nama;
+            $updateBonAlat['kembali_nim']                      = $request->kembali_nim;
+            $updateBonAlat['kembali_golongan_kelompok']        = $request->kembali_gol;
+        }
         $updateBonAlat['tr_member_laboratorium_id_kembali'] = $qrlab[0]->id;
         $updateBonAlat['tanggal_kembali']                   = $request->tanggalKembali.":00";
         $updateBonAlat['status']                            = 2;
         $bonalat->update($updateBonAlat);
-
+        //return $updateBonAlat;
         return redirect(route('bonalat.index'))->with('success','Pengembalian Bon Alat Berhasil Di Simpan.');
     }
 
