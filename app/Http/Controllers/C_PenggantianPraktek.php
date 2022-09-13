@@ -126,24 +126,37 @@ class C_PenggantianPraktek extends Controller
                 2 => array("link" => "active", "label" => "Ubah Data Penggantian Praktikum"),
             );
 
-            return view('penggantianpraktek.edit',compact('data','Breadcrumb'));
+            return view('penggantianpraktek.edit',compact('data','Breadcrumb','id'));
         }
     }
 
     public function update(Request $request, $id){
         $id = Crypt::decryptString($id);
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         $request->validate([
-            'satuan'          => 'required|string|max:255',
+            'tr_matakuliah_semester_prodi_id'                => 'required|string|max:32',
+            'jadwal_asli'                                    => 'required|string|max:64',
+            'jadwal_ganti'                                   => 'required|string|max:64',
+            'acara_praktek'                                  => 'required|string|max:255',
+            'tm_staff_id'                                    => 'required|string|max:255',
         ]);
-        $input['satuan'] = $request->satuan;
-        $satuan = MSatuan::find($id);
-        $satuan->update($input);
-        return redirect(route('satuan.index'))->with('success','Data Satuan Berhasil di Ubah.');
+        $qrKaprodi = MKaprodi::where('tm_program_studi_id',$request->tm_program_studi_id)->get();
+
+        $input['tr_matakuliah_semester_prodi_id'] = $request->tr_matakuliah_semester_prodi_id;
+        $input['jadwal_asli']                                    = $request->jadwal_asli.":00";
+        $input['jadwal_ganti']                                   = $request->jadwal_ganti.":00";
+        $input['acara_praktek']                                  = $request->acara_praktek;
+        $input['tm_staff_id']                                    = $request->tm_staff_id;
+        $input['tr_member_laboratorium_id']                      = $qrlab[0]->id;
+        $input['tr_kaprodi_id']                                  = $qrKaprodi[0]->id;
+        MPenggantianPraktek::find($id)->update($input);
+        return redirect(route('penggantianPraktek.index'))->with('success','Data Penggantian Praktikum Berhasil di Simpan.');
     }
 
     public function destroy( Request $request){
-        MSatuan::find(Crypt::decryptString($request->id))->delete();
-        return redirect()->route('satuan.index')->with('success','satuan deleted successfully');
+        MPenggantianPraktek::find(Crypt::decryptString($request->id))->delete();
+        return redirect()->route('penggantianPraktek.index')->with('success','satuan deleted Data Penggantian Praktikum Berhasil di Hapus');
     }
 
     public function GantiJadwal(Request $request){

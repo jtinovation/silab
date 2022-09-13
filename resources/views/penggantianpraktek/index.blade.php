@@ -63,7 +63,7 @@
     var penggantianPraktekDelete    = "{{url('penggantianPraktekDelete')}}";
     var token = "{{ csrf_token() }}";
 
-    $('#tablePenggantianPraktek').DataTable({
+    var tablePenggantian = $('#tablePenggantianPraktek').DataTable({
         responsive: true,
         processing: true,
         serverSide: true,
@@ -112,6 +112,7 @@
     $("body").on("click", ".delete", function() {
         event.preventDefault();
         var id = $(this).attr("data-id");
+        let href = $(this).attr("data-href");
         swal.fire({
             title: 'Yakin, Hapus Data?',
             text: "Data Penggantian Praktikum yang di hapus tidak bisa dikembalikan",
@@ -125,7 +126,7 @@
                 var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
                     type: "POST",
-                    url: bonAlatDelete,
+                    url: href,
                     data: { id: id, _token: token },
                     dataType: "html",
                     success: function(data) {
@@ -134,7 +135,8 @@
                             text: "",
                             icon: "success"
                         }).then(function() {
-                            location.reload();
+                            //location.reload();
+                            tablePenggantian.ajax.reload();
                         });
                     },
                     error: function(xhr, ajaxOptions, thrownError) {

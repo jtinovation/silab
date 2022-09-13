@@ -23,8 +23,9 @@
                     <h4 class="mt-0 header-title text-center" style="">Form Penggantian Jadwal Praktek</h4>
                     <hr>
 
-                    <form action="{{route('penggantianPraktek.store')}}" class="form-horizontal" id="frmGanti" method="post" enctype="multipart/form-data">
+                    <form action="{{route('penggantianPraktek.update',$id)}}" class="form-horizontal" id="frmGanti" method="post" enctype="multipart/form-data">
                         @csrf
+                        @method('PUT')
                         <div class="row d-flex justify-content-center">
                             <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
                                 <i class="ri-user-smile-line label-icon"></i><strong>Informasi Praktek</strong>
@@ -76,13 +77,16 @@
                                     </select>
                                 </div>
                             </div>
+                           {{--  @foreach($data['dosen'] as $v)
+                            {{$v->id}} {{$v->id==$data['penggantianpraktek']->tm_staff_id}} {{$v->nama}}
+                        @endforeach --}}
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 mt-2">
                                 <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                     <label for="selectStaff" class="form-label text-right">Pilih Dosen</label></br>
                                     <select class="form-control" style="font-size: 15px;" name="tm_staff_id" id="selectStaff" required>
                                         <option></option>
                                         @foreach($data['dosen'] as $v)
-                                        <option value="{{$v->id}}" {{$v->id==$data['penggantianpraktek']->tm_staff_id}}>{{$v->nama}}</option>
+                                        <option value="{{$v->id}}" {{$v->id==$data['penggantianpraktek']->tm_staff_id?"selected":""}}>{{$v->nama}}</option>
                                     @endforeach
                                     </select>
                                 </div>
@@ -90,13 +94,13 @@
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 mt-2">
                                 <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                     <label for="jadwal_asli" class="form-label text-right">Jadwal Asli</label></br>
-                                    <input type="text" class="form-control" name="jadwal_asli" id="jadwal_asli" value="{{$data['penggantianpraktek']->JadwalAsli}}" required>
+                                    <input type="text" class="form-control" name="jadwal_asli" id="jadwal_asli" value="{{$data['penggantianpraktek']->jadwal_asli}}" required>
                                 </div>
                             </div>
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 mt-2">
                                 <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                     <label for="jadwal_ganti" class="form-label text-right">Jadwal Pengganti</label></br>
-                                    <input type="text" class="form-control" name="jadwal_ganti" id="jadwal_ganti" value="{{$data['penggantianpraktek']->JadwalGanti}}" required>
+                                    <input type="text" class="form-control" name="jadwal_ganti" id="jadwal_ganti" value="{{$data['penggantianpraktek']->jadwal_ganti}}" required>
                                 </div>
                             </div>
                             <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 mt-2">
@@ -191,6 +195,33 @@
         });
     });
 
+    $('#SelectProdi').change(function(){
+        $(".core-ans").empty();
+        let id=$('#SelectSemester option:selected').val();
+        let prodi= $(this).val();
+        console.log(prodi+" "+id);
+        $.ajax({
+            url :  "{{route('getMKGantiPraktek')}}",
+            method : "GET",
+            data : {id: id, prodi: prodi},
+            async : true,
+            dataType: 'json',
+            success: function(response){
+                $('#SelectMK').html('');
+                $('#SelectMK').append('<option></option>');
+                if ($.trim(response) == '' ) {
+                    console.log("no data found");
+                    //$("#txtMatakuliahId").prop('selectedIndex',-1);
+                }else{
+                    $.each(response,function(key, value){
+                            $("#SelectMK").append(
+                                $('<option></option>').attr('value', value.id).text(value.mk)
+                            );
+                        });
+                }
+            }
+        });
+    });
     $('#SelectSemester').change(function(){
         $(".core-ans").empty();
         let id=$(this).val();
@@ -203,7 +234,8 @@
             async : true,
             dataType: 'json',
             success: function(response){
-                //$('#txtMatakuliahId').html('');
+                $('#SelectMK').html('');
+                $('#SelectMK').append('<option></option>');
                 if ($.trim(response) == '' ) {
                     console.log("no data found");
                     //$("#txtMatakuliahId").prop('selectedIndex',-1);
