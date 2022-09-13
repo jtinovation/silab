@@ -196,6 +196,7 @@
                 @endcan
 
                 @can('inventaris-alat-list')
+                <li class="nav-item">
                     <a class="nav-link menu-link{{ $data['npage'] == 83 ? ' active' : '' }}" href="{{ route('invAlat.index') }}">
                         <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Inventaris Alat Laboratorium</span>
                     </a>
@@ -203,6 +204,7 @@
                 @endcan
 
                 @can('kesiapan-praktek-list')
+                <li class="nav-item">
 					<a class="nav-link menu-link{{ $data['npage'] == 85 ? ' active' : '' }}" href="{{ route('kestek.index') }}">
 						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Kesiapan Bahan Praktikum</span>
 					</a>
@@ -210,10 +212,19 @@
                 @endcan
 
                 @can('bonalat-list')
+                <li class="nav-item">
 					<a class="nav-link menu-link{{ $data['npage'] == 84 ? ' active' : '' }}" href="{{ route('bonalat.index') }}">
 						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Bon Alat Praktikum</span>
 					</a>
 				</li>
+                @endcan
+
+                @can('penggantian-praktek-list')
+                <li class="nav-item">
+                    <a class="nav-link menu-link{{ $data['npage'] == 82 ? ' active' : '' }}" href="{{ route('penggantianPraktek.index') }}">
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Penggantian Jadwal Praktikum</span>
+                    </a>
+                </li>
                 @endcan
 
 

@@ -92,7 +92,7 @@ class C_BonAlat extends Controller
         if(count($qrlab)){
             $date = Carbon::now();
             $input['kode']                         = Str::random(8).$date->format('YmdHis');
-            if($request->has('is_pegawai')){
+            if($request->is_pegawai==1){
                 $input['is_pegawai']               = $request->is_pegawai;
                 $input['tm_staff_id']              = $request->tm_staff_id;
             }else{
@@ -105,6 +105,7 @@ class C_BonAlat extends Controller
             $input['tr_member_laboratorium_id_pinjam']  = $qrlab[0]->id;
             $input['status']                            = 1;
             $bonalat = MBonalat::create($input);
+            //return $input;
 
             foreach($request->barang as $key => $value){
                 $arrV = explode("#", $value);
@@ -133,8 +134,7 @@ class C_BonAlat extends Controller
                 $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
                 $stokBarang = $tr_barang->qty;
                 $updateStokBarang['qty'] = $stokBarang - $stokKeluar;
-                $tr_barang->update($updateStokBarang);
-
+               $tr_barang->update($updateStokBarang);
             }
             return redirect(route('bonalat.index'))->with('success','Bon Alat Berhasil di Simpan.');
         }else{
@@ -251,8 +251,8 @@ class C_BonAlat extends Controller
                     'staff'     => M_Staff::where('is_aktif',1)->orderBy('nama','ASC')->get(),];
 
                 $Breadcrumb = array(
-                    1 => array("link" => url("kestek"), "label" => "Daftar Data Kesiapan Praktek"),
-                    2 => array("link" => "active", "label" => "Form Ubah Data Kesiapan Praktek"),
+                    1 => array("link" => url("bonalat"), "label" => "Daftar Bon Alat"),
+                    2 => array("link" => "active", "label" => "Form Pengembalian Bon Alat"),
                 );
                 return view('bonalat.kembali', compact('data', 'Breadcrumb','qrBonAlat','qrDetailBonAlat','staff_nm','id'));
             }else{
@@ -365,11 +365,12 @@ class C_BonAlat extends Controller
                     $status = 0;
                 }
                 $ks['qty'] = $newJml;
-                $ks['stok'] = $qrDetailBonalat->kartuStokData->stok + $newJml;
+                //$ks['stok'] = $qrDetailBonalat->kartuStokData->stok + $newJml;
                 $qrKartuStok = MKartuStok::find($qrDetailBonalat->tr_kartu_stok_id);
                 $qrBarangLab = MBarangLab::find($qrKartuStok->tr_barang_laboratorium_id);
                     $qrBarang    = MBarang::find($qrBarangLab->tm_barang_id);
                         $updateQrBarang['qty']= $qrBarang->qty + $newJml;
+                        $ks['stok'] = $qrBarang->qty + $newJml;
                         $qrBarang->update($updateQrBarang);
                         //echo "</br>Update TM Barang "; var_dump($updateQrBarang);
 
@@ -379,7 +380,7 @@ class C_BonAlat extends Controller
                 $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
                 $ks['is_stok_in'] = 1;
                 $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
-                $ks['keterangan'] = $idDecrypt."#bon alat - kembali";
+                $ks['keterangan'] = $idDecrypt."#".$vdu."#bon alat - kembali";
                 $kartustok = MKartuStok::create($ks);
 
                 $detailInput['jumlah_kembali']          = $newJml ;
@@ -390,7 +391,7 @@ class C_BonAlat extends Controller
             }
         }
 
-        if($request->has('kembali_is_pegawai')){
+        if($request->kembali_is_pegawai==1){
             $updateBonAlat['kembali_is_pegawai']               = $request->kembali_is_pegawai;
             $updateBonAlat['kembali_tm_staff_id']              = $request->kembali_tm_staff_id;
         }else{
@@ -549,7 +550,7 @@ class C_BonAlat extends Controller
                 $kembali = $record->Kembali;
                 $button = "";
                 $button = $button."<a href='#' data-href='".route('bonalat.show',$idEncrypt)."' class='btn btn-success btn-outline btn-circle btn-md m-r-5 btnDetailClass'>
-                <i class=' ri-install-line'></i></a>";
+                <i class='ri-folders-fill'></i></a>";
             }
 
             $data_arr[] = array(

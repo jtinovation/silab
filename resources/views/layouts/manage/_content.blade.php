@@ -13,7 +13,7 @@
 
 						<div class="page-title-right">
 							<ol class="breadcrumb m-0">
-								<li class="breadcrumb-item"><a href="{{ route('manage') }}">Beranda</a></li>
+								<li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Beranda</a></li>
 								{{-- @if ($data['npage'] != 0)
 								<li class="breadcrumb-item active">{{ $data['subtitle'] }}</li>
 								@endif --}}

@@ -14,11 +14,11 @@
 
         <div class="card tableElement wow fadeInLeft" id="tableCard" style="display: @if ($errors->any()) none @else block @endif">
             <div class="card-header align-items-center d-flex">
-                <h4 class="card-title mb-0 flex-grow-1">Tabel Data Bon Alat Laboratorium</h4>
-                @can('bonalat-create')
-                <a href="{{route('bonalat.create')}}" class="float-left">
-                    <button id="BtnAddBonAlat" class="btn btn-primary waves-effect waves-light" type="button">
-                        <i data-feather="plus-circle"></i> Buat Permintaan Bon Alat
+                <h4 class="card-title mb-0 flex-grow-1">Tabel Penggantian Praktikum</h4>
+                @can('penggantian-praktek-create')
+                <a href="{{route('penggantianPraktek.create')}}" class="float-left">
+                    <button id="BtnAddGanti" class="btn btn-primary waves-effect waves-light" type="button">
+                        <i data-feather="plus-circle"></i> Buat Penggantian Praktikum
                     </button>
                 </a>
                 @endcan
@@ -27,14 +27,14 @@
             <div class="card-body">
                 <div class="live-preview">
                     <div class="table-responsive">
-                        <table id="tableBonAlat" class="table align-middle table-nowrap mb-0" width="100%">
+                        <table id="tablePenggantianPraktek" class="table align-middle table-nowrap mb-0" width="100%">
                             <thead class="table-light">
                                 <tr>
                                     <th>Nomor</th>
-                                    <th>Nama</th>
-                                    <th>Tanggal Pinjam</th>
-                                    <th>Tanggal Kembali</th>
-                                    <th>Status</th>
+                                    <th>Jadwal Asli</th>
+                                    <th>Jadwal Ganti</th>
+                                    <th>Matakuliah</th>
+                                    <th>Dosen</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -58,26 +58,27 @@
 <script src="{{ asset('assets/libs/select2/select2.min.js') }}"></script>
 
 <script type="text/javascript">
-    var getBonAlat      = "{{route('getBonAlat')}}";
-    var BonAlatCreate   = "{{route('bonalat.create')}}";
-    var bonAlatDelete    = "{{url('bonAlatDelete')}}";
+    var getPenggantianPraktek      = "{{route('getPenggantianPraktek')}}";
+    var penggantianPraktekCreate   = "{{route('penggantianPraktek.create')}}";
+    var penggantianPraktekDelete    = "{{url('penggantianPraktekDelete')}}";
     var token = "{{ csrf_token() }}";
 
-    $('#tableBonAlat').DataTable({
+    $('#tablePenggantianPraktek').DataTable({
         responsive: true,
         processing: true,
         serverSide: true,
         pageLength: 16,
-        ajax: getBonAlat,
+        ajax: getPenggantianPraktek,
         columns: [
-            { data: 'id' },
-            { data: 'nm' },
-            { data: 'tglpinjam' },
-            { data: 'tglkembali' },
-            { data: 'status' },
-            { data: 'action' },
+            { data: 'id'},
+            { data: 'jadwal_asli'},
+            { data: 'jadwal_ganti'},
+            { data: 'matakuliah'},
+            { data: 'dosen'},
+            { data: 'action'},
         ]
     });
+
     $("body").on("click",".btnEditClass",function(){
         event.preventDefault();
         let pageEdit =$(this).attr("data-href");
@@ -102,19 +103,18 @@
         });
     });
 
-    $("body").on("click",".BtnAddBonAlat",function(){
+    $("body").on("click",".BtnAddGanti",function(){
         event.preventDefault();
-        let pageEdit =$(this).attr("data-href");
         $('.tableElement').hide("slide",{direction:'left'},1000, function(){
-            window.location.href = BonAlatCreate;
+            window.location.href = penggantianPraktekCreate;
         });
     });
     $("body").on("click", ".delete", function() {
         event.preventDefault();
         var id = $(this).attr("data-id");
         swal.fire({
-            title: 'Yakin, Hapus Data Bon Alat?',
-            text: "Data yang di hapus tidak bisa dikembalikan",
+            title: 'Yakin, Hapus Data?',
+            text: "Data Penggantian Praktikum yang di hapus tidak bisa dikembalikan",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonClass: 'btn btn-success',

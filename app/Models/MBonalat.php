@@ -62,21 +62,17 @@ class MBonalat extends Model
 
     public function getTanggalKembaliAttribute($value)
     {
-        return Carbon::parse($value)->format('d-m-Y H:i:s');
+        return Carbon::parse($value)->format('d/m/Y H:i:s');
     }
 
 
     public function getKembaliAttribute(){
-    //return "{$this->kode}";
-    return Carbon::parse("{$this->tanggal_kembali}")->format('d/m/Y H:i:s');
+        $dateKembali = Carbon::parse("{$this->tanggal_kembali}")->format('d/m/Y H:i:s');
+        return Carbon::parse("{$dateKembali}")->format('d F Y H:i:s');
+    }
 
-       /*  //return Carbon::createFromFormat('Y-m-d', $this->end_date)->format('d/m/Y');
-        //$hasil = $this->start_date;
-        $start = $this->start_date;
-        $myDate = '2022-03-14';
-        //$date = Carbon::createFromFormat('Y-m-d', $start);
-
-        $monthName = Carbon::parse($myDate)->format('d/m/Y');
-        return $monthName; */
+    public function getPinjamAttribute(){
+        $datePinjam = Carbon::parse("{$this->tanggal_pinjam}")->format('d/m/Y H:i:s');
+        return Carbon::parse("{$datePinjam}")->format('d F Y H:i:s');
     }
 }
