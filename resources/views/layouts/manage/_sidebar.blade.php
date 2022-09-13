@@ -227,6 +227,14 @@
                 </li>
                 @endcan
 
+                @can('kehilangan-list')
+                <li class="nav-item">
+                    <a class="nav-link menu-link{{ $data['npage'] == 81 ? ' active' : '' }}" href="{{ route('kehilangan.index') }}">
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Berita Acara Kerusakan / Hilang</span>
+                    </a>
+                </li>
+                @endcan
+
 
 
 

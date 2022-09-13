@@ -11,6 +11,7 @@ use App\Http\Controllers\C_Welcome;
 use App\Http\Controllers\C_Staff;
 use App\Http\Controllers\C_Role;
 use App\Http\Controllers\C_Jurusan;
+use App\Http\Controllers\C_Kehilangan;
 use App\Http\Controllers\C_KesiapanPraktek;
 use App\Http\Controllers\C_Lab;
 use App\Http\Controllers\C_Matakuliah;
@@ -153,10 +154,11 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('penggantianPraktek',        C_PenggantianPraktek::class);
     Route::get('getPenggantianPraktek',         [C_PenggantianPraktek::class, 'gantiJadwal'])->name('getPenggantianPraktek');
-    //Route::get('getMKGantiPraktek',             [C_PenggantianPraktek::class, 'getMKGantiPraktek'])->name('getMKGantiPraktek');
     Route::post('penggantianPraktek.Del',       [C_PenggantianPraktek::class, 'destroy'])->name('penggantianPraktek.Del');
     Route::get('getMKGantiPraktek',             [C_PenggantianPraktek::class,'GetMatakuliah'])->name('getMKGantiPraktek');
 
+    Route::resource('kehilangan',                C_Kehilangan::class);
+    Route::get('getKehilangan',                 [C_Kehilangan::class, 'getKehilangan'])->name('getKehilangan');
 
 });
 
