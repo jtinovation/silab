@@ -89,51 +89,51 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('getSatuan',                     [C_Satuan::class,'getSatuan'])->name('getSatuan');
     Route::post('satuanDelete',                 [C_Satuan::class,'destroy'])->name('satuanDelete');
 
-    Route::resource('barang',                    C_Barang::class);
-    Route::get('getBarang',                     [C_Barang::class,'getBarang'])->name('getBarang');
-    Route::post('barangDelete',                 [C_Barang::class,'destroy'])->name('BarangDelete');
-    Route::get('getSatuan/{id}',                [C_Barang::class,'getSatuan']);
+    Route::resource('barang',                                C_Barang::class);
+    Route::get('getBarang',                                 [C_Barang::class,'getBarang'])->name('getBarang');
+    Route::post('barangDelete',                             [C_Barang::class,'destroy'])->name('BarangDelete');
+    Route::get('getSatuan/{id}',                            [C_Barang::class,'getSatuan']);
 
-    Route::resource('satuanDetail',              C_SatuanDetail::class);
-    Route::post('SatuanDetailDelete',           [C_SatuanDetail::class,'destroy'])->name('SatuanDetailDelete');
+    Route::resource('satuanDetail',                          C_SatuanDetail::class);
+    Route::post('SatuanDetailDelete',                       [C_SatuanDetail::class,'destroy'])->name('SatuanDetailDelete');
     /*Route::post('SatuanDetailDelete',       [C_Barang::class,'SatuanDetailDelete'])->name('SatuanDetailDelete');
     Route::put('SatuanDetailUpdate',        [C_Barang::class,'SatuanDetailUpdate'])->name('SatuanDetailUpdate'); */
 
-    Route::resource('pengajuanalat',             C_PengajuanAlatBahan::class);
-    Route::get('createPengajuan/{id}',          [C_PengajuanAlatBahan::class, 'create']);
-    Route::get('barangSelect',                  [C_PengajuanAlatBahan::class, 'barangSelect'])->name('barangSelect');
-    Route::get('satuanSelect',                  [C_PengajuanAlatBahan::class, 'satuanSelect'])->name('satuanSelect');
+    Route::resource('pengajuanalat',                         C_PengajuanAlatBahan::class);
+    Route::get('createPengajuan/{id}',                      [C_PengajuanAlatBahan::class, 'create']);
+    Route::get('barangSelect',                              [C_PengajuanAlatBahan::class, 'barangSelect'])->name('barangSelect');
+    Route::get('satuanSelect',                              [C_PengajuanAlatBahan::class, 'satuanSelect'])->name('satuanSelect');
 
-    Route::resource('laboratorium',              C_Lab::class);
-    Route::get('getLab',                        [C_Lab::class, 'getLab'])->name('getLab');
-    Route::post('labDelete',                    [C_Lab::class,'destroy'])->name('labDelete');
+    Route::resource('laboratorium',                          C_Lab::class);
+    Route::get('getLab',                                    [C_Lab::class, 'getLab'])->name('getLab');
+    Route::post('labDelete',                                [C_Lab::class,'destroy'])->name('labDelete');
 
-    Route::resource('memberLab',                 C_MemberLab::class);
-    Route::get('getMemberLab/{id}',             [C_MemberLab::class, 'getMemberLab']);
-    Route::post('memberDelete',                 [C_MemberLab::class,'destroy'])->name('memberDelete');
-    Route::get('memberLabSelect',               [C_MemberLab::class, 'memberLabSelect'])->name('memberLabSelect');
+    Route::resource('memberLab',                             C_MemberLab::class);
+    Route::get('getMemberLab/{id}',                         [C_MemberLab::class, 'getMemberLab']);
+    Route::post('memberDelete',                             [C_MemberLab::class,'destroy'])->name('memberDelete');
+    Route::get('memberLabSelect',                           [C_MemberLab::class, 'memberLabSelect'])->name('memberLabSelect');
 
-    Route::resource('reviewPengajuan',           C_ReviewPengajuanAlat::class);
-    Route::get('getReviewUsulan/{id}',          [C_ReviewPengajuanAlat::class,'getReviewUsulan'])->name('getReviewUsulan');
-    Route::get('reviewPengajuanCetak/{id}',     [C_ReviewPengajuanAlat::class,'getReviewUsulanCetak'])->name('reviewPengajuan.cetak');
-    Route::get('getReviewUsulanMK/{id}',        [C_ReviewPengajuanAlat::class,'getReviewUsulanMK'])->name('getReviewUsulanMK');
-    Route::post('UsulanDetailDelete',           [C_ReviewPengajuanAlat::class,'destroy'])->name('UsulanDetailDelete');
-    Route::get('CetakOneWeek/{id}',             [C_ReviewPengajuanAlat::class,'CetakOneWeek'])->name('CetakOneWeek');
-    Route::post('CetakPengajuan',               [C_ReviewPengajuanAlat::class,'CetakPengajuan'])->name('CetakPengajuan');
-    Route::get('statusPengajuan',               [C_ReviewPengajuanAlat::class,'statusPengajuan'])->name('statusPengajuan');
+    Route::resource('reviewPengajuan',                       C_ReviewPengajuanAlat::class);
+    Route::get('getReviewUsulan/{id}',                      [C_ReviewPengajuanAlat::class,'getReviewUsulan'])->name('getReviewUsulan');
+    Route::get('reviewPengajuanCetak/{id}',                 [C_ReviewPengajuanAlat::class,'getReviewUsulanCetak'])->name('reviewPengajuan.cetak');
+    Route::get('getReviewUsulanMK/{id}',                    [C_ReviewPengajuanAlat::class,'getReviewUsulanMK'])->name('getReviewUsulanMK');
+    Route::post('UsulanDetailDelete',                       [C_ReviewPengajuanAlat::class,'destroy'])->name('UsulanDetailDelete');
+    Route::get('CetakOneWeek/{id}',                         [C_ReviewPengajuanAlat::class,'CetakOneWeek'])->name('CetakOneWeek');
+    Route::post('CetakPengajuan',                           [C_ReviewPengajuanAlat::class,'CetakPengajuan'])->name('CetakPengajuan');
+    Route::get('statusPengajuan',                           [C_ReviewPengajuanAlat::class,'statusPengajuan'])->name('statusPengajuan');
 
-    Route::resource('deljulat',                  C_DeliverPengajuanAlatBahan::class);
+    Route::resource('deljulat',                              C_DeliverPengajuanAlatBahan::class);
 
-    Route::resource('pengadaanStokin',           C_PengadaanStokin::class);
-    Route::resource('invBahan',                  C_InventarisBahan::class);
-    Route::get('GetInvBahan',                   [C_InventarisBahan::class,'GetInvBahan'])->name('GetInvBahan');
-    Route::get('getInvent/{prodi}',             [C_InventarisBahan::class, 'getInvent']);
+    Route::resource('pengadaanStokin',                       C_PengadaanStokin::class);
+    Route::resource('invBahan',                              C_InventarisBahan::class);
+    Route::get('GetInvBahan',                               [C_InventarisBahan::class,'GetInvBahan'])->name('GetInvBahan');
+    Route::get('getInvent/{prodi}',                         [C_InventarisBahan::class, 'getInvent']);
 
-    Route::resource('kestek',                    C_KesiapanPraktek::class);
-    Route::get('getKestek',                     [C_KesiapanPraktek::class, 'getKestek'])->name('getKestek');
-    Route::get('barangLabSelect',               [C_KesiapanPraktek::class, 'barangLabSelect'])->name('barangLabSelect');
-    Route::post('kestekDetailDelete',           [C_KesiapanPraktek::class, 'destroy'])->name('kestekDetailDelete');
-    Route::post('kestekDelete',                 [C_KesiapanPraktek::class, 'delete'])->name('kestekDelete');
+    Route::resource('kestek',                                C_KesiapanPraktek::class);
+    Route::get('getKestek',                                 [C_KesiapanPraktek::class, 'getKestek'])->name('getKestek');
+    Route::get('barangLabSelect',                           [C_KesiapanPraktek::class, 'barangLabSelect'])->name('barangLabSelect');
+    Route::post('kestekDetailDelete',                       [C_KesiapanPraktek::class, 'destroy'])->name('kestekDetailDelete');
+    Route::post('kestekDelete',                             [C_KesiapanPraktek::class, 'delete'])->name('kestekDelete');
 
     Route::resource('invAlat',                               C_InvetarisAlat::class);
     Route::get('getInvAlat',                                [C_InvetarisAlat::class,'getInvAlat'])->name('getInvAlat');
@@ -162,6 +162,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('kehilanganDetailDelete',                   [C_Kehilangan::class, 'delete'])->name('kehilanganDetailDelete');
     Route::get('kehilangan/{kehilangan}/kembali',           [C_Kehilangan::class, 'kembali'])->name('kehilangan.ganti');
     Route::put('kehilanganKembali/{kehilangan}',            [C_Kehilangan::class, 'kembaliUpdate'])->name('kehilangan.kembaliUpdate');
+
+    Route::resource('serma',                                 C_Serma::class);
+    Route::get('getSerma',                                  [C_Serma::class, 'getSerma'])->name('getSerma');
 
 });
 
