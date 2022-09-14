@@ -7,6 +7,7 @@ use App\Models\MBarang;
 use App\Models\MBarangLab;
 use App\Models\MBonalat;
 use App\Models\MDetailBonAlat;
+use App\Models\MDetailHilang;
 use App\Models\MHilang;
 use App\Models\MKartuStok;
 use App\Models\MMemberLab;
@@ -38,7 +39,7 @@ class C_Kehilangan extends Controller
             $jurusan = $lab_id[0]->LaboratoriumData->JurusanData->jurusan;
             $data = [
                 'title' => "Sistem Informasi Laboratorium",
-                'subtitle'  => "Berita Acara Kehilangan/Rusak",
+                'subtitle'  => "Berita Acara Kehilangan / Rusak",
                 'npage'     => 81,
                 'lab_id'    => $tm_lab_id,
                 'lab'       => $lab,
@@ -46,7 +47,7 @@ class C_Kehilangan extends Controller
             ];
 
             $Breadcrumb = array(
-            1 => array("link" => "active", "label" => "Table Berita Acara Kehilangan/Rusak"),
+            1 => array("link" => "active", "label" => "Tabel"),
         );
         return view('kehilangan.index',compact('data','Breadcrumb','tm_lab_id'));
         }else{
@@ -65,7 +66,7 @@ class C_Kehilangan extends Controller
             $jurusan = $lab_id[0]->LaboratoriumData->JurusanData->jurusan;
             $data = [
                 'title' => "Sistem Informasi Laboratorium",
-                'subtitle'  => "Table Berita Acara Kehilangan/Rusak",
+                'subtitle'  => "Berita Acara Kehilangan / Rusak",
                 'npage'     => 81,
                 'lab_id'    => $tm_lab_id,
                 'lab'       => $lab,
@@ -75,7 +76,7 @@ class C_Kehilangan extends Controller
                 'staff'     => M_Staff::where('is_aktif',1)->orderBy('nama','ASC')->get(),
             ];
             $Breadcrumb = array(
-                1 => array("link" => url("bonalat"), "label" => "Table Berita Acara Kehilangan/Rusak"),
+                1 => array("link" => url("bonalat"), "label" => "Tabel"),
                 2 => array("link" => "active", "label" => "Form Tambah "),
             );
 
@@ -93,51 +94,24 @@ class C_Kehilangan extends Controller
         if(count($qrlab)){
             $date = Carbon::now();
             $input['kode']                         = Str::random(8).$date->format('YmdHis');
-            if($request->is_pegawai==1){
-                $input['is_pegawai']               = $request->is_pegawai;
-                $input['tm_staff_id']              = $request->tm_staff_id;
-            }else{
-                $input['nama']                     = $request->nama;
-                $input['nim']                      = $request->nim;
-                $input['golongan_kelompok']        = $request->gol;
-            }
-            $input['tm_laboratorium_id']                = $lab_id;
-            $input['tanggal_pinjam']                    = $request->tanggalPinjam.":00";
-            $input['tr_member_laboratorium_id_pinjam']  = $qrlab[0]->id;
-            $input['status']                            = 1;
-            $bonalat = MBonalat::create($input);
-            //return $input;
+            $input['nama']                     = $request->nama;
+            $input['nim']                      = $request->nim;
+            $input['golongan_kelompok']        = $request->golongan_kelompok;
+            $input['tanggal_sanggup']          = $request->tanggal_sanggup;
+            $input['tr_member_laboratorium_id']  = $qrlab[0]->id;
+            $input['status']  = 0;
+            $hilang_rusak = MHilang::create($input);
 
             foreach($request->barang as $key => $value){
                 $arrV = explode("#", $value);
                 $tr_barang_laboratorium_id = $arrV[0];
-                $stokKeluar = $request->jml[$key];
-
-                $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
-                $stokLab = $tr_barang_laboratorium->stok;
-                $updateStokLab['stok'] = $stokLab - $stokKeluar;
-                $tr_barang_laboratorium->update($updateStokLab);
-
-                $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                $ks['is_stok_in'] = 0;
-                $ks['qty'] = $stokKeluar;
-                $ks['stok'] = $stokLab - $stokKeluar;
-                $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
-                $kartusStok = MKartuStok::create($ks);
 
                 $detailInput['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                $detailInput['tr_bon_alat_id'] = $bonalat->id;
-                $detailInput['jumlah'] = $request->jml[$key];
-                $detailInput['keterangan'] = $request->keterangan[$key];
-                $detailInput['tr_kartu_stok_id'] = $kartusStok->id;
-                $DetailBonAlat = MDetailBonAlat::create($detailInput);
-
-                $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
-                $stokBarang = $tr_barang->qty;
-                $updateStokBarang['qty'] = $stokBarang - $stokKeluar;
-               $tr_barang->update($updateStokBarang);
+                $detailInput['tr_hilang_rusak_id'] = $hilang_rusak->id;
+                $detailInput['jumlah_hilang_rusak'] = $request->jml[$key];
+                $DetailBonAlat = MDetailHilang::create($detailInput);
             }
-            return redirect(route('bonalat.index'))->with('success','Bon Alat Berhasil di Simpan.');
+            return redirect(route('kehilangan.index'))->with('success','Berita Acara Kehilangan / Rusak Berhasil di Simpan.');
         }else{
             return abort(403, 'Unauthorized action.');
         }
@@ -194,27 +168,27 @@ class C_Kehilangan extends Controller
             $lab = $qrlab[0]->LaboratoriumData->laboratorium;
             $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
             $idDecrypt = Crypt::decryptString($id);
-            $qrBonAlat = MBonalat::where('id',$idDecrypt)->get();
-            if(count($qrBonAlat)){
-                $qrDetailBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$qrBonAlat[0]->id)->get();
+            $qrHilang = MHilang::find($idDecrypt);
+            if(!empty($qrHilang)){
+                $qrDetailHilang = MDetailHilang::where('tr_hilang_rusak_id',$qrHilang->id)->get();
 
                 $data = [
-                    'title' => "Sistem Informasi Laboratorium",
-                    'subtitle'  => "Bon Alat Laboratorium",
-                    'npage'     => 84,
+                    'title'     => "Sistem Informasi Laboratorium",
+                    'subtitle'  => "Berita Acara Kehilangan / Rusak",
+                    'npage'     => 81,
                     'lab_id'    => $tm_lab_id,
                     'lab'       => $lab,
                     'jurusan'   => $jurusan,
-                    //'memberlab' => MMemberLab::where([['tm_laboratorium_id',$tm_lab_id],['is_aktif',1]])->get(),
                     'memberlab' => $qrlab[0]->staffData->nama,
-                    'barang' => MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q){$q->select('nama_barang');})->get(),
-                    'staff'     => M_Staff::where('is_aktif',1)->orderBy('nama','ASC')->get(),];
+                    'barang'    => MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q){$q->select('nama_barang');})->get(),
+                    'staff'     => M_Staff::where('is_aktif',1)->orderBy('nama','ASC')->get(),
+                ];
 
                 $Breadcrumb = array(
-                    1 => array("link" => url("kestek"), "label" => "Daftar Data Kesiapan Praktek"),
-                    2 => array("link" => "active", "label" => "Form Ubah Data Kesiapan Praktek"),
+                    1 => array("link" => url("kehilangan"), "label" => "Tabel"),
+                    2 => array("link" => "active", "label" => "Form Ubah"),
                 );
-                return view('bonalat.edit', compact('data', 'Breadcrumb','qrBonAlat','qrDetailBonAlat'));
+                return view('kehilangan.edit', compact('data', 'Breadcrumb','qrHilang','qrDetailHilang','id'));
             }else{
                 return abort(403, 'Unauthorized action.');
             }
@@ -223,10 +197,8 @@ class C_Kehilangan extends Controller
         }
     }
 
-    public function kembali($id)
-    {
+    public function kembali($id){
         $staff_id = Auth::user()->tm_staff_id;
-        $staff_nm = Auth::user()->staffData->nama;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         if(count($qrlab)){
             $lab_id = $qrlab[0]->tm_laboratorium_id;
@@ -234,28 +206,27 @@ class C_Kehilangan extends Controller
             $lab = $qrlab[0]->LaboratoriumData->laboratorium;
             $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
             $idDecrypt = Crypt::decryptString($id);
-            $qrBonAlat = MBonalat::where('id',$idDecrypt)->get();
-            //dd($qrBonAlat);
-            if(count($qrBonAlat)){
-                $qrDetailBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$qrBonAlat[0]->id)->get();
+            $qrHilang = MHilang::find($idDecrypt);
+            if(!empty($qrHilang)){
+                $qrDetailHilang = MDetailHilang::where('tr_hilang_rusak_id',$qrHilang->id)->get();
 
                 $data = [
-                    'title' => "Sistem Informasi Laboratorium",
-                    'subtitle'  => "Bon Alat Laboratorium",
-                    'npage'     => 84,
+                    'title'     => "Sistem Informasi Laboratorium",
+                    'subtitle'  => "Berita Acara Kehilangan / Rusak",
+                    'npage'     => 81,
                     'lab_id'    => $tm_lab_id,
                     'lab'       => $lab,
                     'jurusan'   => $jurusan,
-                    //'memberlab' => MMemberLab::where([['tm_laboratorium_id',$tm_lab_id],['is_aktif',1]])->get(),
                     'memberlab' => $qrlab[0]->staffData->nama,
-                    'barang' => MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q){$q->select('nama_barang');})->get(),
-                    'staff'     => M_Staff::where('is_aktif',1)->orderBy('nama','ASC')->get(),];
+                    'barang'    => MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q){$q->select('nama_barang');})->get(),
+                    'staff'     => M_Staff::where('is_aktif',1)->orderBy('nama','ASC')->get(),
+                ];
 
                 $Breadcrumb = array(
-                    1 => array("link" => url("bonalat"), "label" => "Daftar Bon Alat"),
-                    2 => array("link" => "active", "label" => "Form Pengembalian Bon Alat"),
+                    1 => array("link" => url("kehilangan"), "label" => "Tabel"),
+                    2 => array("link" => "active", "label" => "Form Ubah"),
                 );
-                return view('bonalat.kembali', compact('data', 'Breadcrumb','qrBonAlat','qrDetailBonAlat','staff_nm','id'));
+                return view('kehilangan.kembali', compact('data', 'Breadcrumb','qrHilang','qrDetailHilang','id'));
             }else{
                 return abort(403, 'Unauthorized action.');
             }
@@ -264,218 +235,124 @@ class C_Kehilangan extends Controller
         }
     }
 
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-        $bonalat = MBonalat::find($id);
-        foreach($request->barang as $key => $value){
-            if($value != ""){
-                $arrV = explode("#", $value);
-                $tr_barang_laboratorium_id = $arrV[0];
-                $stokKeluar = $request->jml[$key];
-
-                $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
-                $stokLab                = $tr_barang_laboratorium->stok;
-                $updateStokLab['stok']  = $stokLab - $stokKeluar;
-                $tr_barang_laboratorium->update($updateStokLab);
-
-                $ks['tr_barang_laboratorium_id']    = $tr_barang_laboratorium_id;
-                $ks['is_stok_in']                   = 0;
-                $ks['qty']                          = $stokKeluar;
-                $ks['stok']                         = $stokLab - $stokKeluar;
-                $ks['tr_member_laboratorium_id']    = $qrlab[0]->id;
-                $kartustok = MKartuStok::create($ks);
-
-                $detailInput['tr_barang_laboratorium_id']   = $tr_barang_laboratorium_id;
-                $detailInput['tr_bon_alat_id']              = $bonalat->id;
-                $detailInput['jumlah']                      = $request->jml[$key];
-                $detailInput['keterangan']                  = $request->keterangan[$key];
-                $detailInput['tr_kartu_stok_id']            = $kartustok->id;
-                $DetailBonAlat = MDetailBonAlat::create($detailInput);
-
-                $tr_barang                  = MBarang::find($tr_barang_laboratorium->tm_barang_id);
-                $stokBarang                 = $tr_barang->qty;
-                $updateStokBarang['qty']    = $stokBarang - $stokKeluar;
-                $tr_barang->update($updateStokBarang);
-            }
-        }
-
-        $detailBonAlat = @$request->detailBonAlat;
-        if(count($detailBonAlat)){
-            foreach($detailBonAlat as $vdu){
-                //echo $_REQUEST['barang-'.$vdu]; ;
-                $qrDetailBonalat = MDetailBonAlat::find($vdu);
-                $tr_barang_laboratorium_id = $qrDetailBonalat->tr_barang_laboratorium_id;
-                $oldJml = $qrDetailBonalat->jumlah;
-                $newJml = $_REQUEST['jml-'.$vdu];
-                $qty = 0;
-                if($oldJml<$newJml){
-                    $selisihJml = $newJml-$oldJml;
-                    $updateKS['qty'] = $qrDetailBonalat->kartuStokData->qty + $selisihJml;
-                    $updateKS['stok'] = $qrDetailBonalat->kartuStokData->stok - $selisihJml;
-                    $qrKartuStok = MKartuStok::find($qrDetailBonalat->tr_kartu_stok_id);
-                    $qrBarangLab = MBarangLab::find($qrKartuStok->tr_barang_laboratorium_id);
-                        $qrBarang    = MBarang::find($qrBarangLab->tm_barang_id);
-                            $updateQrBarang['qty']= $qrBarang->qty - $selisihJml;
-                            $qrBarang->update($updateQrBarang);
-
-                        $updateQrBarangLab['stok'] = $qrBarangLab->stok - $selisihJml;
-                        $qrBarangLab->update($updateQrBarangLab);
-                    $qrKartuStok->update($updateKS);
-                }elseif($oldJml>$newJml){
-                    $selisihJml = $oldJml-$newJml;
-                    $updateKS['qty'] = $qrDetailBonalat->kartuStokData->qty - $selisihJml;
-                    $updateKS['stok'] = $qrDetailBonalat->kartuStokData->stok + $selisihJml;
-                    $qrKartuStok = MKartuStok::find($qrDetailBonalat->tr_kartu_stok_id);
-                    $qrBarangLab = MBarangLab::find($qrKartuStok->tr_barang_laboratorium_id);
-                        $qrBarang    = MBarang::find($qrBarangLab->tm_barang_id);
-                            $updateQrBarang['qty']= $qrBarang->qty + $selisihJml;
-                            $qrBarang->update($updateQrBarang);
-
-                        $updateQrBarangLab['stok'] = $qrBarangLab->stok + $selisihJml;
-                        $qrBarangLab->update($updateQrBarangLab);
-                    $qrKartuStok->update($updateKS);
-                }
-
-                $detailInput['jumlah'] = $newJml ;
-                $detailInput['stok'] = $_REQUEST['stok-'.$vdu];
-                $detailInput['keterangan'] =  $_REQUEST['keterangan-'.$vdu];
-                $qrDetailBonalat->update($detailInput);
-            }
-        }
-        return redirect(route('bonalat.index'))->with('success','Permintaan Bon Alat Berhasil Di Ubah.');
-    }
-
-    public function kembaliUpdate(Request $request, $id)
-    {
-        $staff_id = Auth::user()->tm_staff_id;
-        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $lab_id = $qrlab[0]->tm_laboratorium_id;
         $idDecrypt = Crypt::decryptString($id);
-        $bonalat = MBonalat::find($idDecrypt);
-        $detailBonAlat = @$request->detailBonAlat;
-        if(count($detailBonAlat)){
-            foreach($detailBonAlat as $vdu){
-                //echo "</br>".$vdu;
-                $qrDetailBonalat = MDetailBonAlat::find($vdu);
-                $tr_barang_laboratorium_id = $qrDetailBonalat->tr_barang_laboratorium_id;
-                $oldJml = $qrDetailBonalat->jumlah;
-                $newJml = $_REQUEST['jmlkembali-'.$vdu];
-                $status = 1;
-                if($oldJml>$newJml){
-                    $status = 0;
+        if(count($qrlab)){
+            $input['nama']                     = $request->nama;
+            $input['nim']                      = $request->nim;
+            $input['golongan_kelompok']        = $request->golongan_kelompok;
+            $input['tanggal_sanggup']          = $request->tanggal_sanggup;
+            $hilang_rusak                      = MHilang::find($idDecrypt)->update($input);
+
+            foreach($request->barang as $key => $value){
+                if($value != ""){
+                    $arrV = explode("#", $value);
+                    $tr_barang_laboratorium_id = $arrV[0];
+
+                    $detailInput['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                    $detailInput['tr_hilang_rusak_id'] = $idDecrypt;
+                    $detailInput['jumlah_hilang_rusak'] = $request->jml[$key];
+                    $DetailBonAlat = MDetailHilang::create($detailInput);
                 }
-                $ks['qty'] = $newJml;
-                //$ks['stok'] = $qrDetailBonalat->kartuStokData->stok + $newJml;
-                $qrKartuStok = MKartuStok::find($qrDetailBonalat->tr_kartu_stok_id);
-                $qrBarangLab = MBarangLab::find($qrKartuStok->tr_barang_laboratorium_id);
-                    $qrBarang    = MBarang::find($qrBarangLab->tm_barang_id);
-                        $updateQrBarang['qty']= $qrBarang->qty + $newJml;
-                        $ks['stok'] = $qrBarang->qty + $newJml;
-                        $qrBarang->update($updateQrBarang);
-                        //echo "</br>Update TM Barang "; var_dump($updateQrBarang);
-
-                    $updateQrBarangLab['stok'] = $qrBarangLab->stok + $newJml;
-                    $qrBarangLab->update($updateQrBarangLab);
-                    //echo "</br> Update Barang Lab "; var_dump($updateQrBarangLab);
-                $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                $ks['is_stok_in'] = 1;
-                $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
-                $ks['keterangan'] = $idDecrypt."#".$vdu."#bon alat - kembali";
-                $kartustok = MKartuStok::create($ks);
-
-                $detailInput['jumlah_kembali']          = $newJml ;
-                $detailInput['status']                  = $status;
-                $detailInput['keterangan']              = $_REQUEST['keterangan-'.$vdu];
-                $detailInput['tr_kartu_stok_id_kembali']= $kartustok->id;
-                $qrDetailBonalat->update($detailInput);
             }
-        }
 
-        if($request->kembali_is_pegawai==1){
-            $updateBonAlat['kembali_is_pegawai']               = $request->kembali_is_pegawai;
-            $updateBonAlat['kembali_tm_staff_id']              = $request->kembali_tm_staff_id;
+            $detailHilang = @$request->detailHilang;
+            //dd($detailHilang);
+            if(count($detailHilang)){
+                foreach($detailHilang as $vdu){
+                    $detailUpdate['jumlah_hilang_rusak'] = $_REQUEST['jml-'.$vdu];
+                    $qrdetailHilang = MDetailHilang::find($vdu)->update($detailUpdate);
+                }
+            }
+            return redirect(route('kehilangan.index'))->with('success','Berita Acara Kehilangan / Rusak Berhasil di Simpan.');
         }else{
-            $updateBonAlat['kembali_nama']                     = $request->kembali_nama;
-            $updateBonAlat['kembali_nim']                      = $request->kembali_nim;
-            $updateBonAlat['kembali_golongan_kelompok']        = $request->kembali_gol;
+            return abort(403, 'Unauthorized action.');
         }
-        $updateBonAlat['tr_member_laboratorium_id_kembali'] = $qrlab[0]->id;
-        $updateBonAlat['tanggal_kembali']                   = $request->tanggalKembali.":00";
-        $updateBonAlat['status']                            = 2;
-        $bonalat->update($updateBonAlat);
-        //return $updateBonAlat;
-        return redirect(route('bonalat.index'))->with('success','Pengembalian Bon Alat Berhasil Di Simpan.');
     }
 
-    public function destroy(Request $request)
-    {
+    public function kembaliUpdate(Request $request, $id){
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $lab_id = $qrlab[0]->tm_laboratorium_id;
+        $idDecrypt = Crypt::decryptString($id);
+        if(count($qrlab)){
+            $statusHilang =1;
+            $konfirmasi = @$request->konfirmasi;
+            //dd($konfirmasi);
+            if(count($konfirmasi)){
+                foreach($konfirmasi as $vdu){
+                    $expVal = explode("-",$vdu);
+                    $td_hilang_rusak_detail_id = $expVal[0];
+                    $tr_barang_laboratorium_id = $expVal[1];
+                    $jml_ganti = $expVal[2];
+                    $tdhrid[]=$td_hilang_rusak_detail_id;
+                    $detailHilang = MDetailHilang::find($td_hilang_rusak_detail_id);
+                    if($detailHilang->status == 0 ){
+                    $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
+                    $StokLab = $barangLab->stok;
+                        $TmBarang = MBarang::find($barangLab->tm_barang_id);
+                        $stokBarang = $TmBarang->qty;
 
-        $id = Crypt::decryptString($request->id);
-        $bonalat = MBonalat::find($id);
-        $tdBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$id)->get();
-        if(count($tdBonAlat)){
-            foreach($tdBonAlat as $vba){
-                $tr_barang_laboratorium_id = $vba->tr_barang_laboratorium_id;
-                $jumlah = $vba->jumlah;
+                        $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
+                        $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                        $inputKS['is_stok_in']                = 1;
+                        $inputKS['qty']                       = $jml_ganti;
+                        $inputKS['stok']                      = $jml_ganti + $StokLab;
+                        $KS = MKartuStok::create($inputKS);
 
-                $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
-                $stokLab = $tr_barang_laboratorium->stok;
-                $updateStokLab['stok'] = $stokLab + $jumlah;
-                $tr_barang_laboratorium->update($updateStokLab);
+                        $TmBarang->update(array('qty' => $stokBarang+$jml_ganti));
+                    $barangLab->update(array('stok'=>$StokLab+$jml_ganti));
+                    $detailHilang->update(array('status'=>1));
+                    }
+                }
+            }
 
-                $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                $ks['is_stok_in'] = 1;
-                $ks['qty'] = $jumlah;
-                $ks['stok'] = $stokLab + $jumlah;
-                $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
-                $ks['keterangan'] = $vba->tr_kartu_stok_id."# was deleted";
-                $kartustok = MKartuStok::create($ks);
+            $qryNotIn = MDetailHilang::where('tr_hilang_rusak_id',$idDecrypt)->whereNotIn('id',$tdhrid)->get();
+        if(count($qryNotIn)){
+            foreach($qryNotIn as $qni){
+               if($qni->status){
+                $jml_ganti = $qni->jumlah_hilang_rusak;
+                $barangLab = MBarangLab::find($qni->tr_barang_laboratorium_id);
+                $StokLab = $barangLab->stok;
+                    $TmBarang = MBarang::find($barangLab->tm_barang_id);
+                    $stokBarang = $TmBarang->qty;
 
-                $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
-                $stokBarang = $tr_barang->qty;
-                $updateStokBarang['qty'] = $stokBarang + $jumlah;
-                $tr_barang->update($updateStokBarang);
+                    $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
+                    $inputKS['tr_barang_laboratorium_id'] = $qni->tr_barang_laboratorium_id;
+                    $inputKS['is_stok_in']                = 0;
+                    $inputKS['qty']                       = $jml_ganti;
+                    $inputKS['stok']                      = $StokLab - $jml_ganti;
+                    $KS = MKartuStok::create($inputKS);
 
-                MDetailBonAlat::find($vba->id)->delete();
+                    $TmBarang->update(array('qty' => $stokBarang-$jml_ganti));
+                $barangLab->update(array('stok'=>$StokLab - $jml_ganti));
+                $detailHilang =MDetailHilang::find($qni->id)->update(array('status'=>0));
+               }
             }
         }
-        $bonalat->delete();
+
+            $qrDetailHilang = MDetailHilang::where('tr_hilang_rusak_id',$idDecrypt)->get();
+            foreach($qrDetailHilang as $d){
+                if($d->status==0){
+                    $statusHilang=0;
+                }
+            }
+            MHilang::find($idDecrypt)->update(array("status"=>$statusHilang));
+
+            return redirect(route('kehilangan.index'))->with('success','Penerimaan Penggantian Barang Hilang/Rusak Berhasil Disimpan.');
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
     }
 
-    public function delete(Request $request)
+    public function destroy($id)
     {
-        $staff_id = Auth::user()->tm_staff_id;
-        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-
-        $id = Crypt::decryptString($request->id);
-        $tdBonAlat = MDetailBonAlat::find($id);
-
-                $tr_barang_laboratorium_id = $tdBonAlat->tr_barang_laboratorium_id;
-                $jumlah = $tdBonAlat->jumlah;
-
-                $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
-                $stokLab = $tr_barang_laboratorium->stok;
-                $updateStokLab['stok'] = $stokLab + $jumlah;
-                $tr_barang_laboratorium->update($updateStokLab);
-
-                $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                $ks['is_stok_in'] = 1;
-                $ks['qty'] = $jumlah;
-                $ks['stok'] = $stokLab + $jumlah;
-                $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
-                $ks['keterangan'] = $tdBonAlat->tr_kartu_stok_id."# was deleted";
-                $kartustok = MKartuStok::create($ks);
-
-                $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
-                $stokBarang = $tr_barang->qty;
-                $updateStokBarang['qty'] = $stokBarang + $jumlah;
-                $tr_barang->update($updateStokBarang);
-
-
-        if($tdBonAlat->delete()){
+        $idDecrypt = Crypt::decryptString($id);
+        $qrHilang = MHilang::find($idDecrypt);
+        if($qrHilang->delete()){
             $response = array(
                 'status' => 200,
             );
@@ -484,7 +361,28 @@ class C_Kehilangan extends Controller
                 'status' => 503,
             );
         }
-        echo json_encode($response);
+
+        return json_encode($response);
+    }
+
+    public function delete(Request $request){
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($qrlab)){
+            $id = Crypt::decryptString($request->id);
+            $tdHilang = MDetailHilang::find($id);
+
+            if($tdHilang->delete()){
+                $response = array(
+                    'status' => 200,
+                );
+            }else{
+                $response = array(
+                    'status' => 503,
+                );
+            }
+            echo json_encode($response);
+        }
     }
 
     public function getKehilangan(Request $request){
@@ -525,29 +423,46 @@ class C_Kehilangan extends Controller
         $number = $start;
         //dd($records);
         foreach ($records as $record) { $number += 1;
+            $qrDetailHilang = MDetailHilang::where('tr_hilang_rusak_id',$record->id)->get();
+            $statusDetailHilang = 0;
+            foreach($qrDetailHilang as $d){
+                if($d->status){
+                    $statusDetailHilang=1;
+                }
+            }
             $idEncrypt = Crypt::encryptString($record->id);
 
             $button = "";
-            if(Gate::check('kehilangan-edit')){
-                $button = $button."<a href='#' data-href='".route('kehilangan.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
-                <i class='ri-edit-2-line'></i></a>";
-            }
 
-            $button = $button." <a href='#' data-href='".route('kehilangan.kembali',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnKembaliClass'>
+
+            $button = $button." <a href='#' data-href='".route('kehilangan.ganti',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnKembaliClass'>
             <i class=' ri-install-line'></i></a>";
 
-            if(Gate::check('kehilangan-delete')){
-                $button = $button." <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete' data-id='".route('kehilangan.destroy',$idEncrypt)."'  >
-                <i class='ri-delete-bin-2-line'></i></a>";
+
+            if($record->status==0 && $statusDetailHilang == 0){
+                if(Gate::check('kehilangan-edit')){
+                    $button = $button." <a href='#' data-href='".route('kehilangan.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
+                    <i class='ri-edit-2-line'></i></a>";
+                }
+
+                if(Gate::check('kehilangan-delete')){
+                    $button = $button." <a href='#' data-href='".route('kehilangan.destroy',$idEncrypt)."'  class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete'>
+                    <i class='ri-delete-bin-2-line'></i></a>";
+                }
             }
 
+            if($record->status){
+                $stts = "<span class='badge rounded-pill bg-success'>$record->stts</span>";
+            }else{
+                $stts = "<span class='badge rounded-pill bg-warning'>$record->stts</span>";
+            }
 
             $nama = $record->nim." - ".$record->nama;
             $data_arr[] = array(
                 "id"               => $number,
                 "nm"               => $nama,
                 "tglsanggup"       => $record->tanggal_sanggup,
-                "status"           => $record->stts,
+                "status"           => $stts,
                 "action"           => $button
             );
         }

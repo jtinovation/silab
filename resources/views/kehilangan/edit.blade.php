@@ -23,162 +23,87 @@
                     <h4 class="mt-0 header-title text-center" style="">Ubah Form Bon Alat Laboratorium</h4>
                     <hr>
 
-                    <form action="{{route('bonalat.update',$qrBonAlat[0]->id)}}" class="form-horizontal" id="frmPengajuanAlat" method="post" enctype="multipart/form-data">
+                    <form action="{{route('kehilangan.update',$id)}}" class="form-horizontal" id="frmPengajuanAlat" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
-                        <div class="row d-flex justify-content-center">
-                            <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Informasi Peminjam</strong>
-                            </div>
-                            <div class=" row col-12 justify-content-center " >
-                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="col-12 btn-group" role="group" aria-label="Basic radio toggle button group">
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai1" value="1" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"checked":"disabled"}}   >
-                                        <label class="btn btn-outline-primary" for="is_pegawai1">&nbsp;&nbsp;&nbsp;&nbsp;Pegawai&nbsp;&nbsp;&nbsp;</label>
-
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai2" value="0" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"disabled":"checked"}}  >
-                                        <label class="btn btn-outline-dark" for="is_pegawai2">Mahasiswa</label>
-                                    </div>
-                                </div>
-                            </div>
-                            @if($qrBonAlat[0]->is_pegawai)
-                            <div class="row d-flex justify-content-center mt-2" >
-                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: {{$qrBonAlat[0]->is_pegawai?"block":"none"}} ";">
-                                    <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                        <label for="SelectStaff" class="form-label text-right">Pilih Pegawai</label></br>
-                                        <input type="text" class="form-control" name="tm_staff_id" id="SelectStaff" value="{{$qrBonAlat[0]->StaffData->nama}}" readonly>
-
-                                    </div>
-                                </div>
-                            </div>
-                            @else
-                            <div class=" mahasiswa mt-2" style="display:  {{$qrBonAlat[0]->is_pegawai?"none":"block"}} ;">
-                                <div class="row d-flex">
-                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
-                                        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                            <label for="nim" class="form-label text-right">NIM</label></br>
-                                            <input type="text" class="form-control" name="nim" id="nim" value="{{@$qrBonAlat[0]->nim}}" />
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
-                                        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                            <label for="nama" class="form-label text-right">Nama</label></br>
-                                            <input type="text" class="form-control" name="nama" id="nama" value="{{@$qrBonAlat[0]->nama}}" />
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                            <label for="gol" class="form-label text-right">Golongan / Kelompok</label></br>
-                                            <input type="text" class="form-control" name="gol" id="gol" value="{{@$qrBonAlat[0]->golongan_kelompok}}" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @endif
-                            <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show mt-4" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Data Petugas </strong>
-                            </div>
-
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <label for="selectPinjam" class="form-label text-right">Petugas Peminjaman</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{$qrBonAlat[0]->memberLabOut->StaffData->nama}}" readonly>
-                            </div>
-
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <label for="tanggalPinjam" class="form-label text-right">Tanggal Pinjam</label></br>
-                                <input type="text" class="form-control" name="tanggalPinjam" id="tanggalPinjam" value="{{\Carbon\Carbon::parse($qrBonAlat[0]->tanggal_pinjam)->translatedFormat('d F Y H:i:s') }}" readonly>
-                            </div>
-
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
-                                <label for="selectKembali" class="form-label text-right">Petugas Pengembalian</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_kembali" id="selectKembali" value="" readonly>
-                            </div>
-
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label for="tanggalKembali" class="form-label text-right">Tanggal Kembali</label></br>
-                                    <input type="text" class="form-control" name="tanggalKembali" id="tanggalKembali" readonly>
-                            </div>
-
-                            <div class="alert alert-info alert-dismissible alert-label-icon label-arrow fade show mt-5" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Berdasarkan hasil uji coba alat/mesin dan kesiapan bahan praktek dapat dilaporkan sebagai berikut :</strong>
-                            </div>
-
-                            <div class="col-lg-12 ">
-                                <div class="row form-group form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                    <label for="txtSatuan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Pilih Barang </label>
-                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Stok</label>
-                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Jumlah</label>
-                                    <label for="keterangan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Keterangan</label>
-                                </div>
-                                @foreach ($qrDetailBonAlat as $vdu)
-                                <div class="wrapper">
-                                    <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 wrap" id="{{"inputCopy-".$vdu->id}}" style="margin-bottom: 10px;">
-                                        <input type="hidden" name="detailBonAlat[]" value="{{$vdu->id}}">
-                                        <input type="hidden" name="tr_barang_laboratorium_id[]" value="{{$vdu->tr_barang_laboratorium_id}}" class="getBarang">
-                                        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
-                                            <input class="form-control" type="text" name="{{'barang-'.$vdu->id}}" value="{{$vdu->barangLabData->BarangData->nama_barang}}" readonly>
-
-                                        </div>
-
-                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                            <input class="form-control stok " type="text" name="{{'stok-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->barangLabData->stok + $vdu->jumlah}}" readonly>
-                                        </div>
-                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                            <input class="form-control  hit" type="text" name="{{'jml-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah}}">
-                                        </div>
-
-
-                                        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
-                                            <div class="hstack gap-3">
-                                                <input class="form-control" type="text" name="{{'keterangan-'.$vdu->id}}">
-                                                <button class="btn btn-danger removeBonAlatDetail" data-remove="{{Crypt::encryptString($vdu->id)}}" data-id="{{$vdu->id}}" type="button"><i class=" bx bx-trash"></i></button>
-                                                <button class="btn btn-success add-more" type="button"><i class=" bx bx-plus"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endforeach
-                                <div class="copy-fields" style="display: none;">
-                                    <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 abc wrap" style="margin-bottom: 10px;">
-
-                                        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
-                                            <select class="form-control select2_el first" style="font-size: 15px;" name="barang[]" aa>
-                                                <option value="">Pilih Barang</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                            <input type="text" class="form-control stok" name="stok[]" readonly >
-                                        </div>
-
-                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                               <input type="text" class="form-control hi" name="jml[]" b12>
-                                        </div>
-
-                                        <input type="hidden" name="tr_barang_laboratorium[]" class="xxxxx"/>
-
-                                        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
-                                            <div class="hstack gap-3">
-                                                <input class="form-control" type="text" name="keterangan[]">
-                                                <button class="btn btn-success add-more" type="button"><i class=" bx bx-plus"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                    <div class="core-ans"></div>
-                            </div>
-
-                            @can('kesiapan-praktek-create')
-                            <div class="col-md-12 row button-items justify-content-center gap-3" style="margin-top: 10px;">
-                                <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Permintaaan Bon Alat</button>
-                                <a href="{{route('bonalat.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Permintaaan Bon Alat</a>
-                            </div>
-                            @endcan
-
-
+                        <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
+                            <i class="ri-user-smile-line label-icon"></i><strong>Saya Yang Bertanda Tangan Dibawah ini :</strong>
                         </div>
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-4 col-xs-12 mb-3">
+                                <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                    <label for="nim" class="form-label text-right">NIM</label></br>
+                                    <input type="text" class="form-control" name="nim" id="nim" value="{{$qrHilang->nim}}" required>
+                                </div>
+                            </div>
+                            <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-8 col-xs-12 mb-3">
+                                <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                    <label for="nama" class="form-label text-right">Nama</label></br>
+                                    <input type="text" class="form-control" name="nama" id="nama" value="{{$qrHilang->nama}}" required>
+                                </div>
+                            </div>
+                            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                    <label for="gol" class="form-label text-right">Golongan / Kelompok</label></br>
+                                    <input type="text" class="form-control" name="golongan_kelompok" id="gol" value="{{$qrHilang->golongan_kelompok}}" required>
+                                </div>
+                            </div>
+                            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                <label for="tanggalSanggup" class="form-label text-right">Tanggal Kesanggupan Mengganti</label></br>
+                                <input type="text" class="form-control" name="tanggal_sanggup" id="tanggalSanggup" value="{{$qrHilang->tanggal_sanggup}}">
+                            </div>
+                        </div>
+                        <div class="alert alert-info alert-dismissible alert-label-icon label-arrow fade show mt-5" role="alert">
+                            <i class="ri-user-smile-line label-icon"></i><strong>Barang yang telah dihilangkan atau rusak sebagai berikut :</strong>
+                        </div>
+                        <div class="col-lg-12 ">
+                            <div class="row form-group form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                <label for="txtSatuan" class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-form-label text-left pl-4">Pilih Barang </label>
+                                <label for="jumlah" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Jumlah</label>
+                            </div>
+                            @foreach ($qrDetailHilang as $vdu)
+                            <div class="wrapper">
+                                <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 wrap" id="{{"inputCopy-".$vdu->id}}" style="margin-bottom: 10px;">
+                                    <input type="hidden" name="detailHilang[]" value="{{$vdu->id}}">
+                                    <input type="hidden" name="tr_barang_laboratorium_id[]" value="{{$vdu->tr_barang_laboratorium_id}}" class="getBarang">
+                                    <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8" id="place_barang">
+                                        <input class="form-control" type="text" name="{{'barang-'.$vdu->id}}" value="{{$vdu->barangLabData->BarangData->nama_barang}}" readonly>
+                                    </div>
+                                    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
+                                        <div class="hstack gap-3">
+                                            <input class="form-control  hit" type="text" name="{{'jml-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah_hilang_rusak}}">
+                                            <button class="btn btn-danger removeHilangDetail" data-remove="{{Crypt::encryptString($vdu->id)}}" data-id="{{$vdu->id}}" type="button"><i class=" bx bx-trash"></i></button>
+                                            <button class="btn btn-success add-more" type="button"><i class=" bx bx-plus"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                            <div class="copy-fields" style="display: none;">
+                                <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 abc wrap" style="margin-bottom: 10px;">
+                                    <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-md-4" id="place_barang">
+                                        <select class="form-control select2_el first" style="font-size: 15px;" name="barang[]" aa>
+                                            <option value="">Pilih Barang</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xxl-4 col-xl-4 col-lg-4 col-lg-4 col-md-4">
+                                        <div class="hstack gap-3">
+                                            <input type="text" class="form-control hi" name="jml[]" b12>
+                                            <button class="btn btn-success add-more" type="button"><i class=" bx bx-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="tr_barang_laboratorium[]" class="xxxxx"/>
+                                </div>
+                            </div>
+                            <div class="core-ans"></div>
+                        </div>
+                        @can('kehilangan-create')
+                        <div class="col-md-12 row button-items justify-content-center gap-3" style="margin-top: 10px;">
+                            <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Berita Acara Kehilangan / Rusak</button>
+                            <a href="{{route('kehilangan.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Berita Acara Kehilangan / Rusak</a>
+                        </div>
+                        @endcan
                     </form>
-
                 </div><!--end card-body-->
             </div>
     </div>
@@ -201,38 +126,22 @@
 <script type="text/javascript">
     var txtNumeric;
     var alatLabSelect  = "{{route('alatLabSelects')}}";
-    var bonAlatDetailDelete = "{{route('bonAlatDetailDelete')}}";
+    var kehilanganDetailDelete = "{{route('kehilanganDetailDelete')}}";
     var token = "{{ csrf_token() }}";
     var num = 1;
     var arrBarang=[];
-    $(".cp").change(function(){
-    let val = parseInt($(".cp:checked").val());
-    if(val){
-        $('.mahasiswa').hide("slide", { direction: 'down' }, 1000, function() {
-            $('.pegawai').show("slide", { direction: 'down' }, 1000);
-        });
-      /*   $(".mahasiswa").hide();
-        $(".pegawai").show(); */
-        $("#SelectStaff").attr('required', true);
-        $("#nim").attr('required', false);
-        $("#nama").attr('required', false);
-        $("#gol").attr('required', false);
-        console.log("Pegawai");
-    }else{
-        $('.pegawai').hide("slide", { direction: 'down' }, 1000, function() {
-            $('.mahasiswa').show("slide", { direction: 'down' }, 1000);
-        });
-      /*   $(".pegawai").hide();
-        $(".mahasiswa").show(); */
-        $("#SelectStaff").attr('required', false);
-        $("#nim").attr('required', true);
-        $("#nama").attr('required', true);
-        $("#gol").attr('required', true);
-        console.log("Mahasiswa");
-    }
-});
+    initEditKehilangan();
 
-$("body").on("click", ".removeBonAlatDetail", function() {
+    function initEditKehilangan() {
+        $('#tanggalSanggup').daterangepicker({
+            singleDatePicker: true,
+            locale: {
+                format: 'D/M/Y',
+            }
+        });
+    }
+
+  $("body").on("click", ".removeHilangDetail", function() {
         var id = $(this).attr("data-remove");
         var rid = $(this).attr("data-id");
         swal.fire({
@@ -248,7 +157,7 @@ $("body").on("click", ".removeBonAlatDetail", function() {
                 var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
                     type: "POST",
-                    url: bonAlatDetailDelete,
+                    url: kehilanganDetailDelete,
                     data: { id: id, _token: token },
                     dataType: "html",
                     success: function(data) {

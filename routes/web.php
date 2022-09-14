@@ -135,30 +135,33 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('kestekDetailDelete',           [C_KesiapanPraktek::class, 'destroy'])->name('kestekDetailDelete');
     Route::post('kestekDelete',                 [C_KesiapanPraktek::class, 'delete'])->name('kestekDelete');
 
-    Route::resource('invAlat',                   C_InvetarisAlat::class);
-    Route::get('getInvAlat',                    [C_InvetarisAlat::class,'getInvAlat'])->name('getInvAlat');
-    Route::get('alatSelect',                    [C_InvetarisAlat::class, 'alatSelect'])->name('alatSelect');
-    Route::get('alatSatuan',                    [C_InvetarisAlat::class, 'satuanSelect'])->name('alatSatuan');
-    Route::post('saveMasterAlat',               [C_InvetarisAlat::class, 'saveMasterAlat'])->name('saveMasterAlat');
-    Route::post('invAlat.Del',                  [C_InvetarisAlat::class, 'destroy'])->name('invAlat.Del');
+    Route::resource('invAlat',                               C_InvetarisAlat::class);
+    Route::get('getInvAlat',                                [C_InvetarisAlat::class,'getInvAlat'])->name('getInvAlat');
+    Route::get('alatSelect',                                [C_InvetarisAlat::class, 'alatSelect'])->name('alatSelect');
+    Route::get('alatSatuan',                                [C_InvetarisAlat::class, 'satuanSelect'])->name('alatSatuan');
+    Route::post('saveMasterAlat',                           [C_InvetarisAlat::class, 'saveMasterAlat'])->name('saveMasterAlat');
+    Route::post('invAlat.Del',                              [C_InvetarisAlat::class, 'destroy'])->name('invAlat.Del');
 
 
-    Route::resource('bonalat',                   C_BonAlat::class);
-    Route::get('getBonAlat',                    [C_BonAlat::class, 'getBonalat'])->name('getBonAlat');
-    Route::post('bonAlatDelete',                [C_BonAlat::class, 'destroy'])->name('bonAlatDelete');
-    Route::get('alatLabSelect',                 [C_BonAlat::class, 'alatLabSelect'])->name('alatLabSelect');
-    Route::get('alatLabSelects',                [C_BonAlat::class, 'alatLabSelects'])->name('alatLabSelects');
-    Route::post('bonAlatDetailDelete',          [C_BonAlat::class, 'delete'])->name('bonAlatDetailDelete');
-    Route::get('bonalat/{bonalat}/kembali',     [C_BonAlat::class, 'kembali'])->name('bonalat.kembali');
-    Route::put('bonalatKembali/{bonalat}',      [C_BonAlat::class, 'kembaliUpdate'])->name('bonalat.kembaliUpdate');
+    Route::resource('bonalat',                               C_BonAlat::class);
+    Route::get('getBonAlat',                                [C_BonAlat::class, 'getBonalat'])->name('getBonAlat');
+    Route::post('bonAlatDelete',                            [C_BonAlat::class, 'destroy'])->name('bonAlatDelete');
+    Route::get('alatLabSelect',                             [C_BonAlat::class, 'alatLabSelect'])->name('alatLabSelect');
+    Route::get('alatLabSelects',                            [C_BonAlat::class, 'alatLabSelects'])->name('alatLabSelects');
+    Route::post('bonAlatDetailDelete',                      [C_BonAlat::class, 'delete'])->name('bonAlatDetailDelete');
+    Route::get('bonalat/{bonalat}/kembali',                 [C_BonAlat::class, 'kembali'])->name('bonalat.kembali');
+    Route::put('bonalatKembali/{bonalat}',                  [C_BonAlat::class, 'kembaliUpdate'])->name('bonalat.kembaliUpdate');
 
-    Route::resource('penggantianPraktek',        C_PenggantianPraktek::class);
-    Route::get('getPenggantianPraktek',         [C_PenggantianPraktek::class, 'gantiJadwal'])->name('getPenggantianPraktek');
-    Route::post('penggantianPraktek.Del',       [C_PenggantianPraktek::class, 'destroy'])->name('penggantianPraktek.Del');
-    Route::get('getMKGantiPraktek',             [C_PenggantianPraktek::class,'GetMatakuliah'])->name('getMKGantiPraktek');
+    Route::resource('penggantianPraktek',                    C_PenggantianPraktek::class);
+    Route::get('getPenggantianPraktek',                     [C_PenggantianPraktek::class, 'gantiJadwal'])->name('getPenggantianPraktek');
+    Route::post('penggantianPraktek.Del',                   [C_PenggantianPraktek::class, 'destroy'])->name('penggantianPraktek.Del');
+    Route::get('getMKGantiPraktek',                         [C_PenggantianPraktek::class,'GetMatakuliah'])->name('getMKGantiPraktek');
 
-    Route::resource('kehilangan',                C_Kehilangan::class);
-    Route::get('getKehilangan',                 [C_Kehilangan::class, 'getKehilangan'])->name('getKehilangan');
+    Route::resource('kehilangan',                            C_Kehilangan::class);
+    Route::get('getKehilangan',                             [C_Kehilangan::class, 'getKehilangan'])->name('getKehilangan');
+    Route::post('kehilanganDetailDelete',                   [C_Kehilangan::class, 'delete'])->name('kehilanganDetailDelete');
+    Route::get('kehilangan/{kehilangan}/kembali',           [C_Kehilangan::class, 'kembali'])->name('kehilangan.ganti');
+    Route::put('kehilanganKembali/{kehilangan}',            [C_Kehilangan::class, 'kembaliUpdate'])->name('kehilangan.kembaliUpdate');
 
 });
 

@@ -31,38 +31,39 @@
                             </div>
 
                             <div class=" mahasiswa mt-2">
-                                <div class="row d-flex">
-                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
+                                <div class="row d-flex justify-content-center">
+                                    <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-4 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="nim" class="form-label text-right">NIM</label></br>
                                             <input type="text" class="form-control" name="nim" id="nim" required>
                                         </div>
                                     </div>
-                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
+                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-8 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="nama" class="form-label text-right">Nama</label></br>
                                             <input type="text" class="form-control" name="nama" id="nama" required>
                                         </div>
                                     </div>
-                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="gol" class="form-label text-right">Golongan / Kelompok</label></br>
                                             <input type="text" class="form-control" name="golongan_kelompok" id="gol" required>
                                         </div>
                                     </div>
+                                    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                        <label for="tanggalSanggup" class="form-label text-right">Tanggal Kesanggupan Mengganti</label></br>
+                                        <input type="text" class="form-control" name="tanggal_sanggup" id="tanggalSanggup">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <label for="tanggalSanggup" class="form-label text-right">Tanggal Kesanggupan Mengganti</label></br>
-                                <input type="text" class="form-control" name="tanggal_sanggup" id="tanggalSanggup">
-                            </div>
+
                             <div class="alert alert-info alert-dismissible alert-label-icon label-arrow fade show mt-5" role="alert">
                                 <i class="ri-user-smile-line label-icon"></i><strong>Barang yang telah dihilangkan atau rusak sebagai berikut :</strong>
                             </div>
                             <div class="col-lg-12 ">
                                 <div class="row form-group form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                     <label for="txtSatuan" class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-form-label text-left pl-4">Pilih Barang </label>
-                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Jumlah Hilang/Rusak</label>
+                                    <label for="jumlah" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Jumlah Hilang/Rusak</label>
                                 </div>
                                 <div class="copy-fields">
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 abc wrap" style="margin-bottom: 10px;">
@@ -71,8 +72,11 @@
                                                 <option value="">Pilih Alat</option>
                                             </select>
                                         </div>
-                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
+                                        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
+                                            <div class="hstack gap-3">
                                                <input type="text" class="form-control number hit" name="jml[]" >
+                                               <button class="btn btn-success add-more" type="button"><i class=" bx bx-plus"></i></button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -99,7 +103,6 @@
 
 <!-- Select 2 -->
 <script src="{{ asset('assets/libs/select2/select2.min.js') }}"></script>
-<script src="{{ asset('assets/js/pages/bonalat.js') }}"></script>
 
 <!-- Daterangepicker -->
 <script src="{{asset('assets/libs/daterangepicker/moment.min.js')}}"></script>
@@ -112,35 +115,56 @@
     var txtNumeric;
     var alatLabSelect  = "{{route('alatLabSelect')}}";
     var num = 1;
+    initAddKehilangan();
     initailizeSelect2();
-    initDaterangpicker();
 
-
-
-
-   /*  $("#SelectMinggu").select2({
-        placeholder: "Pilih Minggu Ke",
-        allowClear: true
-    });
-
-    $("#SelectMinggu").change(function() {
-        let selectMinggu = $(this).find(":selected").text();
-        let myArray = selectMinggu.split(" ");
-        let waktu = myArray[1].split("-");
-        min = waktu[0].replace('(', '');
-        max = waktu[1].replace(')', '');
-        initDaterangpicker();
-    });
-    function initDaterangpicker() {
-        $('#tanggal').daterangepicker({
+    function initAddKehilangan() {
+        $('#tanggalSanggup').daterangepicker({
             singleDatePicker: true,
-            minDate: min,
-            maxDate: max,
             locale: {
                 format: 'D/M/Y',
             }
         });
-    } */
+
+        $("body").on("click", ".add-more", function() {
+            var html = $(".copy-fields").html();
+            var rep = html.replace('abc', "input_copy");
+            var rep = rep.replace('place_barang', "place_barang-" + num);
+            var rep = rep.replace('first', "first-" + num);
+            var rep = rep.replace('success', "danger");
+            var rep = rep.replace('add-more', "remove");
+            var rep = rep.replace('plus', "trash");
+            $(".core-ans").append(rep);
+            let select = "<select class='form-control select2_el ' style='font-size: 15px;' name='barang[]'><option value=''>Pilih Barang</option></select>";
+            $("#place_barang-" + num).empty();
+            $("#place_barang-" + num).append(select);
+            num++;
+            initailizeSelect2();
+        });
+    }
+
+    function initailizeSelect2() {
+    $(".select2_el").select2({
+        ajax: {
+            url: alatLabSelect,
+            type: "get",
+            dataType: 'json',
+            delay: 500,
+            data: function(params) {
+                return {
+                    searchTerm: params.term // search term
+                };
+            },
+            processResults: function(r) {
+                return {
+                    results: r
+                };
+            },
+            cache: true
+        }
+    });
+}
+
 
 </script>
 @endsection

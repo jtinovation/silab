@@ -20,137 +20,82 @@
     <div class="row col-md-12 col-lg-12 col-sm-12 animate__animated animate__backInLeft">
             <div class="card">
                 <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Form Pengembalian Alat Laboratorium {{$data['lab']}}</h4>
-                    @can('inventaris-alat-create')
-                    <a href="#" class="float-left">
-                       <h4 class="card-title"> Peminjam : {{$qrBonAlat[0]->is_pegawai?$qrBonAlat[0]->StaffData->nama:$qrBonAlat[0]->nim." - ".$qrBonAlat[0]->nama}}</h4>
-                    </a>
-                    @endcan
+                    <h4 class="card-title mb-0 flex-grow-1">Form Penerimaan Penggantian Kehilangan/Kerusakan Alat Laboratorium {{$data['lab']}}</h4>
                 </div>
                 <div class="card-body ">
-                    <form action="{{route('bonalat.kembaliUpdate',$id)}}" class="form-horizontal" id="frmPengajuanAlat" method="post" enctype="multipart/form-data">
+                    <form action="{{route('kehilangan.kembaliUpdate',$id)}}" class="form-horizontal" id="frmPengajuanAlat" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="row d-flex justify-content-center">
                             <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Informasi Pengembali</strong>
-
+                                <i class="ri-user-smile-line label-icon"></i><strong>Saya Yang Bertanda Tangan Dibawah ini :</strong>
                             </div>
-                            <div class=" row col-12 justify-content-center " >
-                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="col-12 btn-group" role="group" aria-label="Basic radio toggle button group">
-                                        <input type="radio" class="btn-check cp" name="kembali_is_pegawai" id="is_pegawai1" value="1" autocomplete="off"  {{$qrBonAlat[0]->is_pegawai?"checked":""}}   >
-                                        <label class="btn btn-outline-primary" for="is_pegawai1">&nbsp;&nbsp;&nbsp;&nbsp;Pegawai&nbsp;&nbsp;&nbsp;</label>
-
-                                        <input type="radio" class="btn-check cp" name="kembali_is_pegawai" id="is_pegawai2" value="0" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"":"checked"}} >
-                                        <label class="btn btn-outline-dark" for="is_pegawai2">Mahasiswa</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row d-flex justify-content-center mt-2" >
-                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display:  {{$qrBonAlat[0]->is_pegawai?"block":"none"}};">
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-4 col-xs-12 mb-3">
                                     <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                        <label for="SelectStaff" class="form-label text-right">Pilih Pegawai</label></br>
-                                        <select class="form-control" style="font-size: 15px;" name="kembali_tm_staff_id" id="SelectStaff" {{$qrBonAlat[0]->is_pegawai?"required":""}}>
-                                            <option></option>
-                                            @foreach($data['staff'] as $v)
-                                                <option value="{{$v->id}}">{{$v->nama}}</option>
-                                            @endforeach
-                                        </select>
+                                        <label for="nim" class="form-label text-right">NIM</label></br>
+                                        <input type="text" class="form-control" name="nim" id="nim" value="{{$qrHilang->nim}}" required readonly>
                                     </div>
                                 </div>
-                            </div>
-                            <div class=" mahasiswa mt-2" style="display:  {{$qrBonAlat[0]->is_pegawai?"none":"block"}} ;">
-                                <div class="row d-flex">
-                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
-                                        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                            <label for="nim" class="form-label text-right">NIM</label></br>
-                                            <input type="text" class="form-control" name="kembali_nim" id="nim" {{$qrBonAlat[0]->is_pegawai?"":"required"}}>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
-                                        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                            <label for="nama" class="form-label text-right">Nama</label></br>
-                                            <input type="text" class="form-control" name="kembali_nama" id="nama" {{$qrBonAlat[0]->is_pegawai?"":"required"}}>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                            <label for="gol" class="form-label text-right">Golongan / Kelompok</label></br>
-                                            <input type="text" class="form-control" name="kembali_gol" id="gol" {{$qrBonAlat[0]->is_pegawai?"":"required"}}>
-                                        </div>
+                                <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-8 col-xs-12 mb-3">
+                                    <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                        <label for="nama" class="form-label text-right">Nama</label></br>
+                                        <input type="text" class="form-control" name="nama" id="nama" value="{{$qrHilang->nama}}" required readonly>
                                     </div>
                                 </div>
+                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                    <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                        <label for="gol" class="form-label text-right">Golongan / Kelompok</label></br>
+                                        <input type="text" class="form-control" name="golongan_kelompok" id="gol" value="{{$qrHilang->golongan_kelompok}}" required readonly>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                    <label for="tanggalSanggup" class="form-label text-right">Tanggal Kesanggupan Mengganti</label></br>
+                                    <input type="text" class="form-control" name="tanggal_sanggup" id="tanggalSanggup" value="{{$qrHilang->tanggal_sanggup}}" readonly>
+                                </div>
                             </div>
-
-                            <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show mt-4" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Data Petugas </strong>
-                            </div>
-
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <label for="selectPinjam" class="form-label text-right">Petugas Peminjaman</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{@$qrBonAlat[0]->memberLabOut->StaffData->nama}}" readonly>
-                            </div>
-
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <label for="tanggalPinjam" class="form-label text-right">Tanggal Pinjam</label></br>
-                                <input type="text" class="form-control" name="tanggalPinjam" id="tanggalPinjam" value="{{$qrBonAlat[0]->tanggal_pinjam}}" readonly>
-                            </div>
-
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
-                                <label for="petugasKembali" class="form-label text-right">Petugas Pengembalian</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_kembali" id="petugasKembali" value="{{$staff_nm}}" readonly>
-                            </div>
-
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label for="tanggalKembali" class="form-label text-right">Tanggal Kembali</label></br>
-                                    <input type="text" class="form-control" name="tanggalKembali" id="tanggalKembali">
-                            </div>
-
                             <div class="alert alert-info alert-dismissible alert-label-icon label-arrow fade show mt-5" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Berdasarkan hasil uji coba alat/mesin dan kesiapan bahan praktek dapat dilaporkan sebagai berikut :</strong>
+                                <i class="ri-user-smile-line label-icon"></i><strong>Barang yang telah dihilangkan atau rusak sebagai berikut :</strong>
                             </div>
 
                             <div class="col-lg-12 ">
                                 <div class="row form-group form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                    <label for="txtSatuan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Pilih Barang </label>
-                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Jumlah Pinjam</label>
-                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Jumlah Kembali</label>
-                                    <label for="keterangan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Keterangan</label>
+                                    <label for="txtSatuan" class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-form-label text-left pl-4">Nama Alat </label>
+                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Jumlah Ganti</label>
+                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Konfirmasi</label>
                                 </div>
-                                @foreach ($qrDetailBonAlat as $vdu)
+                                @foreach ($qrDetailHilang as $vdu)
                                 <div class="wrapper">
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 wrap" id="{{"inputCopy-".$vdu->id}}" style="margin-bottom: 10px;">
-                                        <input type="hidden" name="detailBonAlat[]" value="{{$vdu->id}}">
+                                        <input type="hidden" name="detailHilang[]" value="{{$vdu->id}}">
                                         <input type="hidden" name="tr_barang_laboratorium_id[]" value="{{$vdu->tr_barang_laboratorium_id}}" class="getBarang">
-                                        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
+                                        <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8" id="place_barang">
                                             <input class="form-control" type="text" name="{{'barang-'.$vdu->id}}" value="{{$vdu->barangLabData->BarangData->nama_barang}}" readonly>
 
                                         </div>
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                            <input class="form-control pinjam" type="text" name="{{'jmlpinjam-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah}}" readonly>
-                                        </div>
-                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                            <input class="form-control number hit" type="text" name="{{'jmlkembali-'.$vdu->id}}" style="padding: 8px 10px;" value="">
+                                            <input class="form-control pinjam" type="text" name="{{'jmlkembali-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah_hilang_rusak}}" readonly>
                                         </div>
 
-
-                                        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
-                                            <div class="hstack gap-3">
-                                                <input class="form-control" type="text" name="{{'keterangan-'.$vdu->id}}">
-                                            </div>
+                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 justify-content-center row d-flex" >
+                                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
+                                            <input class="form-check-input" type="checkbox" id="formCheck{{$vdu->id}}" name="konfirmasi[]" value="{{$vdu->id."-".$vdu->tr_barang_laboratorium_id."-".$vdu->jumlah_hilang_rusak}}" {{$vdu->status?"checked":""}} {{$qrHilang->status?"disabled":""}}>
+                                            <label class="form-check-label" for="formCheck{{$vdu->id}}">
+                                                </div>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
                                 @endforeach
                             </div>
 
-                            @can('kesiapan-praktek-create')
+                            @can('kehilangan-edit')
                             <div class="col-md-12 row button-items justify-content-center gap-3" style="margin-top: 10px;">
-                                <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Pengembalian Bon Alat</button>
-                                <a href="{{route('bonalat.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Pengembalian Bon Alat</a>
+                                @if ($qrHilang->status==0)
+                                    <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Penerimaan Penggantian Alat</button>
+                                @endif
+                                <a href="{{route('kehilangan.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Kembali Ke Tabel Berita Acara</a>
                             </div>
                             @endcan
 

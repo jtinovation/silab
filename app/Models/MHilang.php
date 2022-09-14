@@ -16,32 +16,25 @@ class MHilang extends Model
         return $this->belongsTo(MMemberLab::class,'tr_member_laboratorium_id');//table class,fk
     }
 
-    public function getSttsAttribute()
-    {
+    public function getSttsAttribute(){
         if($this->status==1){
             return "Selesai";
-        }elseif($this->status==2){
+        }elseif($this->status==0){
             return "Belum";
         }
     }
 
-    public function setTanggalSanggupAttribute($value)
-    {
-        $this->attributes['tanggal_sanggup'] = Carbon::createFromFormat('d/m/Y H:i:s', $value)->format('Y-m-d H:i:s');
-        //Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d')
-        //$this->attributes['tanggal'] = Carbon::parse($value)->format('Y-m-d');
+    public function setTanggalSanggupAttribute($value){
+        $this->attributes['tanggal_sanggup'] = Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
     }
 
-    public function getTanggalSanggupAttribute($value)
-    {
-        return Carbon::parse($value)->format('d/m/Y H:i:s');
+    public function getTanggalSanggupAttribute($value){
+        return Carbon::parse($value)->format('d/m/Y');
     }
-
-
 
     public function getSanggupAttribute(){
-        $dateSanggup = Carbon::parse("{$this->tanggal_sanggup}")->format('d/m/Y H:i:s');
-        return Carbon::parse("{$dateSanggup}")->format('d F Y H:i:s');
+        $dateSanggup = Carbon::parse("{$this->tanggal_sanggup}")->format('d/m/Y');
+        return Carbon::parse("{$dateSanggup}")->format('d F Y');
     }
 
 }

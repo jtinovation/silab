@@ -32,8 +32,7 @@
                                 <tr>
                                     <th>Nomor</th>
                                     <th>Nama</th>
-                                    <th>Tanggal Pinjam</th>
-                                    <th>Tanggal Kembali</th>
+                                    <th>Tanggal Kesanggupan</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -71,8 +70,7 @@
         columns: [
             { data: 'id' },
             { data: 'nm' },
-            { data: 'tglpinjam' },
-            { data: 'tglkembali' },
+            { data: 'tglsanggup' },
             { data: 'status' },
             { data: 'action' },
         ]
@@ -101,7 +99,7 @@
         });
     });
 
-    $("body").on("click",".BtnAddBonAlat",function(){
+    $("body").on("click",".BtnAddKehilangan",function(){
         event.preventDefault();
         let pageEdit =$(this).attr("data-href");
         $('.tableElement').hide("slide",{direction:'left'},1000, function(){
@@ -110,9 +108,10 @@
     });
     $("body").on("click", ".delete", function() {
         event.preventDefault();
-        var id = $(this).attr("data-id");
+        var destroy = $(this).attr("data-href");
+        console.log(destroy);
         swal.fire({
-            title: 'Yakin, Hapus Data Bon Alat?',
+            title: 'Yakin, Hapus Data Kehilangan / Rusak?',
             text: "Data yang di hapus tidak bisa dikembalikan",
             icon: 'warning',
             showCancelButton: true,
@@ -124,8 +123,8 @@
                 var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
                     type: "POST",
-                    url: bonAlatDelete,
-                    data: { id: id, _token: token },
+                    url: destroy,
+                    data: { _method:"DELETE", _token: token },
                     dataType: "html",
                     success: function(data) {
                         swal.fire({
@@ -133,7 +132,8 @@
                             text: "",
                             icon: "success"
                         }).then(function() {
-                            location.reload();
+                            //location.reload();
+                            tableKehilangan.ajax.reload();
                         });
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
