@@ -230,7 +230,33 @@
         }
     });
 
-
+    $('#SelectProdi').change(function(){
+        $(".core-ans").empty();
+        let id=$('#SelectSemester option:selected').val();
+        let prodi= $(this).val();
+        console.log(prodi+" "+id);
+        $.ajax({
+            url :  "{{route('getMKGantiPraktek')}}",
+            method : "GET",
+            data : {id: id, prodi: prodi},
+            async : true,
+            dataType: 'json',
+            success: function(response){
+                $('#SelectMK').html('');
+                $('#SelectMK').append('<option></option>');
+                if ($.trim(response) == '' ) {
+                    console.log("no data found");
+                    //$("#txtMatakuliahId").prop('selectedIndex',-1);
+                }else{
+                    $.each(response,function(key, value){
+                            $("#SelectMK").append(
+                                $('<option></option>').attr('value', value.id).text(value.mk)
+                            );
+                        });
+                }
+            }
+        });
+    });
 
 
 </script>

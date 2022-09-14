@@ -2,7 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\M_Staff;
+use App\Models\MBarang;
+use App\Models\MBarangLab;
 use App\Models\MMemberLab;
+use App\Models\MMinggu;
+use App\Models\MProgramStudi;
+use App\Models\MTahunAjaran;
+use App\Models\MvSerma;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
@@ -22,7 +29,7 @@ class C_Serma extends Controller
     public function index(){
         $data = [
             'title' => "Sistem Informasi Laboratorium",
-            'subtitle'  => "Berita Acara Serah Terima Hasil dan Bahan Praktikum",
+            'subtitle'  => "Serah Terima Hasil dan Bahan Praktikum",
             'npage'     => 80,
         ];
 
@@ -33,7 +40,30 @@ class C_Serma extends Controller
     }
 
     public function create(){
-        //
+        $staff_id = Auth::user()->tm_staff_id;
+        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($lab_id)){
+            $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
+            $nm_lab = $lab_id[0]->LaboratoriumData->laboratorium;
+
+            $data = [
+                'title'                 => "Sistem Informasi Laboratorium",
+                'subtitle'              => "Serah Terima Hasil dan Bahan Praktikum",
+                'npage'                 => 80,
+                'tahun_ajaran'          => MTahunAjaran::orderBy('id','Desc')->get(),
+                'prodi'                 => MProgramStudi::where('tm_jurusan_id',8)->get(),
+                'dosen'                 => M_Staff::where([['tm_status_kepegawaian_id',1],['is_aktif',1]])->get(),
+                'minggu'                => MMinggu::whereHas('taData', function($q){$q->where('is_aktif',1);})->get(),
+            ];
+
+            $Breadcrumb = array(
+                1 => array("link" => url("serma"), "label" => "Tabel"),
+                2 => array("link" => "active", "label" => "Form Tambah "),
+            );
+            return view('serma.add',compact('data','Breadcrumb','nm_lab'));
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
     }
 
     public function store(Request $request){
@@ -79,14 +109,14 @@ class C_Serma extends Controller
 
         // Total records
         //$totalRecords = MHilang::select('count(*) as allcount')->where('tm_laboratorium_id',$tm_lab_id)->count();
-        $totalRecords = MHilang::select('count(*) as allcount')->whereHas('memberLab', function($q)use ($tm_lab_id) {$q->where([['tm_laboratorium_id',$tm_lab_id]]);})->count();
-        $totalRecordswithFilter = MHilang::select('count(*) as allcount')->Where('nama', 'like', '%' . $searchValue . '%')->whereHas('memberLab', function($q)use ($tm_lab_id) {$q->where([['tm_laboratorium_id',$tm_lab_id]]);})->count();
+        $totalRecords = MvSerma::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id]])->count();
+        $totalRecordswithFilter = MvSerma::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id]])->whereHas('pengampuData', function($q)use ($searchValue) {$q->Where('nama', 'like', '%' . $searchValue . '%');})->count();
 
         // Get records, also we have included search filter as well
-        $records = MHilang::orderBy($columnName, $columnSortOrder)
-            ->where('nama', 'like', '%' . $searchValue . '%')
-            ->whereHas('memberLab', function($q)use ($tm_lab_id) {$q->where([['tm_laboratorium_id',$tm_lab_id]]);})
-            ->select('tr_hilang_rusak.*')
+        $records = MvSerma::orderBy($columnName, $columnSortOrder)
+            ->where([['tm_laboratorium_id',$tm_lab_id]])
+            ->whereHas('pengampuData', function($q)use ($searchValue) {$q->where('nama', 'like', '%' . $searchValue . '%');})
+            ->select('v_serma.*')
             ->skip($start)
             ->take($rowperpage)
             ->get();
@@ -95,46 +125,23 @@ class C_Serma extends Controller
         $number = $start;
         //dd($records);
         foreach ($records as $record) { $number += 1;
-            $qrDetailHilang = MDetailHilang::where('tr_hilang_rusak_id',$record->id)->get();
-            $statusDetailHilang = 0;
-            foreach($qrDetailHilang as $d){
-                if($d->status){
-                    $statusDetailHilang=1;
-                }
-            }
             $idEncrypt = Crypt::encryptString($record->id);
-
             $button = "";
-
-
-            $button = $button." <a href='#' data-href='".route('kehilangan.ganti',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnKembaliClass'>
-            <i class=' ri-install-line'></i></a>";
-
-
-            if($record->status==0 && $statusDetailHilang == 0){
-                if(Gate::check('kehilangan-edit')){
-                    $button = $button." <a href='#' data-href='".route('kehilangan.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
+                if(Gate::check('serma-edit')){
+                    $button = $button." <a href='#' data-href='".route('serma.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
                     <i class='ri-edit-2-line'></i></a>";
                 }
 
-                if(Gate::check('kehilangan-delete')){
-                    $button = $button." <a href='#' data-href='".route('kehilangan.destroy',$idEncrypt)."'  class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete'>
+                if(Gate::check('serma-delete')){
+                    $button = $button." <a href='#' data-href='".route('serma.destroy',$idEncrypt)."'  class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete'>
                     <i class='ri-delete-bin-2-line'></i></a>";
                 }
-            }
-
-            if($record->status){
-                $stts = "<span class='badge rounded-pill bg-success'>$record->stts</span>";
-            }else{
-                $stts = "<span class='badge rounded-pill bg-warning'>$record->stts</span>";
-            }
 
             $nama = $record->nim." - ".$record->nama;
             $data_arr[] = array(
                 "id"               => $number,
-                "nm"               => $nama,
-                "tglsanggup"       => $record->tanggal_sanggup,
-                "status"           => $stts,
+                "mk"               => $record->maproditerData->mkData->matakuliah,
+                "nama"       => $record->pengampuData->nama,
                 "action"           => $button
             );
         }
@@ -148,4 +155,114 @@ class C_Serma extends Controller
         echo json_encode($response);
         }
     }
+
+
+    public function hasilSelect(Request $request){
+        $staff_id = Auth::user()->tm_staff_id;
+        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($lab_id)){
+            $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
+            $search = $request->searchTerm;
+        if($search != null){
+            $q = MBarang::where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',3]])->whereNotIn('id',MBarangLab::select('tm_barang_id')->where('tm_laboratorium_id',$tm_lab_id)->get())->get();
+            $data= array();
+            if(count($q)){
+                foreach($q as $v){
+                    $id=$v->id;
+                    $nm=$v->nama_barang;
+                    $data[] = array("id"=>$id,"text"=>$nm);
+                }
+            }else{
+                $data[] = array("id"=>"","text"=>"Data Hasil Praktikum Tidak Ditemukan!",);
+            }
+
+        }else{
+            $q = MBarang::where('tm_jenis_barang_id',3)->whereNotIn('id',MBarangLab::select('tm_barang_id')->where('tm_laboratorium_id',$tm_lab_id)->get())->get();
+            $data= array();
+            if(count($q)){
+                foreach($q as $v){
+                    $id=$v->id;
+                    $nm=$v->nama_barang;
+                    $data[] = array("id"=>$id,"text"=>$nm);
+                }
+            }else{
+                $data[] = array("id"=>"","text"=>"Data Hasil Praktikum Tidak Ditemukan!",);
+            }
+        }
+		return json_encode($data);
+
+        }
+    }
+
+    public function hasilSelectIn(Request $request){
+        $staff_id = Auth::user()->tm_staff_id;
+        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($lab_id)){
+            $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
+            $search = $request->searchTerm;
+        if($search != null){
+            $q = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereHas('BarangData', function($q) use ($search) {$q->where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',3]]);})->get();
+            $data= array();
+            if(count($q)){
+                foreach($q as $v){
+                    $id=$v->id;
+                    $nm=$v->nama_barang;
+                    $data[] = array("id"=>$id,"text"=>$nm);
+                }
+            }else{
+                $data[] = array("id"=>"","text"=>"Data Hasil Praktikum Tidak Ditemukan!",);
+            }
+
+        }else{
+            $q = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereHas('BarangData', function($q) use ($search) {$q->where([['tm_jenis_barang_id',3]]);})->get();
+            $data= array();
+            if(count($q)){
+                foreach($q as $v){
+                    $id=$v->id;
+                    $nm=$v->nama_barang;
+                    $data[] = array("id"=>$id,"text"=>$nm);
+                }
+            }else{
+                $data[] = array("id"=>"","text"=>"Data Hasil Praktikum Tidak Ditemukan!",);
+            }
+        }
+		return json_encode($data);
+
+        }
+    }
+
+    public function saveMasterHasil(Request $request){
+        $request->validate([
+            'barang'                => 'required|string|max:255',
+            'satuan'                => 'required|string|max:255',
+        ]);
+
+        //cek Redudancy Barang
+        $cek = MBarang::where('nama_barang',$request->barang)->get();
+        if(count($cek)){
+            $response = array(
+                'status' => 201,
+            );
+        }else{
+            $inputBarang['nama_barang']         = $request->barang;
+            $inputBarang['tm_jenis_barang_id']  = 3;
+            $inputBarang['tm_satuan_id']        = $request->satuan;
+            $inputBarang['spesifikasi']         = $request->spesifikasi;
+            $inputBarang['user_id']             = Auth::user()->id;
+            $barang = MBarang::create($inputBarang);
+            if($barang){
+                $response = array(
+                    'status' => 304,
+                );
+                return $response;
+            }else{
+                $response = array(
+                    'status' => 400,
+                );
+                return $response;
+            }
+        }
+    }
 }
+
+

@@ -190,7 +190,7 @@
                 @can('inventaris-bahan-list')
                 <li class="nav-item">
                     <a class="nav-link menu-link{{ $data['npage'] == 86 ? ' active' : '' }}" href="{{ route('invBahan.index') }}">
-						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Inventaris Bahan Laboratorium</span>
+						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Inventaris Bahan </span>
 					</a>
 				</li>
                 @endcan
@@ -198,7 +198,7 @@
                 @can('inventaris-alat-list')
                 <li class="nav-item">
                     <a class="nav-link menu-link{{ $data['npage'] == 83 ? ' active' : '' }}" href="{{ route('invAlat.index') }}">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Inventaris Alat Laboratorium</span>
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Inventaris Alat </span>
                     </a>
                 </li>
                 @endcan
@@ -222,7 +222,7 @@
                 @can('penggantian-praktek-list')
                 <li class="nav-item">
                     <a class="nav-link menu-link{{ $data['npage'] == 82 ? ' active' : '' }}" href="{{ route('penggantianPraktek.index') }}">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Penggantian Jadwal Praktikum</span>
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Penggantian Jadwal</span>
                     </a>
                 </li>
                 @endcan
@@ -231,6 +231,14 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link{{ $data['npage'] == 81 ? ' active' : '' }}" href="{{ route('kehilangan.index') }}">
                         <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Berita Acara Kerusakan / Hilang</span>
+                    </a>
+                </li>
+                @endcan
+
+                @can('serma-list')
+                <li class="nav-item">
+                    <a class="nav-link menu-link{{ $data['npage'] == 80 ? ' active' : '' }}" href="{{ route('serma.index') }}">
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Serah Terima Hasil & Sisa Praktek</span>
                     </a>
                 </li>
                 @endcan

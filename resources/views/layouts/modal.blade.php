@@ -76,7 +76,7 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-
+@if($data['npage'] == 83)
 {{-- ADD ALAT --}}
 @can('inventaris-alat-create')
 <div id="ShowAddAlatlab" class="modal fade" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
@@ -204,3 +204,89 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 @endcan
+
+@endif
+
+@if($data['npage'] == 80)
+{{-- ADD ALAT --}}
+@can('serma-create')
+<div id="ShowAddHasil" class="modal fade" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header row">
+                <h5 class="modal-title text-center" id="myModalLabel" >TAMBAH DATA HASIL PRAKTIKUM</h5>
+                <h5 class="modal-title text-center mdlHeaderTitle" id="myModalLabel" ></h5>
+            </div>
+            <div class="modal-body">
+                <div class="col-lg-12 ">
+                    <div class="row d-flex justify-content-center">
+                        <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
+                            <i class="ri-user-smile-line label-icon "></i><strong>Form Tambah Hasil Praktikum</strong>
+                        </div>
+                        <div class="wrap-alat-to-lab">
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                    <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                        <label for="selectAlat" class="form-label text-right">Pilih Hasil Praktikum </label></br>
+                                        <select class="form-control tambahHasil" style="font-size: 15px;" name="barang[]" id="selectAlat" required>
+                                            <option value="">Pilih Hasil Praktikum</option>
+                                        </select>
+                                    </div>
+                                    <small>Data Tidak Ditemukan? <a href="#"><span class="addMode"><strong>Tambahkan Data Master Hasil Praktikum</strong></span> </a></small>
+                                </div>
+
+                                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                    <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                        <label for="jmlh" class="form-label text-right">Jumlah</label></br>
+                                        <input type="text" class="form-control number" name="jumlah" id="jmlh" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 mt-4">
+                                    <button type="button" id="btnAlatLab" class="ol-xxl-12 col-xl-12 col-lg-12 col-md-12 btn btn-primary waves-effect waves-light ">Tambah Hasil Ke Laboratorium</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="wrap-master-alat" style="display: none;">
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-xxl-4 col-md-6 mt-1">
+                                    <label for="barang" class="form-label">Hasil Praktikum</label>
+                                    <input class="form-control" type="text" value="" id="barang" name="nama_barang" placeholder="Masukan Barang" required="" style=" text-transform: capitalize;">
+                                </div>
+
+                                <div class="col-xxl-4 col-md-6 mt-1">
+                                    <label for="satuanDefault" class="form-label">Satuan</label></br>
+                                    <select class="form-control" style="font-size: 15px;" name="tm_satuan_id" id="satuanDefault">
+                                        <option value="">Pilih Satuan</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-xxl-4 col-md-12 mt-1">
+                                    <label for="spesifikasi" class="form-label">Spesifikasi</label>
+                                    <textarea class="form-control" name="spesifikasi" id="spesifikasi"></textarea>
+                                </div>
+                                @can('serma-create')
+                                <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 row d-flex mt-2">
+                                    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <button type="button" id="btnMasterAlat" class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 btn btn-primary waves-effect waves-light ">Tambah Data Alat</button>
+                                    </div>
+                                    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <button type="button" id="btnCancel" class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 btn btn-primary waves-effect waves-light ">Batal Input Data</button>
+                                    </div>
+                                </div>
+                                @endcan
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #e2e5ed;">
+               <button type="button" class="btn btn-danger mt-4" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+@endcan
+
+@endif

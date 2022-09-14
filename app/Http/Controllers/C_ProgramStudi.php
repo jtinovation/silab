@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MKaprodi;
+use App\Models\MPengampu;
 use App\Models\MProgramStudi;
 use App\Models\MSemester;
 use Illuminate\Http\Request;
@@ -152,6 +153,17 @@ class C_ProgramStudi extends Controller
 		foreach($q as $v){
 			$id=$v->id;
 			$nm=$v->semester." ( ".$v->taData->tahun_ajaran." )";
+			$data[] = array("id"=>$id,"nama"=>$nm);
+		}
+		return json_encode($data);
+    }
+
+    public function MKSelect(Request $request){
+        $q = MPengampu::where('tr_matakuliah_semester_prodi_id',$request->id)->get();
+        $data= array();
+		foreach($q as $v){
+			$id=$v->id;
+			$nm=$v->pegawaiData->nama;
 			$data[] = array("id"=>$id,"nama"=>$nm);
 		}
 		return json_encode($data);

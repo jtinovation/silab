@@ -267,7 +267,7 @@ class C_InvetarisAlat extends Controller
                 $nm=$v->satuan;
                 $data[] = array("id"=>$id,"text"=>$nm);
             }
-            $data[] = array("id"=>0,"text"=>"Silahkan Pilih Barang");
+            //$data[] = array("id"=>0,"text"=>"Silahkan Pilih Barang");
         }
 		return json_encode($data);
     }
