@@ -19,4 +19,13 @@ class MSerma extends Model
     public function StaffData(){
         return $this->belongsTo(M_Staff::class,'tm_staff_id');//table class,fk
     }
+
+    public function setTanggalAttribute($value){
+        $this->attributes['tanggal'] = Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
+    }
+
+    public function getTanggalAttribute($value){
+        return Carbon::parse($value)->format('d/m/Y');
+    }
+
 }

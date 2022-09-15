@@ -126,6 +126,7 @@
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
                                                <input type="text" class="form-control number hit" name="jml[]" >
+                                               <input type="hidden" name="tr_barang_laboratorium[]" class="getBarang"/>
                                         </div>
 
 
@@ -173,8 +174,9 @@
 
 <script type="text/javascript">
     var txtNumeric;
-    var alatLabSelect  = "{{route('alatLabSelect')}}";
+    var alatLabSelect  = "{{route('alatLabSelects')}}";
     var num = 1;
+    var arrBarang=[];
     initailizeSelect2();
     initDaterangpicker();
 

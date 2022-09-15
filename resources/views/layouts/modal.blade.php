@@ -243,7 +243,7 @@
                                 </div>
 
                                 <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12 mt-4">
-                                    <button type="button" id="btnAlatLab" class="ol-xxl-12 col-xl-12 col-lg-12 col-md-12 btn btn-primary waves-effect waves-light ">Tambah Hasil Ke Laboratorium</button>
+                                    <button type="button" id="btnHasilLab" class="ol-xxl-12 col-xl-12 col-lg-12 col-md-12 btn btn-primary waves-effect waves-light ">Tambah Hasil Ke Laboratorium</button>
                                 </div>
                             </div>
                         </div>
@@ -268,7 +268,7 @@
                                 @can('serma-create')
                                 <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 row d-flex mt-2">
                                     <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <button type="button" id="btnMasterAlat" class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 btn btn-primary waves-effect waves-light ">Tambah Data Alat</button>
+                                        <button type="button" id="btnMasterAlat" class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 btn btn-primary waves-effect waves-light ">Tambah Data Hasil</button>
                                     </div>
                                     <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <button type="button" id="btnCancel" class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 btn btn-primary waves-effect waves-light ">Batal Input Data</button>

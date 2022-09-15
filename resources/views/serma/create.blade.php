@@ -128,6 +128,7 @@
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
                                                <input type="text" class="form-control number hit" name="jumlah[]" >
+                                               <input type="hidden" name="tr_bahan_laboratorium[]" class="getBahan"/>
                                         </div>
 
                                         <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
@@ -172,7 +173,8 @@
                                         </div>
 
                                         <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3">
-                                               <input type="text" class="form-control number hit" name="jumlah[]" >
+                                               <input type="text" class="form-control number hit" name="jumlahHasil[]" >
+                                               <input type="hidden" name="tr_hasil_laboratorium[]" class="getBarangHasil"/>
                                         </div>
 
                                         <div class="col-xxl-1 col-xl-1 col-lg-1 col-md-1">
@@ -215,16 +217,19 @@
 <script type="text/javascript">
     var txtNumeric;
     var nmLab               = "{{$nm_lab}}";
-    var barangSelect        = "{{route('barangSelect')}}";
+    var barangSelect        = "{{route('barangSelectSerma')}}";
     var hasilSelect         = "{{route('hasilSelectIn')}}";
-    var satuanSelect        = "{{route('satuanSelect')}}";
+    var satuanSelect        = "{{route('satuanSelectSerma')}}";
     var hasilSelectNotIn    = "{{route('hasilSelectNotIn')}}";
     var satuanDefault       = "{{route('alatSatuan')}}";
     var saveMasterHasil     = "{{route('saveMasterHasil')}}";
     var token               = "{{ csrf_token() }}";
+    var saveHasilLab        = "{{route('saveHasilLab')}}";
     var num = 1;
     var min = '03/08/2022';
     var max = '13/08/2022';
+    var arrBarangHasil=[];
+    var arrBahan=[];
     initAddSerma();
 
     function initAddSerma(){
@@ -375,11 +380,27 @@
             });
         });
 
+        $("body").on("change", ".selectHasil", function() {
+            let idHasil = $(this).val();
+            $(this).parents(".wrap").find('.getBarangHasil').val(idHasil);
+        });
+
+        $("body").on("change", ".select2_el", function() {
+            let idHasil = $(this).val();
+            $(this).parents(".wrap").find('.getBahan').val(idHasil);
+            $(this).parents(".wrap").find('.satuan_el').html('').append('<option>Pilih Satuan</option>');
+        });
+
         $("body").on("click", ".remove", function() {
             $(this).parents(".input_copy").remove();
         });
 
         $("body").on("click", ".add-more", function() {
+            arrBahan=[];
+            $('.getBahan').each(function(i, obj) {
+                arrBahan.push(obj.value);
+            });
+            arrBahan = arrBahan.filter(e => String(e).trim());
             var html = $(".copy-fields").html();
             var rep = html.replace('abc', "input_copy");
             var rep = rep.replace('place_barang', "place_barang-" + num);
@@ -410,6 +431,11 @@
         });
 
         $("body").on("click", ".add-more-hasil", function() {
+            arrBarangHasil=[];
+            $('.getBarangHasil').each(function(i, obj) {
+                arrBarangHasil.push(obj.value);
+            });
+            arrBarangHasil = arrBarangHasil.filter(e => String(e).trim());
             var html = $(".copy-fields-hasil").html();
             var rep = html.replace('abc', "input_copy_hasil");
             var rep = rep.replace('place_hasil', "place_hasil-" + num);
@@ -501,48 +527,75 @@
             let barang = $('#barang').val();
             let spesifikasi = $('#spesifikasi').val();
             if(barang!="" && satuan!=""){
-
                 $.ajax({
-            type: "POST",
-            url: saveMasterHasil,
-            data: { barang: barang, satuan: satuan , spesifikasi:spesifikasi , _token: token },
-            dataType: "html",
-            success: function(data) {
-                swal.fire({
-                    title: "Simpan Data Berhasil!",
-                    text: "",
-                    icon: "success"
-                }).then(function() {
-                    $('.wrap-master-alat').hide("slide", { direction: 'down' }, 1000, function() {
-                        $('.wrap-alat-to-lab').show("slide", { direction: 'down' }, 1000);
-                        $('#satuanDefault').val(null).trigger('change');
-                        $('#barang').val("");
-                        $('#spesifikasi').val("");
-                    });
+                    type: "POST",
+                    url: saveMasterHasil,
+                    data: { barang: barang, satuan: satuan , spesifikasi:spesifikasi , _token: token },
+                    dataType: "html",
+                    success: function(data) {
+                        swal.fire({
+                            title: "Simpan Data Berhasil!",
+                            text: "",
+                            icon: "success"
+                        }).then(function() {
+                            $('.wrap-master-alat').hide("slide", { direction: 'down' }, 1000, function() {
+                                $('.wrap-alat-to-lab').show("slide", { direction: 'down' }, 1000);
+                                $('#satuanDefault').val(null).trigger('change');
+                                $('#barang').val("");
+                                $('#spesifikasi').val("");
+                            });
+                        });
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        swal.fire("Error deleting!", "Please try again", "error");
+                    }
                 });
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-                swal.fire("Error deleting!", "Please try again", "error");
+                // console.log(barang+" # "+satuan);
+            }else if(barang == ""){
+                //console.log("Isi Data Barang Untuk Melanjutkan");
+                swal.fire({
+                    title: "Isi Data Barang Untuk Melanjutkan!",
+                    text: "",
+                    icon: "error"
+                });
+            }else if(satuan == ""){
+                //console.log("Isi Data Satuan Untuk Melanjutkan");
+                swal.fire({
+                    title: "Isi Data Satuan Untuk Melanjutkan!",
+                    text: "",
+                    icon: "error"
+                });
             }
         });
-        // console.log(barang+" # "+satuan);
-    }else if(barang == ""){
-        //console.log("Isi Data Barang Untuk Melanjutkan");
-        swal.fire({
-            title: "Isi Data Barang Untuk Melanjutkan!",
-            text: "",
-            icon: "error"
-        });
-    }else if(satuan == ""){
-        //console.log("Isi Data Satuan Untuk Melanjutkan");
-        swal.fire({
-            title: "Isi Data Satuan Untuk Melanjutkan!",
-            text: "",
-            icon: "error"
-        });
-    }
 
-});
+        $("body").on("click","#btnHasilLab",function(){
+            let tm_barang_id = $('#selectAlat').val();
+            let jumlah       = $('#jmlh').val();
+            if(tm_barang_id!=""){
+                $.ajax({
+                    type: "POST",
+                    url: saveHasilLab,
+                    data: { id: tm_barang_id,jumlah:jumlah, _token: token },
+                    dataType: "html",
+                    success: function(data) {
+                        $('#ShowAddHasil').modal('hide');
+                        swal.fire({
+                            title: "Simpan Data Berhasil!",
+                            text: "",
+                            icon: "success"
+                        }).then(function() {
+
+                            $('#selectAlat').val(null).trigger('change');
+                            $('#jmlh').val(0);
+                        });
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        swal.fire("Error deleting!", "Please try again", "error");
+                    }
+                });
+            }
+            console.log(tm_barang_id);
+        });
 
 
     };
@@ -559,7 +612,8 @@
                 delay: 250,
                 data: function(params) {
                     return {
-                        searchTerm: params.term // search term
+                        searchTerm: params.term,
+                        valBarang: arrBarangHasil,
                     };
                 },
                 processResults: function(response) {
@@ -569,35 +623,6 @@
                 },
                 cache: true
             }
-        });
-
-        $("body").on("click","#btnAlatLab",function(){
-            let tm_barang_id = $('#selectAlat').val();
-            let jumlah       = $('#jmlh').val();
-            if(tm_barang_id!=""){
-                $.ajax({
-                    type: "POST",
-                    url: saveMasterHasilPraktek,
-                    data: { id: tm_barang_id,jumlah:jumlah, _token: token },
-                    dataType: "html",
-                    success: function(data) {
-                        $('#ShowAddAlatlab').modal('hide');
-                        swal.fire({
-                            title: "Simpan Data Berhasil!",
-                            text: "",
-                            icon: "success"
-                        }).then(function() {
-                            table.ajax.reload();
-                            $('#selectAlat').val(null).trigger('change');
-                            $('#jmlh').val(0);
-                        });
-                    },
-                    error: function(xhr, ajaxOptions, thrownError) {
-                        swal.fire("Error deleting!", "Please try again", "error");
-                    }
-                });
-            }
-            console.log(tm_barang_id);
         });
     }
 
@@ -610,7 +635,8 @@
                 delay: 250,
                 data: function(params) {
                     return {
-                        searchTerm: params.term // search term
+                        searchTerm: params.term,
+                        valBarang: arrBahan,
                     };
                 },
                 processResults: function(response) {

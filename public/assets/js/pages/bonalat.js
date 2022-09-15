@@ -65,10 +65,17 @@ $("body").on("change", ".select2_el", function() {
     let idStok = $(this).val();
     let arr = idStok.split("#");
     $(this).parents(".wrap").find('.stok').val(arr[1]);
+    $(this).parents(".wrap").find('.getBarang').val(arr[0]);
     console.log(arr[1]);
 });
 
 $("body").on("click", ".add-more", function() {
+    arrBarang=[];
+    $('.getBarang').each(function(i, obj) {
+        arrBarang.push(obj.value);
+    });
+    arrBarang = arrBarang.filter(e => String(e).trim());
+
     var html = $(".copy-fields").html();
     var rep = html.replace('abc', "input_copy");
     var rep = rep.replace('place_barang', "place_barang-" + num);
@@ -106,7 +113,8 @@ function initailizeSelect2() {
             delay: 500,
             data: function(params) {
                 return {
-                    searchTerm: params.term // search term
+                    searchTerm: params.term,
+                    valBarang: arrBarang, // search term
                 };
             },
             processResults: function(r) {

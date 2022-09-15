@@ -144,8 +144,6 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('saveMasterAlat',                           [C_InvetarisAlat::class, 'saveMasterAlat'])->name('saveMasterAlat');
     Route::post('invAlat.Del',                              [C_InvetarisAlat::class, 'destroy'])->name('invAlat.Del');
 
-
-
     Route::resource('bonalat',                               C_BonAlat::class);
     Route::get('getBonAlat',                                [C_BonAlat::class, 'getBonalat'])->name('getBonAlat');
     Route::post('bonAlatDelete',                            [C_BonAlat::class, 'destroy'])->name('bonAlatDelete');
@@ -171,6 +169,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('saveMasterHasil',                          [C_Serma::class, 'saveMasterHasil'])->name('saveMasterHasil');
     Route::get('hasilSelectNotIn',                          [C_Serma::class, 'hasilSelect'])->name('hasilSelectNotIn');
     Route::get('hasilSelectIn',                             [C_Serma::class, 'hasilSelectIn'])->name('hasilSelectIn');
+    Route::post('saveHasilLab',                             [C_Serma::class, 'saveHasilLab'])->name('saveHasilLab');
+    Route::get('barangSelectSerma',                         [C_Serma::class, 'barangSelect'])->name('barangSelectSerma');
+    Route::get('satuanSelectSerma',                         [C_Serma::class, 'satuanSelect'])->name('satuanSelectSerma');
 
 });
 

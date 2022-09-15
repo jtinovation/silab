@@ -574,16 +574,16 @@ class C_BonAlat extends Controller
     }
 
     public function alatLabSelect(Request $request){
-        $staff_id = Auth::user()->tm_staff_id;
-        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-        $lab_id = $qrlab[0]->tm_laboratorium_id;
-        $search = $request->searchTerm;
+        $staff_id   = Auth::user()->tm_staff_id;
+        $qrlab      = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $lab_id     = $qrlab[0]->tm_laboratorium_id;
+        $search     = $request->searchTerm;
         if($search != null){
             //$q = MBarangLab::where('nama_barang','LIKE','%'.$search.'%')->get();
-            $q = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereHas('BarangData', function($q) use ($search) {$q->where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',1]]);})->get();
-            $data= array();
+            $q      = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereHas('BarangData', function($q) use ($search) {$q->where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',1]]);})->get();
+            $data   = array();
             foreach($q as $v){
-                $id=$v->id;
+                $id =$v->id;
                 $nm=$v->BarangData->nama_barang;
                 $stok = $v->stok;
                 $idstok = $id."#".$stok;
@@ -613,7 +613,11 @@ class C_BonAlat extends Controller
         $search = $request->searchTerm;
         if($search != null){
             //$q = MBarangLab::where('nama_barang','LIKE','%'.$search.'%')->get();
-            $q = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereNotIn('id',$request->valBarang)->whereHas('BarangData', function($q) use ($search) {$q->where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',1]]);})->get();
+            if($request->valBarang != null){
+                $q = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereNotIn('id',$request->valBarang)->whereHas('BarangData', function($q) use ($search) {$q->where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',1]]);})->get();
+            }else{
+            $q      = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereHas('BarangData', function($q) use ($search) {$q->where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',1]]);})->get();
+            }
             $data= array();
             foreach($q as $v){
                 $id=$v->id;
@@ -624,7 +628,12 @@ class C_BonAlat extends Controller
             }
         }else{
             //$q = MBarang::all();
-            $q = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereNotIn('id',$request->valBarang)->whereHas('BarangData', function($q) use ($search) {$q->where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',1]]);})->get();
+            //$q = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereNotIn('id',$request->valBarang)->whereHas('BarangData', function($q) use ($search) {$q->where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',1]]);})->get();
+            if($request->valBarang != null){
+                $q = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereNotIn('id',$request->valBarang)->whereHas('BarangData', function($q){$q->where([['tm_jenis_barang_id',1]]);})->get();
+            }else{
+                $q = MBarangLab::where([['tm_laboratorium_id',$lab_id],['is_aktif',1]])->whereHas('BarangData', function($q){$q->where([['tm_jenis_barang_id',1]]);})->get();
+            }
             $data= array();
             foreach($q as $v){
                 $id=$v->id;
