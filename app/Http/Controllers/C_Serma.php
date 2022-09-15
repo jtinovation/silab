@@ -151,7 +151,45 @@ class C_Serma extends Controller
     }
 
     public function edit($id){
-        //
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($qrlab)){
+            $lab_id = $qrlab[0]->tm_laboratorium_id;
+            $tm_lab_id = $qrlab[0]->tm_laboratorium_id;
+            $lab = $qrlab[0]->LaboratoriumData->laboratorium;
+            $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
+            $idDecrypt = Crypt::decryptString($id);
+            $qrHilang = MSerma::find($idDecrypt);
+            if(!empty($qrHilang)){
+                $qrHasil    = MSermaHasil::where('tr_serma_hasil_sisa_praktek_id',$idDecrypt)->get();
+                $qrSisa     = MSermaSisa::where('tr_serma_hasil_sisa_praktek_id',$idDecrypt)->get();
+
+                $data = [
+                    'title'                 => "Sistem Informasi Laboratorium",
+                    'subtitle'              => "Serah Terima Hasil dan Bahan Praktikum",
+                    'npage'                 => 80,
+                    'tahun_ajaran'          => MTahunAjaran::orderBy('id','Desc')->get(),
+                    'prodi'                 => MProgramStudi::where('tm_jurusan_id',8)->get(),
+                    'dosen'                 => M_Staff::where([['tm_status_kepegawaian_id',1],['is_aktif',1]])->get(),
+                    'minggu'                => MMinggu::whereHas('taData', function($q){$q->where('is_aktif',1);})->get(),
+                    'lab_id'                => $tm_lab_id,
+                    'lab'                   => $lab,
+                    'jurusan'               => $jurusan,
+                    'memberlab'             => $qrlab[0]->staffData->nama,
+
+                ];
+
+                $Breadcrumb = array(
+                    1 => array("link" => url("kehilangan"), "label" => "Tabel"),
+                    2 => array("link" => "active", "label" => "Form Ubah"),
+                );
+                return view('serma.edit', compact('data', 'Breadcrumb','qrHilang','qrDetailHilang','id'));
+            }else{
+                return abort(403, 'Unauthorized action.');
+            }
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
     }
 
     public function update(Request $request, $id){
