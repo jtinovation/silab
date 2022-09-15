@@ -172,6 +172,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('saveHasilLab',                             [C_Serma::class, 'saveHasilLab'])->name('saveHasilLab');
     Route::get('barangSelectSerma',                         [C_Serma::class, 'barangSelect'])->name('barangSelectSerma');
     Route::get('satuanSelectSerma',                         [C_Serma::class, 'satuanSelect'])->name('satuanSelectSerma');
+    Route::post('sisaDetailDelete',                         [C_Serma::class,'sisaDetailDelete'])->name('sisaDetailDelete');
 
 });
 

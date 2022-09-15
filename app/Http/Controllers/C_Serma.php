@@ -6,10 +6,13 @@ use App\Models\M_Staff;
 use App\Models\MBarang;
 use App\Models\MBarangLab;
 use App\Models\MKartuStok;
+use App\Models\MMaproditer;
 use App\Models\MMemberLab;
 use App\Models\MMinggu;
+use App\Models\MPengampu;
 use App\Models\MProgramStudi;
 use App\Models\MSatuanDetail;
+use App\Models\MSemester;
 use App\Models\MSerma;
 use App\Models\MSermaHasil;
 use App\Models\MSermaSisa;
@@ -86,59 +89,63 @@ class C_Serma extends Controller
             $serma = MSerma::create($input);
 
             foreach($request->barang as $key => $value){
-                $tr_barang_laboratorium_id                      = $value;
-                $td_satuan_id = $request->satuan[$key];
-                $qrDSatuan = MSatuanDetail::find($td_satuan_id);
-                $satuan = $qrDSatuan->qty;
-                $jumlahSatuan = $request->jumlah[$key] * $satuan;
+                if($value != "" && $request->jumlah[$key] !=""){
+                    $tr_barang_laboratorium_id                      = $value;
+                    $td_satuan_id = $request->satuan[$key];
+                    $qrDSatuan = MSatuanDetail::find($td_satuan_id);
+                    $satuan = $qrDSatuan->qty;
+                    $jumlahSatuan = $request->jumlah[$key] * $satuan;
 
-                $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
-                $StokLab = $barangLab->stok;
-                    $TmBarang = MBarang::find($barangLab->tm_barang_id);
-                    $stokBarang = $TmBarang->qty;
+                    $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
+                    $StokLab = $barangLab->stok;
+                        $TmBarang = MBarang::find($barangLab->tm_barang_id);
+                        $stokBarang = $TmBarang->qty;
 
-                    $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
-                    $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                    $inputKS['is_stok_in']                = 1;
-                    $inputKS['qty']                       = $jumlahSatuan;
-                    $inputKS['stok']                      = $StokLab + $jumlahSatuan;
-                    $KS = MKartuStok::create($inputKS);
+                        $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
+                        $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                        $inputKS['is_stok_in']                = 1;
+                        $inputKS['qty']                       = $jumlahSatuan;
+                        $inputKS['stok']                      = $StokLab + $jumlahSatuan;
+                        $KS = MKartuStok::create($inputKS);
 
-                    $TmBarang->update(array('qty' => $stokBarang+$jumlahSatuan));
-                $barangLab->update(array('stok'=>$StokLab+$jumlahSatuan));
+                        $TmBarang->update(array('qty' => $stokBarang+$jumlahSatuan));
+                    $barangLab->update(array('stok'=>$StokLab+$jumlahSatuan));
 
-                $detailInput['tr_barang_laboratorium_id']       = $tr_barang_laboratorium_id;
-                $detailInput['jumlah']                          = $request->jumlah[$key];
-                $detailInput['td_satuan_id']                    = $td_satuan_id;
-                $detailInput['tr_serma_hasil_sisa_praktek_id']  = $serma->id;
-                $detailInput['tr_kartu_stok_id']                = $KS->id;
-                $sermaSisa = MSermaSisa::create($detailInput);
+                    $detailInput['tr_barang_laboratorium_id']       = $tr_barang_laboratorium_id;
+                    $detailInput['jumlah']                          = $request->jumlah[$key];
+                    $detailInput['td_satuan_id']                    = $td_satuan_id;
+                    $detailInput['tr_serma_hasil_sisa_praktek_id']  = $serma->id;
+                    $detailInput['tr_kartu_stok_id']                = $KS->id;
+                    $sermaSisa = MSermaSisa::create($detailInput);
+                }
             }
 
             foreach($request->hasil as $key => $value){
-                $tr_barang_laboratorium_id                      = $value;
-                $jumlah = $request->jumlahHasil[$key];
+                if($value != "" && $request->jumlahHasil[$key] !=""){
+                    $tr_barang_laboratorium_id                      = $value;
+                    $jumlah = $request->jumlahHasil[$key];
 
-                $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
-                $StokLab = $barangLab->stok;
-                    $TmBarang = MBarang::find($barangLab->tm_barang_id);
-                    $stokBarang = $TmBarang->qty;
+                    $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
+                    $StokLab = $barangLab->stok;
+                        $TmBarang = MBarang::find($barangLab->tm_barang_id);
+                        $stokBarang = $TmBarang->qty;
 
-                    $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
-                    $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                    $inputKS['is_stok_in']                = 1;
-                    $inputKS['qty']                       = $jumlah;
-                    $inputKS['stok']                      = $StokLab + $jumlah;
-                    $KS = MKartuStok::create($inputKS);
+                        $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
+                        $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                        $inputKS['is_stok_in']                = 1;
+                        $inputKS['qty']                       = $jumlah;
+                        $inputKS['stok']                      = $StokLab + $jumlah;
+                        $KS = MKartuStok::create($inputKS);
 
-                    $TmBarang->update(array('qty' => $stokBarang+$jumlah));
-                $barangLab->update(array('stok'=>$StokLab+$jumlah));
+                        $TmBarang->update(array('qty' => $stokBarang+$jumlah));
+                    $barangLab->update(array('stok'=>$StokLab+$jumlah));
 
-                $detailInput['tr_barang_laboratorium_id']       = $tr_barang_laboratorium_id;
-                $detailInput['jumlah']                          = $jumlah;
-                $detailInput['tr_serma_hasil_sisa_praktek_id']  = $serma->id;
-                $detailInput['tr_kartu_stok_id']                = $KS->id;
-                $sermaSisa = MSermaHasil::create($detailInput);
+                    $detailInput['tr_barang_laboratorium_id']       = $tr_barang_laboratorium_id;
+                    $detailInput['jumlah']                          = $jumlah;
+                    $detailInput['tr_serma_hasil_sisa_praktek_id']  = $serma->id;
+                    $detailInput['tr_kartu_stok_id']                = $KS->id;
+                    $sermaSisa = MSermaHasil::create($detailInput);
+                }
             }
             return redirect(route('serma.index'))->with('success','Serah Terima hasil dan sisa praktek Berhasil di Simpan.');
         }else{
@@ -156,24 +163,37 @@ class C_Serma extends Controller
         if(count($qrlab)){
             $lab_id = $qrlab[0]->tm_laboratorium_id;
             $tm_lab_id = $qrlab[0]->tm_laboratorium_id;
-            $lab = $qrlab[0]->LaboratoriumData->laboratorium;
+            $nm_lab = $qrlab[0]->LaboratoriumData->laboratorium;
             $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
             $idDecrypt = Crypt::decryptString($id);
-            $qrHilang = MSerma::find($idDecrypt);
-            if(!empty($qrHilang)){
-                $qrHasil    = MSermaHasil::where('tr_serma_hasil_sisa_praktek_id',$idDecrypt)->get();
-                $qrSisa     = MSermaSisa::where('tr_serma_hasil_sisa_praktek_id',$idDecrypt)->get();
-
+            $qrSerma = MSerma::find($idDecrypt);
+            if(!empty($qrSerma)){
+                $qrHasil                = MSermaHasil::where('tr_serma_hasil_sisa_praktek_id',$idDecrypt)->get();
+                $qrSisa                 = MSermaSisa::where('tr_serma_hasil_sisa_praktek_id',$idDecrypt)->get();
+                $tm_tahun_ajaran_id     = $qrSerma->pengampuData->maproditerData->semesterData->tm_tahun_ajaran_id;
+                $tm_semester_id         = $qrSerma->pengampuData->maproditerData->tm_semester_id;
+                $tm_program_studi_id    = $qrSerma->pengampuData->maproditerData->tm_program_studi_id;
+                $tm_maproditer_id       = $qrSerma->pengampuData->tr_matakuliah_semester_prodi_id;
+                $qrMaproditer           = MMaproditer::where([['tm_program_studi_id',$tm_program_studi_id],['tm_semester_id',$tm_semester_id]])->get();
+                $qrPengampu             = MPengampu::where('tr_matakuliah_semester_prodi_id',$tm_maproditer_id)->get();
+                $qrSemester             = MSemester::where('tm_tahun_ajaran_id', $tm_tahun_ajaran_id)->get();
                 $data = [
                     'title'                 => "Sistem Informasi Laboratorium",
                     'subtitle'              => "Serah Terima Hasil dan Bahan Praktikum",
                     'npage'                 => 80,
                     'tahun_ajaran'          => MTahunAjaran::orderBy('id','Desc')->get(),
+                    'tahun_ajarans'         => $tm_tahun_ajaran_id,
                     'prodi'                 => MProgramStudi::where('tm_jurusan_id',8)->get(),
-                    'dosen'                 => M_Staff::where([['tm_status_kepegawaian_id',1],['is_aktif',1]])->get(),
+                    'prodis'                => $tm_program_studi_id,
+                    'smstr'                 => $qrSemester,
+                    'smstrs'                => $tm_semester_id,
+                    'mk'                    => $qrMaproditer,
+                    'mks'                   => $tm_maproditer_id,
+                    'pengampu'              => $qrPengampu,
+                    'pengampus'             => $qrSerma->tr_matakuliah_dosen_id,
                     'minggu'                => MMinggu::whereHas('taData', function($q){$q->where('is_aktif',1);})->get(),
                     'lab_id'                => $tm_lab_id,
-                    'lab'                   => $lab,
+                    'lab'                   => $nm_lab,
                     'jurusan'               => $jurusan,
                     'memberlab'             => $qrlab[0]->staffData->nama,
 
@@ -183,7 +203,7 @@ class C_Serma extends Controller
                     1 => array("link" => url("kehilangan"), "label" => "Tabel"),
                     2 => array("link" => "active", "label" => "Form Ubah"),
                 );
-                return view('serma.edit', compact('data', 'Breadcrumb','qrHilang','qrDetailHilang','id'));
+                return view('serma.edit', compact('data', 'Breadcrumb','qrHasil','qrSisa','id','qrSerma','nm_lab'));
             }else{
                 return abort(403, 'Unauthorized action.');
             }
@@ -193,7 +213,85 @@ class C_Serma extends Controller
     }
 
     public function update(Request $request, $id){
-        //
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $lab_id = $qrlab[0]->tm_laboratorium_id;
+        $idDecrypt = Crypt::decryptString($id);
+        if(count($qrlab)){
+            $date = Carbon::now();
+            $input['tr_matakuliah_dosen_id']        = $request->tr_matakuliah_dosen_id;
+            $input['tm_minggu_id']                  = $request->tm_minggu_id;
+            $input['tanggal']                       = $request->tanggal;
+            $input['acara_praktek']                 = $request->acara_praktek;
+            $input['tr_member_laboratorium_id']     = $qrlab[0]->id;
+            //$serma = MSerma::find($idDecrypt)->update($input);
+
+            foreach($request->detailSisa as $key => $value){
+                if($value != ""){
+                    $td_sisa_praktek_id = $value;
+                    $tr_barang_laboratorium_id                      = $request->tr_barang_laboratorium_id[$key];
+                    $newJml = $_REQUEST['jmlsisa-'.$value];
+                    $newJml = $_REQUEST['satuansisa-'.$value];
+                    $td_satuan_id = $request->satuan[$key];
+                    $qrDSatuan = MSatuanDetail::find($td_satuan_id);
+                    $satuan = $qrDSatuan->qty;
+                    $jumlahSatuan = $request->jumlah[$key] * $satuan;
+
+                    $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
+                    $StokLab = $barangLab->stok;
+                        $TmBarang = MBarang::find($barangLab->tm_barang_id);
+                        $stokBarang = $TmBarang->qty;
+
+                        $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
+                        $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                        $inputKS['is_stok_in']                = 1;
+                        $inputKS['qty']                       = $jumlahSatuan;
+                        $inputKS['stok']                      = $StokLab + $jumlahSatuan;
+                        $KS = MKartuStok::create($inputKS);
+
+                        $TmBarang->update(array('qty' => $stokBarang+$jumlahSatuan));
+                    $barangLab->update(array('stok'=>$StokLab+$jumlahSatuan));
+
+                    $detailInput['tr_barang_laboratorium_id']       = $tr_barang_laboratorium_id;
+                    $detailInput['jumlah']                          = $request->jumlah[$key];
+                    $detailInput['td_satuan_id']                    = $td_satuan_id;
+                    $detailInput['tr_serma_hasil_sisa_praktek_id']  = $serma->id;
+                    $detailInput['tr_kartu_stok_id']                = $KS->id;
+                    $sermaSisa = MSermaSisa::create($detailInput);
+                }
+            }
+
+            foreach($request->hasil as $key => $value){
+                if($value != "" && $request->jumlahHasil[$key] !=""){
+                    $tr_barang_laboratorium_id                      = $value;
+                    $jumlah = $request->jumlahHasil[$key];
+
+                    $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
+                    $StokLab = $barangLab->stok;
+                        $TmBarang = MBarang::find($barangLab->tm_barang_id);
+                        $stokBarang = $TmBarang->qty;
+
+                        $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
+                        $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                        $inputKS['is_stok_in']                = 1;
+                        $inputKS['qty']                       = $jumlah;
+                        $inputKS['stok']                      = $StokLab + $jumlah;
+                        $KS = MKartuStok::create($inputKS);
+
+                        $TmBarang->update(array('qty' => $stokBarang+$jumlah));
+                    $barangLab->update(array('stok'=>$StokLab+$jumlah));
+
+                    $detailInput['tr_barang_laboratorium_id']       = $tr_barang_laboratorium_id;
+                    $detailInput['jumlah']                          = $jumlah;
+                    $detailInput['tr_serma_hasil_sisa_praktek_id']  = $serma->id;
+                    $detailInput['tr_kartu_stok_id']                = $KS->id;
+                    $sermaSisa = MSermaHasil::create($detailInput);
+                }
+            }
+            return redirect(route('serma.index'))->with('success','Serah Terima hasil dan sisa praktek Berhasil di Simpan.');
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
 
     }
 
@@ -466,6 +564,22 @@ class C_Serma extends Controller
 		return json_encode($data);
     }
 
+    public function sisaDetailDelete(Request $request)
+    {
+        $response = array(
+            'status' => 200,
+        );
+        /* if($qry){
+            $response = array(
+                'status' => 200,
+            );
+        }else{
+            $response = array(
+                'status' => 503,
+            );
+        } */
+        echo json_encode($response);
+    }
 }
 
 
