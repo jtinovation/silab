@@ -226,6 +226,7 @@ class C_Serma extends Controller
             $input['tr_member_laboratorium_id']     = $qrlab[0]->id;
             $serma = MSerma::find($idDecrypt)->update($input);
 
+            if($request->has('detailSisa')){
             foreach($request->detailSisa as $key => $value){
                 if($value != "" && $_REQUEST['jmlsisa-'.$value] !=""  && $_REQUEST['satuansisa-'.$value] !=""){
                     $td_sisa_praktek_id                             = $value;
@@ -253,7 +254,6 @@ class C_Serma extends Controller
 
                             $updateKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
                             $updateKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                            $updateKS['is_stok_in']                = 1;
                             $updateKS['qty']                       = $newJml;
                             $updateKS['stok']                      = ($StokLab - $oldJumlahSatuan)+$newJumlahSatuan;
                             $qrKS->updateKS($updateKS);
@@ -267,7 +267,9 @@ class C_Serma extends Controller
                     }
                 }
             }
+            }
 
+            if($request->has('detailHasil')){
             foreach($request->detailHasil as $key => $value){
                 if($value != "" && $_REQUEST['jmlhasil-'.$value] !=""  && $_REQUEST['hasil-'.$value] !=""){
                     $td_sisa_praktek_id                             = $value;
@@ -295,7 +297,6 @@ class C_Serma extends Controller
 
                             $updateKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
                             $updateKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                            $updateKS['is_stok_in']                = 1;
                             $updateKS['qty']                       = $newJml;
                             $updateKS['stok']                      = ($StokLab - $oldJumlahSatuan)+$newJumlahSatuan;
                             $qrKS->updateKS($updateKS);
@@ -313,7 +314,9 @@ class C_Serma extends Controller
                     //$sermaSisa = MSermaSisa::create($detailInput);
                 }
             }
+            }
 
+            if($request->has('barang')){
             foreach($request->barang as $key => $value){
                 if($value != "" && $request->jumlah[$key] !=""){
                     $tr_barang_laboratorium_id                      = $value;
@@ -345,7 +348,9 @@ class C_Serma extends Controller
                     $sermaSisa = MSermaSisa::create($detailInput);
                 }
             }
+            }
 
+            if($request->has('hasil')){
             foreach($request->hasil as $key => $value){
                 if($value != "" && $request->jumlahHasil[$key] !=""){
                     $tr_barang_laboratorium_id                      = $value;
@@ -373,6 +378,7 @@ class C_Serma extends Controller
                     $sermaSisa = MSermaHasil::create($detailInput);
                 }
             }
+        }
 
             return redirect(route('serma.index'))->with('success','Serah Terima hasil dan sisa praktek Berhasil di Simpan.');
         }else{
