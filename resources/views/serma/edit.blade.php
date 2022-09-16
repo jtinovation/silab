@@ -207,7 +207,7 @@
 
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
                                             <div class="hstack gap-3">
-                                                <input class="form-control  hit" type="text" name="{{'jml-'.$vh->id}}" style="padding: 8px 10px;" value="{{$vh->jumlah}}">
+                                                <input class="form-control  hit" type="text" name="{{'jmlhasil-'.$vh->id}}" style="padding: 8px 10px;" value="{{$vh->jumlah}}">
                                                 <button class="btn btn-danger removeDetail" data-div="{{"inputCopyHasil-".$vh->id}}" data-remove="{{Crypt::encryptString($vh->id)}}" data-id="{{$vh->id}}" type="button"><i class=" bx bx-trash"></i></button>
                                                 <button class="btn btn-success add-more" type="button"><i class=" bx bx-plus"></i></button>
                                             </div>
