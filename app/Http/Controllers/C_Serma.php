@@ -343,7 +343,7 @@ class C_Serma extends Controller
                     $detailInput['tr_barang_laboratorium_id']       = $tr_barang_laboratorium_id;
                     $detailInput['jumlah']                          = $request->jumlah[$key];
                     $detailInput['td_satuan_id']                    = $td_satuan_id;
-                    $detailInput['tr_serma_hasil_sisa_praktek_id']  = $serma->id;
+                    $detailInput['tr_serma_hasil_sisa_praktek_id']  = $idDecrypt;
                     $detailInput['tr_kartu_stok_id']                = $KS->id;
                     $sermaSisa = MSermaSisa::create($detailInput);
                 }
@@ -373,7 +373,7 @@ class C_Serma extends Controller
 
                     $detailInput['tr_barang_laboratorium_id']       = $tr_barang_laboratorium_id;
                     $detailInput['jumlah']                          = $jumlah;
-                    $detailInput['tr_serma_hasil_sisa_praktek_id']  = $serma->id;
+                    $detailInput['tr_serma_hasil_sisa_praktek_id']  = $idDecrypt;
                     $detailInput['tr_kartu_stok_id']                = $KS->id;
                     $sermaSisa = MSermaHasil::create($detailInput);
                 }

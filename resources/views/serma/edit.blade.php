@@ -151,7 +151,7 @@
                                 </div>
                             </div>
                             @endforeach
-                                <div class="copy-fields" style="display: none;">
+                                <div class="copy-fields">
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 abc wrap" style="margin-bottom: 10px;">
 
                                         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6" id="place_barang">
