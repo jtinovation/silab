@@ -173,6 +173,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('barangSelectSerma',                         [C_Serma::class, 'barangSelect'])->name('barangSelectSerma');
     Route::get('satuanSelectSerma',                         [C_Serma::class, 'satuanSelect'])->name('satuanSelectSerma');
     Route::post('sisaDetailDelete',                         [C_Serma::class,'sisaDetailDelete'])->name('sisaDetailDelete');
+    Route::post('hasilDetailDelete',                         [C_Serma::class,'hasilDetailDelete'])->name('hasilDetailDelete');
 
 });
 

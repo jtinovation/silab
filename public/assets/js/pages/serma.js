@@ -13,6 +13,7 @@
 
         $("body").on("change", ".select2_el", function() {
             let idHasil = $(this).val();
+            log
             $(this).parents(".wrap").find('.getBahan').val(idHasil);
             $(this).parents(".wrap").find('.satuan_el').html('').append('<option>Pilih Satuan</option>');
         });
@@ -57,11 +58,7 @@
         });
 
         $("body").on("click", ".add-more-hasil", function() {
-            arrBarangHasil=[];
-            $('.getBarangHasil').each(function(i, obj) {
-                arrBarangHasil.push(obj.value);
-            });
-            arrBarangHasil = arrBarangHasil.filter(e => String(e).trim());
+            initArrayHasil();
             var html = $(".copy-fields-hasil").html();
             var rep = html.replace('abc', "input_copy_hasil");
             var rep = rep.replace('place_hasil', "place_hasil-" + num);
@@ -234,11 +231,31 @@
         initailizeSelect2();
         initailizeSatuan();
         initAllSelect();
+        initArrayBahan();
+        $("body").on("change", ".selectHasil", function() {
+            let idHasil = $(this).val();
+            $(this).parents(".wrap").find('.getBarangHasil').val(idHasil);
+        });
+
+        $("body").on("change", ".select2_el", function() {
+            let idHasil = $(this).val();
+            $(this).parents(".wrap").find('.getBahan').val(idHasil);
+            $(this).parents(".wrap").find('.satuan_el').html('').append('<option>Pilih Satuan</option>');
+        });
+
+        $("body").on("click", ".remove", function() {
+            $(this).parents(".input_copy").remove();
+        });
 
         $("body").on("click", ".removeDetail", function() {
             var id = $(this).attr("data-remove");
             var div = $(this).attr("data-div");
             var rid = $(this).attr("data-id");
+            if(rid=="sisa"){
+                url = sisaDetailDelete;
+            }else if(rid=="hasil"){
+                url = hasilDetailDelete;
+            }
             swal.fire({
                 title: 'Yakin, Hapus Barang?',
                 text: "Data yang di hapus tidak bisa dikembalikan",
@@ -252,7 +269,7 @@
                     var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
                     $.ajax({
                         type: "POST",
-                        url: sisaDetailDelete,
+                        url: url,
                         data: { id: id, _token: token },
                         dataType: "html",
                         success: function(data) {
@@ -273,6 +290,32 @@
                     });
                 }
             })
+        });
+
+        $("body").on("click", ".remove-hasil", function() {
+            $(this).parents(".input_copy-hasil").remove();
+        });
+
+        $("body").on("click", ".add-more-hasil", function() {
+            initArrayHasil();
+            var html = $(".copy-fields-hasil").html();
+            var rep = html.replace('abc', "input_copy_hasil");
+            var rep = rep.replace('place_hasil', "place_hasil-" + num);
+            var rep = rep.replace('first', "firsthasil-" + num);
+            var rep = rep.replace('success', "danger");
+            var rep = rep.replace('add-more-hasil', "remove-hasil");
+            var rep = rep.replace('plus', "trash");
+            $(".core-ans-hasil").append(rep);
+            //console.log(rep);
+
+            //$(".first-"+num ).remove();
+
+            let select = "<select class='form-control selectHasil ' style='font-size: 15px;' name='hasil[]'><option value=''>Pilih Hasil Praktikum</option></select>";
+
+            $("#place_hasil-" + num).empty();
+            $("#place_hasil-" + num).append(select);
+            num++;
+            initailizeSelectHasil();
         });
     }
 
@@ -466,12 +509,25 @@
         });
     }
 
-    $("body").on("click", ".add-more", function() {
+    function initArrayBahan(){
         arrBahan=[];
         $('.getBahan').each(function(i, obj) {
             arrBahan.push(obj.value);
         });
         arrBahan = arrBahan.filter(e => String(e).trim());
+        console.log(arrBahan);
+    }
+
+    function initArrayHasil(){
+        arrBarangHasil=[];
+            $('.getBarangHasil').each(function(i, obj) {
+                arrBarangHasil.push(obj.value);
+            });
+            arrBarangHasil = arrBarangHasil.filter(e => String(e).trim());
+    }
+
+    $("body").on("click", ".add-more", function() {
+        initArrayBahan();
         var html = $(".copy-fields").html();
         var rep = html.replace('abc', "input_copy");
         var rep = rep.replace('place_barang', "place_barang-" + num);
@@ -481,7 +537,8 @@
         var rep = rep.replace('add-more', "remove");
         var rep = rep.replace('plus', "trash");
         $(".core-ans").append(rep);
-        console.log(rep);
+        //console.log(rep);
+
 
         //$(".first-"+num ).remove();
 

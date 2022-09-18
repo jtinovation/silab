@@ -141,7 +141,7 @@
                                         <select class="form-control satuan_has_select" style="font-size: 15px;" name="{{'satuansisa-'.$vs->id}}" >
                                             <option value="{{$vs->td_satuan_id}}">{{$vs->detailSatuanData->satuanData->satuan." (".$vs->detailSatuanData->qty.")"}}</option>
                                         </select>
-                                        <button class="btn btn-danger removeDetail" data-div="{{"inputCopySisa-".$vs->id}}" data-remove="{{Crypt::encryptString($vs->id)}}" data-id="{{$vs->id}}" type="button"><i class=" bx bx-trash"></i></button>
+                                        <button class="btn btn-danger removeDetail" data-div="{{"inputCopySisa-".$vs->id}}" data-remove="{{Crypt::encryptString($vs->id)}}" data-id="sisa" type="button"><i class=" bx bx-trash"></i></button>
                                         <button class="btn btn-success add-more" type="button"><i class=" bx bx-plus"></i></button>
 
                                       </div>
@@ -207,8 +207,8 @@
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
                                             <div class="hstack gap-3">
                                                 <input class="form-control  hit" type="text" name="{{'jmlhasil-'.$vh->id}}" style="padding: 8px 10px;" value="{{$vh->jumlah}}">
-                                                <button class="btn btn-danger removeDetail" data-div="{{"inputCopyHasil-".$vh->id}}" data-remove="{{Crypt::encryptString($vh->id)}}" data-id="{{$vh->id}}" type="button"><i class=" bx bx-trash"></i></button>
-                                                <button class="btn btn-success add-more" type="button"><i class=" bx bx-plus"></i></button>
+                                                <button class="btn btn-danger removeDetail" data-div="{{"inputCopyHasil-".$vh->id}}" data-remove="{{Crypt::encryptString($vh->id)}}" data-id="hasil" type="button"><i class=" bx bx-trash"></i></button>
+                                                <button class="btn btn-success add-more-hasil" type="button"><i class=" bx bx-plus"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -281,6 +281,7 @@
     var getMK               = "{{route('getMKGantiPraktek')}}";
     var getPengampu         = "{{route('MKSelect')}}";
     var sisaDetailDelete    = "{{route('sisaDetailDelete')}}";
+    var hasilDetailDelete   = "{{route('hasilDetailDelete')}}";
     var num = 1;
     let tselectMinggu = $("#SelectMinggu").find(":selected").text();
         let tmyArray = tselectMinggu.split(" ");

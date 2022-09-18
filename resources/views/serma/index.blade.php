@@ -110,7 +110,7 @@
         var destroy = $(this).attr("data-href");
         console.log(destroy);
         swal.fire({
-            title: 'Yakin, Hapus Data Kehilangan / Rusak?',
+            title: 'Yakin, Hapus Data Serah Terima Sisa Hasil Praktek?',
             text: "Data yang di hapus tidak bisa dikembalikan",
             icon: 'warning',
             showCancelButton: true,
@@ -132,7 +132,7 @@
                             icon: "success"
                         }).then(function() {
                             //location.reload();
-                            tableKehilangan.ajax.reload();
+                            tableSerma.ajax.reload();
                         });
                     },
                     error: function(xhr, ajaxOptions, thrownError) {

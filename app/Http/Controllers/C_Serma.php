@@ -380,7 +380,64 @@ class C_Serma extends Controller
     }
 
     public function destroy($id){
-        //
+        $idDecrypt = Crypt::decryptString($id);
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $qrSerma = MSerma::find($idDecrypt);
+        $qrBahan = MSermaSisa::where('tr_serma_hasil_sisa_praktek_id',$qrSerma->id)->get();
+        $qrHasil = MSermaHasil::where('tr_serma_hasil_sisa_praktek_id',$qrSerma->id)->get();
+        if(count($qrBahan)){
+            foreach($qrBahan as $key => $value){
+                $tr_barang_laboratorium_id = $value->tr_barang_laboratorium_id;
+                $qrKS = MKartuStok::find($value->tr_kartu_stok_id);
+                $qtyKS = $qrKS->qty;
+                $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
+                $StokLabNew = $barangLab->stok - $qtyKS;
+                $TmBarang = MBarang::find($barangLab->tm_barang_id);
+                $stokBarang = $TmBarang->qty - $qtyKS;
+
+                $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
+                $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                $inputKS['is_stok_in']                = 0;
+                $inputKS['qty']                       = $qtyKS;
+                $inputKS['stok']                      = $StokLabNew;
+                $KS = MKartuStok::create($inputKS);
+
+                $TmBarang->update(array('qty' => $stokBarang));
+
+                $barangLab->update(array('stok'=>$StokLabNew));
+
+                $qrKS->update(array('keterangan'=>"Serah Terima Bahan Praktek Dihapus, Stok Out id ".$KS->id));
+                MSermaSisa::find($value->id)->delete();
+            }
+        }
+
+        if(count($qrHasil)){
+            foreach($qrHasil as $key => $value){
+                $tr_barang_laboratorium_id = $value->tr_barang_laboratorium_id;
+                $qrKS = MKartuStok::find($value->tr_kartu_stok_id);
+                $qtyKS = $qrKS->qty;
+                $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
+                $StokLabNew = $barangLab->stok - $qtyKS;
+                $TmBarang = MBarang::find($barangLab->tm_barang_id);
+                $stokBarang = $TmBarang->qty - $qtyKS;
+
+                $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
+                $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                $inputKS['is_stok_in']                = 0;
+                $inputKS['qty']                       = $qtyKS;
+                $inputKS['stok']                      = $StokLabNew;
+                $KS = MKartuStok::create($inputKS);
+
+                $TmBarang->update(array('qty' => $stokBarang));
+
+                $barangLab->update(array('stok'=>$StokLabNew));
+
+                $qrKS->update(array('keterangan'=>"Serah Terima Hasil Praktek Dihapus, Stok Out id ".$KS->id));
+                MSermaHasil::find($value->id)->delete();
+            }
+        }
+        $qrSerma->delete();
     }
 
     public function getSerma(Request $request){
@@ -648,8 +705,7 @@ class C_Serma extends Controller
 		return json_encode($data);
     }
 
-    public function sisaDetailDelete(Request $request)
-    {
+    public function sisaDetailDelete(Request $request){
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         $idDecrypt = Crypt::decryptString($request->id);
@@ -672,10 +728,48 @@ class C_Serma extends Controller
             $TmBarang->update(array('qty' => $stokBarang));
         $barangLab->update(array('stok'=>$StokLabNew));
 
-        $qrKS->delete();
+        $qrKS->update(array('keterangan'=>"Bahan sisa praktek Dihapus, Stok Out id ".$KS->id));
         $qrSisaPratek->delete();
 
         if($qrSisaPratek){
+            $response = array(
+                'status' => 200,
+            );
+        }else{
+            $response = array(
+                'status' => 503,
+            );
+        }
+        echo json_encode($response);
+    }
+
+    public function hasilDetailDelete(Request $request){
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $idDecrypt = Crypt::decryptString($request->id);
+        $qrHasilPratek = MSermaHasil::find($idDecrypt);
+        $tr_barang_laboratorium_id = $qrHasilPratek->tr_barang_laboratorium_id;
+        $qrKS = MKartuStok::find($qrHasilPratek->tr_kartu_stok_id);
+        $qtyKS = $qrKS->qty;
+        $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
+        $StokLabNew = $barangLab->stok - $qtyKS;
+            $TmBarang = MBarang::find($barangLab->tm_barang_id);
+            $stokBarang = $TmBarang->qty - $qtyKS;
+
+            $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
+            $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+            $inputKS['is_stok_in']                = 0;
+            $inputKS['qty']                       = $qtyKS;
+            $inputKS['stok']                      = $StokLabNew;
+            $KS = MKartuStok::create($inputKS);
+
+            $TmBarang->update(array('qty' => $stokBarang));
+        $barangLab->update(array('stok'=>$StokLabNew));
+
+        $qrKS->update(array('keterangan'=>"hasil praktek Dihapus, Stok Out id ".$KS->id));
+        $qrHasilPratek->delete();
+
+        if($qrHasilPratek){
             $response = array(
                 'status' => 200,
             );
