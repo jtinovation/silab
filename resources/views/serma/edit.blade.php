@@ -22,7 +22,6 @@
                 <div class="card-body ">
                     <h4 class="mt-0 header-title text-center" style="">Form Serah Terima Hasil dan Sisa Praktek</h4>
                     <hr>
-
                     <form action="{{route('serma.update',$id)}}" class="form-horizontal" id="frmSerma" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')

@@ -256,7 +256,7 @@ class C_Serma extends Controller
                             $updateKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
                             $updateKS['qty']                       = $newJml;
                             $updateKS['stok']                      = ($StokLab - $oldJumlahSatuan)+$newJumlahSatuan;
-                            $qrKS->updateKS($updateKS);
+                            $qrKS->update($updateKS);
 
                             $TmBarang->update(array('qty' => ($stokBarang-$oldJumlahSatuan)+$newJumlahSatuan));
                         $barangLab->update(array('stok'=>($StokLab - $oldJumlahSatuan)+$newJumlahSatuan));
@@ -276,20 +276,13 @@ class C_Serma extends Controller
                     $tr_barang_laboratorium_id                      = $request->tr_hasil_laboratorium[$key];
                     $newJml                                         = $_REQUEST['jmlhasil-'.$value];
                     $newSatuan_id                                   = $_REQUEST['hasil-'.$value];
-                    $qrSisaPratek = MSermaSisa::find($value);
-                    $oldSatuan_id = $qrSisaPratek->td_satuan_id;
-                    $oldJml = $qrSisaPratek->jumlah;
+                    $qrHasil = MSermaHasil::find($value);
+                    $oldSatuan_id = $qrHasil->td_satuan_id;
+                    $oldJml = $qrHasil->jumlah;
                     if($oldSatuan_id ==$newSatuan_id && $oldJml==$newJml ){
 
                     }else{
-                        $qrDSatuanOld = MSatuanDetail::find($oldSatuan_id);
-                        $oldSatuan = $qrDSatuanOld->qty;
-                        $qrDSatuan = MSatuanDetail::find($newSatuan_id);
-                        $newSatuan = $qrDSatuan->qty;
-                        $newJumlahSatuan = $newJml * $newSatuan;
-                        $oldJumlahSatuan = $oldJml * $oldSatuan;
-
-                        $qrKS = MKartuStok::find($qrSisaPratek->tr_kartu_stok_id);
+                        $qrKS = MKartuStok::find($qrHasil->tr_kartu_stok_id);
                         $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
                         $StokLab = $barangLab->stok;
                             $TmBarang = MBarang::find($barangLab->tm_barang_id);
@@ -298,15 +291,14 @@ class C_Serma extends Controller
                             $updateKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
                             $updateKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
                             $updateKS['qty']                       = $newJml;
-                            $updateKS['stok']                      = ($StokLab - $oldJumlahSatuan)+$newJumlahSatuan;
-                            $qrKS->updateKS($updateKS);
+                            $updateKS['stok']                      = ($StokLab - $oldJml)+$newJml;
+                            $qrKS->update($updateKS);
 
-                            $TmBarang->update(array('qty' => ($stokBarang-$oldJumlahSatuan)+$newJumlahSatuan));
-                        $barangLab->update(array('stok'=>($StokLab - $oldJumlahSatuan)+$newJumlahSatuan));
+                            $TmBarang->update(array('qty' => ($stokBarang-$oldJml)+$newJml));
+                        $barangLab->update(array('stok'=>($StokLab - $oldJml)+$newJml));
 
                         $updateSerma['jumlah']                          = $newJml;
-                        $updateSerma['td_satuan_id']                    = $newSatuan_id;
-                        $qrSisaPratek->update($updateSerma);
+                        $qrHasil->update($updateSerma);
                     }
 
 
@@ -658,10 +650,32 @@ class C_Serma extends Controller
 
     public function sisaDetailDelete(Request $request)
     {
-        $response = array(
-            'status' => 200,
-        );
-        /* if($qry){
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $idDecrypt = Crypt::decryptString($request->id);
+        $qrSisaPratek = MSermaSisa::find($idDecrypt);
+        $tr_barang_laboratorium_id = $qrSisaPratek->tr_barang_laboratorium_id;
+        $qrKS = MKartuStok::find($qrSisaPratek->tr_kartu_stok_id);
+        $qtyKS = $qrKS->qty;
+        $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
+        $StokLabNew = $barangLab->stok - $qtyKS;
+            $TmBarang = MBarang::find($barangLab->tm_barang_id);
+            $stokBarang = $TmBarang->qty - $qtyKS;
+
+            $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
+            $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+            $inputKS['is_stok_in']                = 0;
+            $inputKS['qty']                       = $qtyKS;
+            $inputKS['stok']                      = $StokLabNew;
+            $KS = MKartuStok::create($inputKS);
+
+            $TmBarang->update(array('qty' => $stokBarang));
+        $barangLab->update(array('stok'=>$StokLabNew));
+
+        $qrKS->delete();
+        $qrSisaPratek->delete();
+
+        if($qrSisaPratek){
             $response = array(
                 'status' => 200,
             );
@@ -669,7 +683,7 @@ class C_Serma extends Controller
             $response = array(
                 'status' => 503,
             );
-        } */
+        }
         echo json_encode($response);
     }
 }
