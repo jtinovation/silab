@@ -178,7 +178,7 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('ijinLBS',                               C_IjinPenggunaanLBS::class);
     Route::get('getIjinLBS',                                [C_IjinPenggunaanLBS::class, 'getIjinLBS'])->name('getIjinLBS');
-    Route::post('bonAlatDelete',                            [C_IjinPenggunaanLBS::class, 'destroy'])->name('bonAlatDelete');
+    //Route::post('ijinLBSDelete',                            [C_IjinPenggunaanLBS::class, 'destroy'])->name('bonAlatDelete');
     Route::get('alatLabSelect',                             [C_IjinPenggunaanLBS::class, 'alatLabSelect'])->name('alatLabSelect');
     Route::get('alatLabSelects',                            [C_IjinPenggunaanLBS::class, 'alatLabSelects'])->name('alatLabSelects');
     Route::post('bonAlatDetailDelete',                      [C_IjinPenggunaanLBS::class, 'delete'])->name('bonAlatDetailDelete');
