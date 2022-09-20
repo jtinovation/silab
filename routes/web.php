@@ -2,6 +2,7 @@
 use App\Http\Controllers\C_Barang;
 use App\Http\Controllers\C_BonAlat;
 use App\Http\Controllers\C_DeliverPengajuanAlatBahan;
+use App\Http\Controllers\C_IjinPenggunaanLBS;
 use App\Http\Controllers\C_InventarisBahan;
 use App\Http\Controllers\C_InvetarisAlat;
 use App\Http\Controllers\C_Permission;
@@ -174,6 +175,15 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('satuanSelectSerma',                         [C_Serma::class, 'satuanSelect'])->name('satuanSelectSerma');
     Route::post('sisaDetailDelete',                         [C_Serma::class,'sisaDetailDelete'])->name('sisaDetailDelete');
     Route::post('hasilDetailDelete',                         [C_Serma::class,'hasilDetailDelete'])->name('hasilDetailDelete');
+
+    Route::resource('ijinLBS',                               C_IjinPenggunaanLBS::class);
+    Route::get('getIjinLBS',                                [C_IjinPenggunaanLBS::class, 'getIjinLBS'])->name('getIjinLBS');
+    Route::post('bonAlatDelete',                            [C_IjinPenggunaanLBS::class, 'destroy'])->name('bonAlatDelete');
+    Route::get('alatLabSelect',                             [C_IjinPenggunaanLBS::class, 'alatLabSelect'])->name('alatLabSelect');
+    Route::get('alatLabSelects',                            [C_IjinPenggunaanLBS::class, 'alatLabSelects'])->name('alatLabSelects');
+    Route::post('bonAlatDetailDelete',                      [C_IjinPenggunaanLBS::class, 'delete'])->name('bonAlatDetailDelete');
+    Route::get('bonalat/{bonalat}/kembali',                 [C_IjinPenggunaanLBS::class, 'kembali'])->name('bonalat.kembali');
+    Route::put('bonalatKembali/{bonalat}',                  [C_IjinPenggunaanLBS::class, 'kembaliUpdate'])->name('bonalat.kembaliUpdate');
 
 });
 

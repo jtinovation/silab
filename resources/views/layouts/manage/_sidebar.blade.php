@@ -242,6 +242,13 @@
                     </a>
                 </li>
                 @endcan
+                @can('ijinLBS-list')
+                <li class="nav-item">
+                    <a class="nav-link menu-link{{ $data['npage'] == 79 ? ' active' : '' }}" href="{{ route('ijinLBS.index') }}">
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Ijin Penggunaan LBS</span>
+                    </a>
+                </li>
+                @endcan
 
 
 
