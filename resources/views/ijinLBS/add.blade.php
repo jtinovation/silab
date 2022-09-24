@@ -20,14 +20,14 @@
     <div class="row col-md-12 col-lg-12 col-sm-12 animate__animated animate__backInLeft">
             <div class="card">
                 <div class="card-body ">
-                    <h4 class="mt-0 header-title text-center" style="">Form Bon Alat Laboratorium</h4>
+                    <h4 class="mt-0 header-title text-center" style="">Form Permohonan Menggunakan Fasilitas LBS</h4>
                     <hr>
 
-                    <form action="{{route('bonalat.store')}}" class="form-horizontal" id="frmBonalat" method="post" enctype="multipart/form-data">
+                    <form action="{{route('ijinLBS.store')}}" class="form-horizontal" id="frmIjinLBS" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row d-flex justify-content-center">
                             <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Informasi Peminjam</strong>
+                                <i class="ri-user-smile-line label-icon"></i><strong>Yang bertandatangan dibawah ini, saya :</strong>
                             </div>
                             <div class=" row col-12 justify-content-center " >
                                 <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -41,10 +41,10 @@
                                 </div>
                             </div>
                             <div class="row d-flex justify-content-center mt-2" >
-                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: block;">
+                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-8 col-sm-8 col-xs-12 pegawai mb-3" style="display: block;">
                                     <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                        <label for="SelectStaff" class="form-label text-right">Pilih Pegawai</label></br>
-                                        <select class="form-control" style="font-size: 15px;" name="tm_staff_id" id="SelectStaff" required>
+                                        <label for="SelectStaff" class="form-label text-right col-xxl-12 col-xl-12 col-lg-12 col-md-12">Pilih Pegawai</label></br>
+                                        <select class="form-control col-xxl-12 col-xl-12 col-lg-12 col-md-12" style="font-size: 15px;" name="tm_staff_id" id="SelectStaff" required>
                                             <option></option>
                                             @foreach($data['staff'] as $v)
                                                 <option value="{{$v->id}}">{{$v->nama}}</option>
@@ -69,45 +69,52 @@
                                     </div>
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                            <label for="gol" class="form-label text-right">Golongan / Kelompok</label></br>
-                                            <input type="text" class="form-control" name="gol" id="gol">
+                                            <label for="tm_program_studi_id" class="form-label text-right">Pilih Program Studi</label>
+                                            <select class="form-control" style="font-size: 15px;" name="tm_program_studi_id" id="tm_program_studi_id">
+                                                <option></option>
+                                                @foreach($data['prodi'] as $v)
+                                                <option value="{{$v->id}}">{{$v->program_studi}}</option>
+                                            @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row d-flex justify-content-center mt-2" >
+                                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-8 col-sm-8 col-xs-12 mb-3" style="display: block;">
+                                            <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                                <label for="tm_staff_id_pembimbing" class="form-label text-right">Pilih Dosen Pembimbing</label></br>
+                                                <select class="form-control" style="font-size: 15px;" name="tm_staff_id_pembimbing" id="tm_staff_id_pembimbing" >
+                                                    <option></option>
+                                                    @foreach($data['staff'] as $v)
+                                                        <option value="{{$v->id}}">{{$v->nama}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show mt-4" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Data Petugas </strong>
+                                <i class="ri-user-smile-line label-icon"></i><strong>Bermaksud akan melaksanakan kegiatan Tugas Akhir/Penelitian yang dimulai :</strong>
                             </div>
 
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <label for="selectPinjam" class="form-label text-right">Petugas Peminjaman</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{$data['memberlab']}}" readonly>
-                            </div>
+                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
+                                <div>
+                                    <label for="tanggal" class="form-label text-right ">Tanggal Mulai - Tanggal Akhir</label>
+                                    <input class="form-control minggu" type="text" value="" id="tanggal" name="tanggal" placeholder="" required="">
 
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <label for="tanggalPinjam" class="form-label text-right">Tanggal Pinjam</label></br>
-                                <input type="text" class="form-control" name="tanggalPinjam" id="tanggalPinjam">
+                                </div>
                             </div>
-
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
-                                <label for="selectKembali" class="form-label text-right">Petugas Pengembalian</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_kembali" id="selectKembali" value="" readonly>
-                            </div>
-
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label for="tanggalKembali" class="form-label text-right">Tanggal Kembali</label></br>
-                                    <input type="text" class="form-control" name="tanggalKembali" id="tanggalKembali" readonly>
-                            </div>
-
                             <div class="alert alert-info alert-dismissible alert-label-icon label-arrow fade show mt-5" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Berdasarkan hasil uji coba alat/mesin dan kesiapan bahan praktek dapat dilaporkan sebagai berikut :</strong>
+                                <i class="ri-user-smile-line label-icon"></i><strong>Adapun Sarana dan Prasarana yang saya perlukan selama kegiatan Tugas Akhir/Penelitian adalah sebagai berikut :</strong>
                             </div>
 
                             <div class="col-lg-12 ">
                                 <div class="row form-group form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                     <label for="txtSatuan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Pilih Barang </label>
-                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Stok</label>
+                                    <label for="jumlah" class="col-xxl-1 col-xl-1 col-lg-1 col-md-1 col-form-label text-left pl-4">Stok</label>
+                                    <label for="jumlah" class="col-xxl-1 col-xl-1 col-lg-1 col-md-1 col-form-label text-left pl-4">Jumlah</label>
                                     <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Jumlah</label>
                                     <label for="keterangan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Keterangan</label>
                                 </div>
@@ -115,18 +122,24 @@
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 abc wrap" style="margin-bottom: 10px;">
 
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
-                                            <select class="form-control select2_el first" style="font-size: 15px;" name="barang[]" required>
+                                            <select class="form-control selectBarang first" style="font-size: 15px;" name="barang[]" required>
                                                 <option value="">Pilih Alat</option>
                                             </select>
                                         </div>
 
-                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
+                                        <div class="col-xxl-1 col-xl-1 col-lg-1 col-md-1">
                                             <input type="text" class="form-control stok" name="stok[]" readonly >
+                                            <input type="hidden" name="tr_barang_laboratorium[]" class="getBarang"/>
                                         </div>
 
-                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
+                                        <div class="col-xxl-1 col-xl-1 col-lg-1 col-md-1">
                                                <input type="text" class="form-control number hit" name="jml[]" >
-                                               <input type="hidden" name="tr_barang_laboratorium[]" class="getBarang"/>
+                                        </div>
+
+                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2" id="place_satuan">
+                                            <select class="form-control satuan_el" style="font-size: 15px;" name="satuan[]" required>
+                                                <option value="">Pilih Satuan</option>
+                                            </select>
                                         </div>
 
 
@@ -141,7 +154,7 @@
                                     <div class="core-ans"></div>
                             </div>
 
-                            @can('kesiapan-praktek-create')
+                            @can('ijinLBS-create')
                             <div class="col-md-12 row button-items justify-content-center gap-3" style="margin-top: 10px;">
                                 <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Permintaaan Bon Alat</button>
                                 <a href="{{route('bonalat.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Permintaaan Bon Alat</a>
@@ -163,23 +176,21 @@
 
 <!-- Select 2 -->
 <script src="{{ asset('assets/libs/select2/select2.min.js') }}"></script>
-<script src="{{ asset('assets/js/pages/bonalat.js') }}"></script>
 
 <!-- Daterangepicker -->
 <script src="{{asset('assets/libs/daterangepicker/moment.min.js')}}"></script>
 <!-- Daterangepicker -->
 <script src="{{asset('assets/libs/daterangepicker/moment.min.js')}}"></script>
 <script src="{{asset('assets/libs/daterangepicker/daterangepicker.js')}}"></script>
-
+<script src="{{ asset('assets/js/pages/ijinLBS.js') }}"></script>
 
 <script type="text/javascript">
     var txtNumeric;
-    var alatLabSelect  = "{{route('alatLabSelects')}}";
+    var saranaLabSelect  = "{{route('saranaLabSelect')}}";
+    var satuanSelect   = "{{route('satuanSaranaSelect')}}";
     var num = 1;
     var arrBarang=[];
-    initailizeSelect2();
-    initDaterangpicker();
-
+    initAdd();
 
 
 

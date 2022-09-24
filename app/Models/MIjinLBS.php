@@ -37,32 +37,32 @@ class MIjinLBS extends Model
     }
 
     public function setStartDateAttribute($value){
-        $this->attributes['start_date'] = Carbon::createFromFormat('d/m/Y H:i:s', $value)->format('Y-m-d H:i:s');
+        $this->attributes['start_date'] = Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
         //Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d')
         //$this->attributes['tanggal'] = Carbon::parse($value)->format('Y-m-d');
     }
 
     public function setEndDateAttribute($value){
-        $this->attributes['end_date'] = Carbon::createFromFormat('d/m/Y H:i:s', $value)->format('Y-m-d H:i:s');
+        $this->attributes['end_date'] = Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
         //Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d')
         //$this->attributes['tanggal'] = Carbon::parse($value)->format('Y-m-d');
     }
 
     public function getStartDateAttribute($value){
-        return Carbon::parse($value)->format('d/m/Y H:i:s');
+        return Carbon::parse($value)->format('d/m/Y');
     }
 
     public function getEndDateAttribute($value){
-        return Carbon::parse($value)->format('d/m/Y H:i:s');
+        return Carbon::parse($value)->format('d/m/Y');
     }
 
-    public function getKembaliAttribute(){
-        $dateKembali = Carbon::parse("{$this->tanggal_kembali}")->format('d/m/Y H:i:s');
-        return Carbon::parse("{$dateKembali}")->format('d F Y H:i:s');
+    public function getMulaiAttribute(){
+        $dateMulai = Carbon::parse("{$this->start_date}")->format('d/m/Y');
+        return Carbon::parse("{$dateMulai}")->format('d F Y');
     }
 
-    public function getPinjamAttribute(){
-        $datePinjam = Carbon::parse("{$this->tanggal_pinjam}")->format('d/m/Y H:i:s');
-        return Carbon::parse("{$datePinjam}")->format('d F Y H:i:s');
+    public function getSelesaiAttribute(){
+        $dateSelesai = Carbon::parse("{$this->end_date}")->format('d/m/Y');
+        return Carbon::parse("{$dateSelesai}")->format('d F Y');
     }
 }

@@ -16,8 +16,8 @@
             <div class="card-header align-items-center d-flex">
                 <h4 class="card-title mb-0 flex-grow-1">Tabel Data Ijin Penggunaan Laboratorium</h4>
                 @can('ijinLBS-create')
-                <a href="{{route('ijinLBS.create')}}" class="float-left">
-                    <button id="ijinLBS" class="btn btn-primary waves-effect waves-light" type="button">
+                <a href="#" class="float-left">
+                    <button id="BtnAddIjinLBS" class="btn btn-primary waves-effect waves-light" type="button" data-href="{{route('ijinLBS.create')}}">
                         <i data-feather="plus-circle"></i> Buat Ijin Penggunaan Laboratorium
                     </button>
                 </a>
@@ -56,6 +56,7 @@
 <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
 
 <script src="{{ asset('assets/libs/select2/select2.min.js') }}"></script>
+<script src="{{ asset('assets/js/pages/ijinLBS.js') }}"></script>
 
 <script type="text/javascript">
     var getBonAlat      = "{{route('getIjinLBS')}}";
@@ -64,5 +65,4 @@
     var token = "{{ csrf_token() }}";
     initIndex();
 </script>
-<script src="{{ asset('assets/js/pages/ijinLBS.js') }}"></script>
 @endsection

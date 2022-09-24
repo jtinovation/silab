@@ -179,8 +179,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('ijinLBS',                               C_IjinPenggunaanLBS::class);
     Route::get('getIjinLBS',                                [C_IjinPenggunaanLBS::class, 'getIjinLBS'])->name('getIjinLBS');
     //Route::post('ijinLBSDelete',                            [C_IjinPenggunaanLBS::class, 'destroy'])->name('bonAlatDelete');
-    Route::get('alatLabSelect',                             [C_IjinPenggunaanLBS::class, 'alatLabSelect'])->name('alatLabSelect');
-    Route::get('alatLabSelects',                            [C_IjinPenggunaanLBS::class, 'alatLabSelects'])->name('alatLabSelects');
+    Route::get('saranaLabSelect',                           [C_IjinPenggunaanLBS::class, 'saranaLabSelect'])->name('saranaLabSelect');
+    Route::get('satuanSaranaSelect',                        [C_IjinPenggunaanLBS::class, 'satuanSelect'])->name('satuanSaranaSelect');
     Route::post('bonAlatDetailDelete',                      [C_IjinPenggunaanLBS::class, 'delete'])->name('bonAlatDetailDelete');
     Route::get('bonalat/{bonalat}/kembali',                 [C_IjinPenggunaanLBS::class, 'kembali'])->name('bonalat.kembali');
     Route::put('bonalatKembali/{bonalat}',                  [C_IjinPenggunaanLBS::class, 'kembaliUpdate'])->name('bonalat.kembaliUpdate');

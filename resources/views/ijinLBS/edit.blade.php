@@ -20,10 +20,10 @@
     <div class="row col-md-12 col-lg-12 col-sm-12 animate__animated animate__backInLeft">
             <div class="card">
                 <div class="card-body ">
-                    <h4 class="mt-0 header-title text-center" style="">Ubah Form Bon Alat Laboratorium</h4>
+                    <h4 class="mt-0 header-title text-center" style="">Ubah Form Ijin Penggunaan LBS</h4>
                     <hr>
 
-                    <form action="{{route('bonalat.update',$qrBonAlat[0]->id)}}" class="form-horizontal" id="frmPengajuanAlat" method="post" enctype="multipart/form-data">
+                    <form action="{{route('ijinLBS.update',$qrIjinLBS->id)}}" class="form-horizontal" id="frmIjinLBS" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="row d-flex justify-content-center">
