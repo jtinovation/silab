@@ -208,7 +208,7 @@ class C_IjinPenggunaanLBS extends Controller{
             $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
             $idDecrypt = Crypt::decryptString($id);
             $qrIjinLBS = MIjinLBS::find($idDecrypt);
-            if(count($qrIjinLBS)){
+            if($qrIjinLBS->count()){
                 $qrDetailIjinLBS = MDetailIjinLBS::where('tr_ijin_penggunaan_lbs_id',$qrIjinLBS->id)->get();
                 $data = [
                     'title'     => "Sistem Informasi Laboratorium",

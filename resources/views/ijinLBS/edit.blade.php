@@ -33,87 +33,76 @@
                             <div class=" row col-12 justify-content-center " >
                                 <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="col-12 btn-group" role="group" aria-label="Basic radio toggle button group">
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai1" value="1" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"checked":"disabled"}}   >
+                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai1" value="1" autocomplete="off" {{$qrIjinLBS->is_pegawai?"checked":"disabled"}}   >
                                         <label class="btn btn-outline-primary" for="is_pegawai1">&nbsp;&nbsp;&nbsp;&nbsp;Pegawai&nbsp;&nbsp;&nbsp;</label>
 
-                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai2" value="0" autocomplete="off" {{$qrBonAlat[0]->is_pegawai?"disabled":"checked"}}  >
+                                        <input type="radio" class="btn-check cp" name="is_pegawai" id="is_pegawai2" value="0" autocomplete="off" {{$qrIjinLBS->is_pegawai?"disabled":"checked"}}  >
                                         <label class="btn btn-outline-dark" for="is_pegawai2">Mahasiswa</label>
                                     </div>
                                 </div>
                             </div>
-                            @if($qrBonAlat[0]->is_pegawai)
+                            @if($qrIjinLBS->is_pegawai)
                             <div class="row d-flex justify-content-center mt-2" >
-                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: {{$qrBonAlat[0]->is_pegawai?"block":"none"}} ";">
+                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: {{$qrIjinLBS->is_pegawai?"block":"none"}} ";">
                                     <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                         <label for="SelectStaff" class="form-label text-right">Pilih Pegawai</label></br>
-                                        <input type="text" class="form-control" name="tm_staff_id" id="SelectStaff" value="{{$qrBonAlat[0]->StaffData->nama}}" readonly>
+                                        <input type="text" class="form-control" name="tm_staff_id" id="SelectStaff" value="{{$qrIjinLBS->StaffData->nama}}" readonly>
 
                                     </div>
                                 </div>
                             </div>
                             @else
-                            <div class=" mahasiswa mt-2" style="display:  {{$qrBonAlat[0]->is_pegawai?"none":"block"}} ;">
+                            <div class=" mahasiswa mt-2" style="display:  {{$qrIjinLBS->is_pegawai?"none":"block"}} ;">
                                 <div class="row d-flex">
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="nim" class="form-label text-right">NIM</label></br>
-                                            <input type="text" class="form-control" name="nim" id="nim" value="{{@$qrBonAlat[0]->nim}}" />
+                                            <input type="text" class="form-control" name="nim" id="nim" value="{{@$qrIjinLBS->nim}}" />
                                         </div>
                                     </div>
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-3">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="nama" class="form-label text-right">Nama</label></br>
-                                            <input type="text" class="form-control" name="nama" id="nama" value="{{@$qrBonAlat[0]->nama}}" />
+                                            <input type="text" class="form-control" name="nama" id="nama" value="{{@$qrIjinLBS->nama}}" />
                                         </div>
                                     </div>
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                             <label for="gol" class="form-label text-right">Golongan / Kelompok</label></br>
-                                            <input type="text" class="form-control" name="gol" id="gol" value="{{@$qrBonAlat[0]->golongan_kelompok}}" />
+                                            <input type="text" class="form-control" name="gol" id="gol" value="{{@$qrIjinLBS->tm_program_studi_id}}" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             @endif
                             <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show mt-4" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Data Petugas </strong>
+                                <i class="ri-user-smile-line label-icon"></i><strong>Bermaksud akan melaksanakan kegiatan Tugas Akhir/Penelitian yang dimulai :</strong>
                             </div>
 
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <label for="selectPinjam" class="form-label text-right">Petugas Peminjaman</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_pinjam" id="selectPinjam" value="{{$qrBonAlat[0]->memberLabOut->StaffData->nama}}" readonly>
-                            </div>
+                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6">
+                                <div>
+                                    <label for="tanggal" class="form-label text-right ">Tanggal Mulai - Tanggal Akhir</label>
+                                    <input class="form-control minggu" type="text" value="" id="tanggal" name="tanggal" placeholder="" required="">
 
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <label for="tanggalPinjam" class="form-label text-right">Tanggal Pinjam</label></br>
-                                <input type="text" class="form-control" name="tanggalPinjam" id="tanggalPinjam" value="{{$qrBonAlat[0]->tanggal_pinjam}}" readonly>
+                                </div>
                             </div>
-
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
-                                <label for="selectKembali" class="form-label text-right">Petugas Pengembalian</label></br>
-                                <input type="text" class="form-control" name="tr_member_laboratorium_id_kembali" id="selectKembali" value="" readonly>
-                            </div>
-
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label for="tanggalKembali" class="form-label text-right">Tanggal Kembali</label></br>
-                                    <input type="text" class="form-control" name="tanggalKembali" id="tanggalKembali" readonly>
-                            </div>
-
                             <div class="alert alert-info alert-dismissible alert-label-icon label-arrow fade show mt-5" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Berdasarkan hasil uji coba alat/mesin dan kesiapan bahan praktek dapat dilaporkan sebagai berikut :</strong>
+                                <i class="ri-user-smile-line label-icon"></i><strong>Adapun Sarana dan Prasarana yang saya perlukan selama kegiatan Tugas Akhir/Penelitian adalah sebagai berikut :</strong>
                             </div>
+
 
                             <div class="col-lg-12 ">
                                 <div class="row form-group form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12">
                                     <label for="txtSatuan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Pilih Barang </label>
-                                    <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Stok</label>
+                                    <label for="jumlah" class="col-xxl-1 col-xl-1 col-lg-1 col-md-1 col-form-label text-left pl-4">Stok</label>
+                                    <label for="jumlah" class="col-xxl-1 col-xl-1 col-lg-1 col-md-1 col-form-label text-left pl-4">Jumlah</label>
                                     <label for="jumlah" class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-form-label text-left pl-4">Jumlah</label>
                                     <label for="keterangan" class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-form-label text-left pl-4">Keterangan</label>
                                 </div>
-                                @foreach ($qrDetailBonAlat as $vdu)
+                                @foreach ($qrDetailIjinLBS as $vdu)
                                 <div class="wrapper">
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 wrap" id="{{"inputCopy-".$vdu->id}}" style="margin-bottom: 10px;">
-                                        <input type="hidden" name="detailBonAlat[]" value="{{$vdu->id}}">
+                                        <input type="hidden" name="detailIjinLBS[]" value="{{$vdu->id}}">
                                         <input type="hidden" name="tr_barang_laboratorium_id[]" value="{{$vdu->tr_barang_laboratorium_id}}" class="getBarang">
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
                                             <input class="form-control" type="text" name="{{'barang-'.$vdu->id}}" value="{{$vdu->barangLabData->BarangData->nama_barang}}" readonly>
@@ -142,20 +131,26 @@
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 abc wrap" style="margin-bottom: 10px;">
 
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
-                                            <select class="form-control select2_el first" style="font-size: 15px;" name="barang[]" aa>
-                                                <option value="">Pilih Barang</option>
+                                            <select class="form-control selectBarang first" style="font-size: 15px;" name="barang[]" required>
+                                                <option value="">Pilih Alat</option>
                                             </select>
                                         </div>
 
-                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
+                                        <div class="col-xxl-1 col-xl-1 col-lg-1 col-md-1">
                                             <input type="text" class="form-control stok" name="stok[]" readonly >
+                                            <input type="hidden" name="tr_barang_laboratorium[]" class="getBarang"/>
                                         </div>
 
-                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                               <input type="text" class="form-control hi" name="jml[]" b12>
+                                        <div class="col-xxl-1 col-xl-1 col-lg-1 col-md-1">
+                                               <input type="text" class="form-control number hit" name="jml[]" >
                                         </div>
 
-                                        <input type="hidden" name="tr_barang_laboratorium[]" class="xxxxx"/>
+                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2" id="place_satuan">
+                                            <select class="form-control satuan_el" style="font-size: 15px;" name="satuan[]" required>
+                                                <option value="">Pilih Satuan</option>
+                                            </select>
+                                        </div>
+
 
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
                                             <div class="hstack gap-3">
