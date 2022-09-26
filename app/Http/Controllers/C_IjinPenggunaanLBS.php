@@ -276,10 +276,12 @@ class C_IjinPenggunaanLBS extends Controller{
     }
 
     public function update(Request $request, $id){
+        //dd($request->barang);
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         $qrIjinLBS = MIjinLBS::find($id);
         foreach($request->barang as $key => $value){
+            if($value !=""){
             $arrV = explode("#", $value);
             $tr_barang_laboratorium_id = $arrV[0];
             $stokForm = $request->stok[$key];
@@ -296,7 +298,7 @@ class C_IjinPenggunaanLBS extends Controller{
 
 
                 $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                $ks['is_stok_in'] = 1;
+                $ks['is_stok_in'] = 0;
                 $ks['qty'] = $jmlSatuan;
                 $ks['stok'] = $stokLab - $jmlSatuan;
                 $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
@@ -316,7 +318,7 @@ class C_IjinPenggunaanLBS extends Controller{
                $tr_barang->update($updateStokBarang);
                $tr_barang_laboratorium->update($updateStokLab);
             }
-
+        }
 
         }
 
@@ -329,18 +331,59 @@ class C_IjinPenggunaanLBS extends Controller{
                 $oldJml = $qrDetailIjinLBS->jumlah;
                 $oldSatuan = $qrDetailIjinLBS->td_satuan_id;
                 $newJml = $_REQUEST['jml-'.$vdu];
-                $newSatuan = $_REQUEST['satuan-'.$vdu];
+                //dd($_REQUEST['satuan-'.$vdu]);
+                $newSatuanDirty = explode("#",$_REQUEST['satuan-'.$vdu]);
+                $newSatuan = $newSatuanDirty[1];
+                //dd($newSatuan);
                 if($oldJml==$newJml && $oldSatuan==$newSatuan){
 
                 }else{
+                    $qrKS = MKartuStok::find($qrDetailIjinLBS->tr_kartu_stok_id);
+                    $qtyKS = $qrKS->qty;
+                    $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
+                        $StokLabNew = $barangLab->stok + $qtyKS;
+                    $TmBarang = MBarang::find($barangLab->tm_barang_id);
+                        $stokBarang = $TmBarang->qty + $qtyKS;
+                    $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
+                    $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                    $inputKS['is_stok_in']                = 1;
+                    $inputKS['qty']                       = $qtyKS;
+                    $inputKS['stok']                      = $StokLabNew;
+                    $KS = MKartuStok::create($inputKS);
 
+                    $TmBarang->update(array('qty' => $stokBarang));
+                    $barangLab->update(array('stok'=>$StokLabNew));
+                    $qrKS->update(array('keterangan'=>"Barang Untuk Ijin Penggunaan LBS Dihapus, Stok Out id ".$KS->id));
+
+                    $qrDtSatuan = MSatuanDetail::find($newSatuan);
+                    dd($newJml."x".$qrDtSatuan->qty);
+                    $jmlSatuan = $newJml*$qrDtSatuan->qty;
+                    //dd($jmlSatuan);
+                    $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
+                        $stokLab = $tr_barang_laboratorium->stok;
+                        $updateStokLab['stok'] = $stokLab - $jmlSatuan;
+                    $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
+                        $stokBarang = $tr_barang->qty;
+                        $updateStokBarang['qty'] = $stokBarang - $jmlSatuan;
+
+                        $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                    $ks['is_stok_in'] = 0;
+                    $ks['qty'] = $jmlSatuan;
+                    $ks['stok'] = $stokLab - $jmlSatuan;
+                    $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
+                    $kartusStok = MKartuStok::create($ks);
+                    $tr_barang->update($updateStokBarang);
+                    $tr_barang_laboratorium->update($updateStokLab);
+
+                    $detailInput['jumlah'] = $newJml ;
+                    $detailInput['stok'] = $_REQUEST['stok-'.$vdu];
+                    $detailInput['keterangan'] =  $_REQUEST['keterangan-'.$vdu];
+                    $detailInput['tr_kartu_stok_id'] =  $kartusStok->id;
+                    $qrDetailIjinLBS->update($detailInput);
                 }
 
 
-                $detailInput['jumlah'] = $newJml ;
-                $detailInput['stok'] = $_REQUEST['stok-'.$vdu];
-                $detailInput['keterangan'] =  $_REQUEST['keterangan-'.$vdu];
-                $qrDetailIjinLBS->update($detailInput);
+
             }
         }
         return redirect(route('ijinLBS.index'))->with('success','Permintaan Bon Alat Berhasil Di Ubah.');

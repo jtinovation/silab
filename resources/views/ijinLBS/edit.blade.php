@@ -157,7 +157,7 @@
                                     <div class="row form-group col-xxl-12 col-xl-12 col-lg-12 col-md-12 abc wrap" style="margin-bottom: 10px;">
 
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4" id="place_barang">
-                                            <select class="form-control selectBarang first" style="font-size: 15px;" name="barang[]" required>
+                                            <select class="form-control selectBarang first" style="font-size: 15px;" name="barang[]" xxb>
                                                 <option value="">Pilih Alat</option>
                                             </select>
                                         </div>
@@ -172,7 +172,7 @@
                                         </div>
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2" id="place_satuan">
-                                            <select class="form-control satuan_el" style="font-size: 15px;" name="satuan[]" required>
+                                            <select class="form-control satuan_el" style="font-size: 15px;" name="satuan[]" xxa>
                                                 <option value="">Pilih Satuan</option>
                                             </select>
                                         </div>

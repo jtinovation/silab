@@ -299,6 +299,8 @@ function initAddMore(){
         var rep = rep.replace('first', "first-" + num);
         var rep = rep.replace('success', "danger");
         var rep = rep.replace('add-more', "remove");
+        var rep = rep.replace('xxa', "required");
+        var rep = rep.replace('xxb', "required");
         var rep = rep.replace('plus', "trash");
         $(".core-ans").append(rep);
         console.log(rep);
