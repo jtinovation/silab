@@ -27,8 +27,8 @@
                         @csrf
                         @method('PUT')
                         <div class="row d-flex justify-content-center">
-                            <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
-                                <i class="ri-user-smile-line label-icon"></i><strong>Informasi Peminjam</strong>
+                            <div class="alert alert-success alert-dismissible alert-label-icon label-arrow fade show" role="alert">
+                                <i class="ri-user-smile-line label-icon"></i><strong>Yang bertandatangan dibawah ini, saya :</strong>
                             </div>
                             <div class=" row col-12 justify-content-center " >
                                 <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -42,13 +42,15 @@
                                 </div>
                             </div>
                             @if($qrIjinLBS->is_pegawai)
-                            <div class="row d-flex justify-content-center mt-2" >
-                                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 pegawai mb-3" style="display: {{$qrIjinLBS->is_pegawai?"block":"none"}} ";">
-                                    <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                        <label for="SelectStaff" class="form-label text-right">Pilih Pegawai</label></br>
-                                        <input type="text" class="form-control" name="tm_staff_id" id="SelectStaff" value="{{$qrIjinLBS->StaffData->nama}}" readonly>
-
-                                    </div>
+                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-8 col-sm-8 col-xs-12 pegawai mb-3" style="display: block;">
+                                <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                    <label for="SelectStaff" class="form-label text-right col-xxl-12 col-xl-12 col-lg-12 col-md-12">Pilih Pegawai</label></br>
+                                    <select class="form-control col-xxl-12 col-xl-12 col-lg-12 col-md-12" style="font-size: 15px;" name="tm_staff_id" id="SelectStaff" required>
+                                        <option></option>
+                                        @foreach($data['staff'] as $v)
+                                            <option value="{{$v->id}}" {{$v->id == @$qrIjinLBS->tm_staff_id?"selected":""}} >{{$v->nama}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             @else
@@ -68,8 +70,27 @@
                                     </div>
                                     <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                                            <label for="gol" class="form-label text-right">Golongan / Kelompok</label></br>
-                                            <input type="text" class="form-control" name="gol" id="gol" value="{{@$qrIjinLBS->tm_program_studi_id}}" />
+                                            <label for="tm_program_studi_id" class="form-label text-right">Pilih Program Studi</label>
+                                            <select class="form-control" style="font-size: 15px;" name="tm_program_studi_id" id="tm_program_studi_id">
+                                                <option></option>
+                                                @foreach($data['prodi'] as $v)
+                                                <option value="{{$v->id}}" {{$v->id == @$qrIjinLBS->tm_program_studi_id?"selected":""}} >{{$v->program_studi}}</option>
+                                            @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row d-flex justify-content-center mt-2" >
+                                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-8 col-sm-8 col-xs-12 mb-3" style="display: block;">
+                                            <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                                <label for="tm_staff_id_pembimbing" class="form-label text-right">Pilih Dosen Pembimbing</label></br>
+                                                <select class="form-control" style="font-size: 15px;" name="tm_staff_id_pembimbing" id="tm_staff_id_pembimbing" >
+                                                    <option></option>
+                                                    @foreach($data['staff'] as $v)
+                                                        <option value="{{$v->id}}" {{$v->id == @$qrIjinLBS->tm_staff_id_pembimbing?"selected":""}} >{{$v->nama}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -109,18 +130,23 @@
 
                                         </div>
 
-                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
-                                            <input class="form-control stok " type="text" name="{{'stok-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->barangLabData->stok + $vdu->jumlah}}" readonly>
+                                        <div class="col-xxl-1 col-xl-1 col-lg-1 col-md-1">
+                                            <input class="form-control stok " type="text" name="{{'stok-'.$vdu->id}}" style="padding: 8px 10px;" data-val-ori="{{$vdu->barangLabData->stok + ($vdu->jumlah * $vdu->detailSatuanData->qty)}}" value="{{floor($vdu->barangLabData->stok / $vdu->detailSatuanData->qty) + $vdu->jumlah}}" readonly>
                                         </div>
-                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2">
+                                        <div class="col-xxl-1 col-xl-1 col-lg-1 col-md-1">
                                             <input class="form-control  hit" type="text" name="{{'jml-'.$vdu->id}}" style="padding: 8px 10px;" value="{{$vdu->jumlah}}">
                                         </div>
 
+                                        <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2" id="place_satuan">
+                                            <select class="form-control satuan_els" style="font-size: 15px;" name="{{'satuan-'.$vdu->id}}" required>
+                                                <option value="{{$vdu->td_satuan_id}}">{{$vdu->detailSatuanData->satuanData->satuan." (".$vdu->detailSatuanData->qty.")"}}</option>
+                                            </select>
+                                        </div>
 
                                         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4">
                                             <div class="hstack gap-3">
                                                 <input class="form-control" type="text" name="{{'keterangan-'.$vdu->id}}">
-                                                <button class="btn btn-danger removeBonAlatDetail" data-remove="{{Crypt::encryptString($vdu->id)}}" data-id="{{$vdu->id}}" type="button"><i class=" bx bx-trash"></i></button>
+                                                <button class="btn btn-danger removeDetail" data-div="{{"inputCopy-".$vdu->id}}" data-remove="{{Crypt::encryptString($vdu->id)}}" type="button"><i class=" bx bx-trash"></i></button>
                                                 <button class="btn btn-success add-more" type="button"><i class=" bx bx-plus"></i></button>
                                             </div>
                                         </div>
@@ -165,8 +191,8 @@
 
                             @can('kesiapan-praktek-create')
                             <div class="col-md-12 row button-items justify-content-center gap-3" style="margin-top: 10px;">
-                                <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Permintaaan Bon Alat</button>
-                                <a href="{{route('bonalat.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Permintaaan Bon Alat</a>
+                                <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Ijin Penggunaan LBS</button>
+                                <a href="{{route('bonalat.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Ijin Penggunaan LBS</a>
                             </div>
                             @endcan
 
@@ -185,230 +211,26 @@
 
 <!-- Select 2 -->
 <script src="{{ asset('assets/libs/select2/select2.min.js') }}"></script>
-{{-- <script src="{{ asset('assets/js/pages/kestek.js') }}"></script> --}}
 
 <!-- Daterangepicker -->
 <script src="{{asset('assets/libs/daterangepicker/moment.min.js')}}"></script>
 <!-- Daterangepicker -->
 <script src="{{asset('assets/libs/daterangepicker/moment.min.js')}}"></script>
 <script src="{{asset('assets/libs/daterangepicker/daterangepicker.js')}}"></script>
+<script src="{{ asset('assets/js/pages/ijinLBS.js') }}"></script>
 
 <script type="text/javascript">
     var txtNumeric;
-    var alatLabSelect  = "{{route('alatLabSelects')}}";
-    var bonAlatDetailDelete = "{{route('bonAlatDetailDelete')}}";
-    var token = "{{ csrf_token() }}";
-    var num = 1;
-    var arrBarang=[];
-    $(".cp").change(function(){
-    let val = parseInt($(".cp:checked").val());
-    if(val){
-        $('.mahasiswa').hide("slide", { direction: 'down' }, 1000, function() {
-            $('.pegawai').show("slide", { direction: 'down' }, 1000);
-        });
-      /*   $(".mahasiswa").hide();
-        $(".pegawai").show(); */
-        $("#SelectStaff").attr('required', true);
-        $("#nim").attr('required', false);
-        $("#nama").attr('required', false);
-        $("#gol").attr('required', false);
-        console.log("Pegawai");
-    }else{
-        $('.pegawai').hide("slide", { direction: 'down' }, 1000, function() {
-            $('.mahasiswa').show("slide", { direction: 'down' }, 1000);
-        });
-      /*   $(".pegawai").hide();
-        $(".mahasiswa").show(); */
-        $("#SelectStaff").attr('required', false);
-        $("#nim").attr('required', true);
-        $("#nama").attr('required', true);
-        $("#gol").attr('required', true);
-        console.log("Mahasiswa");
-    }
-});
-
-$("body").on("click", ".removeBonAlatDetail", function() {
-        var id = $(this).attr("data-remove");
-        var rid = $(this).attr("data-id");
-        swal.fire({
-            title: 'Yakin, Hapus Barang?',
-            text: "Data yang di hapus tidak bisa dikembalikan",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger ml-2',
-            confirmButtonText: 'Yes, delete it!'
-        }).then(function(result) {
-            if (result.value) {
-                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-                $.ajax({
-                    type: "POST",
-                    url: bonAlatDetailDelete,
-                    data: { id: id, _token: token },
-                    dataType: "html",
-                    success: function(data) {
-                        swal.fire({
-                            title: "Hapus Data Berhasil!",
-                            text: "",
-                            icon: "success"
-                        }).then(function() {
-                            //location.reload();
-                            $('#inputCopy-'+rid).remove();
-                        });
-                    },
-                    error: function(xhr, ajaxOptions, thrownError) {
-                        swal.fire("Error deleting!", "Please try again", "error");
-                    }
-                });
-            }
-        })
-    });
-
-$("body").on("keyup", "input.number", function(event) {
-    if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57) {
-        $(this).val(function(index, value) {
-            return value.replace(/\D/g, "");
-        });
-    }
-});
-
-new AutoNumeric.multiple('.txtNumeric', { 'digitGroupSeparator': '.', 'decimalCharacter': ',', 'decimalPlaces': '0' });
-
-$("body").on("keyup", ".hit", function() {
-    let jml = parseInt($(this).val());
-    let stok = $(this).parents(".wrap").find('.stok').val();
-
-    if (jml > stok) {
-        Swal.fire({
-            title: "Jumlah Terlalu Banyak!",
-            icon: "warning",
-            text: "Jumlah tidak boleh lebih besar dari stok",
-            didClose: () => {
-                $(this).val(0);
-                $(this).focus();
-                $('#btnSubmit').hide();
-            }
-        });
-    }else{
-        $('#btnSubmit').show();
-    }
-});
-
-$("body").on("change", ".select2_el", function() {
-    console.log("ubah");
-    let idStok = $(this).val();
-    let arr = idStok.split("#");
-    $(this).parents(".wrap").find('.stok').val(arr[1]);
-    $(this).parents(".wrap").find('.getBarang').val(arr[0]);
-    console.log(arr[1]);
-});
-
-$("body").on("click", ".add-more", function() {
-    arrBarang=[];
-    $('.getBarang').each(function(i, obj) {
-        arrBarang.push(obj.value);
-    });
-    arrBarang = arrBarang.filter(e => String(e).trim());
-    console.log(arrBarang );
-
-    var html = $(".copy-fields").html();
-    var rep = html.replace('none', "block");
-    var rep = rep.replace('abc', "input_copy");
-    var rep = rep.replace('aa', "required");
-    var rep = rep.replace('b12', "required");
-    var rep = rep.replace('hi', "hit");
-    var rep = rep.replace('xxxxx', "getBarang");
-    var rep = rep.replace('select2_e', "select2_el");
-    var rep = rep.replace('place_barang', "place_barang-" + num);
-    var rep = rep.replace('first', "first-" + num);
-    var rep = rep.replace('success', "danger");
-    var rep = rep.replace('add-more', "remove");
-    var rep = rep.replace('plus', "trash");
-    $(".core-ans").append(rep);
-    //console.log(rep);
-
-    //$(".first-"+num ).remove();
-
-    let select = "<select class='form-control select2_el ' style='font-size: 15px;' name='barang[]'><option value=''>Pilih Barang</option></select>";
-    $("#place_barang-" + num).empty();
-    $("#place_barang-" + num).append(select);
-    num++;
-    initailizeSelect2();
-});
-
-$("body").on("click", ".remove", function() {
-    $(this).parents(".input_copy").remove();
-});
-
-function initailizeSelect2() {
-    $(".select2_el").select2({
-        ajax: {
-            url: alatLabSelect,
-            type: "get",
-            dataType: 'json',
-            delay: 500,
-            data: function(params) {
-
-                return {
-                    searchTerm: params.term,
-                    valBarang: arrBarang,
-                };
-            },
-            processResults: function(r) {
-                return {
-                    results: r
-                };
-            },
-            cache: true
-        }
-    });
-}
-
-function initDaterangpicker() {
-    $('#tanggalPinjam').daterangepicker({
-        singleDatePicker: true,
-        timePicker:true,
-        timePicker24Hour: true,
-        locale: {
-            format: 'D/M/Y H:mm',
-        }
-    });
-}
-
-$("form").submit(function(event) {
-    $('.hit').each(function(i, obj) {
-        if (obj.value <= 0) {
-            Swal.fire({
-                title: "Jumlah Tidak Boleh Kosong!",
-                icon: "warning",
-                text: "Jumlah Harus Di isi",
-                didClose: () => {
-                    obj.focus();
-                }
-            });
-            event.preventDefault();
-        }
-    });
-
-    $('.select2_el').each(function(i, obj) {
-        console.log(obj.value);
-        if (obj.value == " ") {
-            Swal.fire({
-                title: "Silahkan Pilih alat!",
-                icon: "warning",
-                text: "Data Alat Harus dipilih terlebih dahulu",
-                didClose: () => {
-                    obj.focus();
-                }
-            });
-            event.preventDefault();
-        }
-    });
-
-});
-
-
-
+    var saranaLabSelect     = "{{route('saranaLabSelect')}}";
+    var satuanSelect        = "{{route('satuanSaranaSelect')}}";
+    var DetailDelete        = "{{route('DetailDelete')}}";
+    var token               = "{{ csrf_token() }}";
+    var svrStart            = "{{$qrIjinLBS->start_date}}";
+    var svrEnd              = "{{$qrIjinLBS->end_date}}";
+    console.log(svrStart+" - "+svrEnd);
+    var num                 = 1;
+    var arrBarang           = [];
+    initEdit();
 
 
 </script>

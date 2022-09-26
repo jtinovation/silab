@@ -80,6 +80,59 @@ function initAdd(){
     initCP();
 }
 
+function initEdit(){
+    initStartDate();
+    initSelect2();
+    initBarang();
+    initAddMore();
+    initRemove();
+    initArrayBarang();
+    initCP();
+    $('#tanggal').data('daterangepicker').setStartDate(svrStart);
+    $('#tanggal').data('daterangepicker').setEndDate(svrEnd);
+    $("body").on("click", ".removeDetail", function() {
+        var id = $(this).attr("data-remove");
+        var div = $(this).attr("data-div");
+        var rid = $(this).attr("data-id");
+        url = DetailDelete;
+
+        swal.fire({
+            title: 'Yakin, Hapus Barang?',
+            text: "Data yang di hapus tidak bisa dikembalikan",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger ml-2',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(function(result) {
+            if (result.value) {
+                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: { id: id, _token: token },
+                    dataType: "html",
+                    success: function(data) {
+                        swal.fire({
+                            title: "Hapus Data Berhasil!",
+                            text: "",
+                            icon: "success"
+                        }).then(function() {
+                            //location.reload();
+                            console.log(div);
+                            $('#'+div).remove();
+                            //$(this).parents("#"+div).remove();
+                        });
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        swal.fire("Error deleting!", "Please try again", "error");
+                    }
+                });
+            }
+        })
+    });
+}
+
 function initTable(){
     var tableIjinLBS = $('#tableIjinLBS').DataTable({
         responsive: true,
@@ -152,7 +205,30 @@ function initBarang() {
             dataType: 'json',
             delay: 250,
             data: function(params) {
-                let valBarang = $(this).parents(".wrap").find('.selectBarang').val();
+                let valBarang = $(this).parents(".wrap").find('.getBarang').val();
+                //console.log(valBarang);
+                return {
+                    searchTerm: params.term,
+                    valBarang: valBarang,
+                };
+            },
+            processResults: function(response) {
+                return {
+                    results: response
+                };
+            },
+            cache: true
+        }
+    });
+
+    $(".satuan_els").select2({
+        ajax: {
+            url: satuanSelect,
+            type: "get",
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                let valBarang = $(this).parents(".wrap").find('.getBarang').val();
                 //console.log(valBarang);
                 return {
                     searchTerm: params.term,
@@ -186,6 +262,19 @@ function initBarang() {
         //$(this).parents(".wrap").find('.getBarang').val(arr[0]);
         //console.log(arr[0]);
         //initArrayBarang();
+    });
+
+    $("body").on("change", ".satuan_els", function() {
+        //console.log("ubah");
+        let idStok = $(this).val();
+        let arr = idStok.split("#");
+        let stok = $(this).parents(".wrap").find('.stok').val(arr[0]);
+        let stok_ori = $(this).parents(".wrap").find('.stok').attr("data-val-ori");
+        let satuanQty = arr[2];
+        let satuanStok = Math.floor(stok_ori / satuanQty);
+        $(this).parents(".wrap").find('.stok').val(satuanStok);
+
+        console.log(stok_ori+"/"+satuanQty+"="+satuanStok);
     });
 
 }

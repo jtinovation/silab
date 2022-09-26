@@ -23,4 +23,8 @@ class MDetailIjinLBS extends Model
         return $this->belongsTo(MKartuStok::class,'tr_kartu_stok_id');//table class,fk
     }
 
+    public function detailSatuanData(){
+        return $this->belongsTo(MSatuanDetail::class,'td_satuan_id');//table class,fk
+    }
+
 }

@@ -174,16 +174,17 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('barangSelectSerma',                         [C_Serma::class, 'barangSelect'])->name('barangSelectSerma');
     Route::get('satuanSelectSerma',                         [C_Serma::class, 'satuanSelect'])->name('satuanSelectSerma');
     Route::post('sisaDetailDelete',                         [C_Serma::class,'sisaDetailDelete'])->name('sisaDetailDelete');
-    Route::post('hasilDetailDelete',                         [C_Serma::class,'hasilDetailDelete'])->name('hasilDetailDelete');
+    Route::post('hasilDetailDelete',                        [C_Serma::class,'hasilDetailDelete'])->name('hasilDetailDelete');
 
     Route::resource('ijinLBS',                               C_IjinPenggunaanLBS::class);
     Route::get('getIjinLBS',                                [C_IjinPenggunaanLBS::class, 'getIjinLBS'])->name('getIjinLBS');
     //Route::post('ijinLBSDelete',                            [C_IjinPenggunaanLBS::class, 'destroy'])->name('bonAlatDelete');
     Route::get('saranaLabSelect',                           [C_IjinPenggunaanLBS::class, 'saranaLabSelect'])->name('saranaLabSelect');
     Route::get('satuanSaranaSelect',                        [C_IjinPenggunaanLBS::class, 'satuanSelect'])->name('satuanSaranaSelect');
-    Route::post('bonAlatDetailDelete',                      [C_IjinPenggunaanLBS::class, 'delete'])->name('bonAlatDetailDelete');
+    Route::post('DetailDelete',                         [C_IjinPenggunaanLBS::class,'DetailDelete'])->name('DetailDelete');
+    /* Route::post('bonAlatDetailDelete',                      [C_IjinPenggunaanLBS::class, 'delete'])->name('bonAlatDetailDelete');
     Route::get('bonalat/{bonalat}/kembali',                 [C_IjinPenggunaanLBS::class, 'kembali'])->name('bonalat.kembali');
-    Route::put('bonalatKembali/{bonalat}',                  [C_IjinPenggunaanLBS::class, 'kembaliUpdate'])->name('bonalat.kembaliUpdate');
+    Route::put('bonalatKembali/{bonalat}',                  [C_IjinPenggunaanLBS::class, 'kembaliUpdate'])->name('bonalat.kembaliUpdate'); */
 
 });
 

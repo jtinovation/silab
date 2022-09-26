@@ -26,7 +26,7 @@
                     <form action="{{route('ijinLBS.store')}}" class="form-horizontal" id="frmIjinLBS" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row d-flex justify-content-center">
-                            <div class="alert alert-primary alert-dismissible alert-label-icon label-arrow fade show" role="alert">
+                            <div class="alert alert-success alert-dismissible alert-label-icon label-arrow fade show" role="alert">
                                 <i class="ri-user-smile-line label-icon"></i><strong>Yang bertandatangan dibawah ini, saya :</strong>
                             </div>
                             <div class=" row col-12 justify-content-center " >
@@ -156,8 +156,8 @@
 
                             @can('ijinLBS-create')
                             <div class="col-md-12 row button-items justify-content-center gap-3" style="margin-top: 10px;">
-                                <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Permintaaan Bon Alat</button>
-                                <a href="{{route('bonalat.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Permintaaan Bon Alat</a>
+                                <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Ijin Penggunaan LBS</button>
+                                <a href="{{route('bonalat.index')}}" type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Ijin Penggunaan LBS</a>
                             </div>
                             @endcan
 
@@ -191,32 +191,6 @@
     var num = 1;
     var arrBarang=[];
     initAdd();
-
-
-
-   /*  $("#SelectMinggu").select2({
-        placeholder: "Pilih Minggu Ke",
-        allowClear: true
-    });
-
-    $("#SelectMinggu").change(function() {
-        let selectMinggu = $(this).find(":selected").text();
-        let myArray = selectMinggu.split(" ");
-        let waktu = myArray[1].split("-");
-        min = waktu[0].replace('(', '');
-        max = waktu[1].replace(')', '');
-        initDaterangpicker();
-    });
-    function initDaterangpicker() {
-        $('#tanggal').daterangepicker({
-            singleDatePicker: true,
-            minDate: min,
-            maxDate: max,
-            locale: {
-                format: 'D/M/Y',
-            }
-        });
-    } */
 
 </script>
 @endsection
