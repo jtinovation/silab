@@ -139,7 +139,7 @@
 
                                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2" id="place_satuan">
                                             <select class="form-control satuan_els" style="font-size: 15px;" name="{{'satuan-'.$vdu->id}}" required>
-                                                <option value="{{$vdu->td_satuan_id}}">{{$vdu->detailSatuanData->satuanData->satuan." (".$vdu->detailSatuanData->qty.")"}}</option>
+                                                <option value="{{"0#".$vdu->td_satuan_id."#0"}}">{{$vdu->detailSatuanData->satuanData->satuan." (".$vdu->detailSatuanData->qty.")"}}</option>
                                             </select>
                                         </div>
 
