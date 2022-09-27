@@ -12,7 +12,7 @@ use App\Models\MIjinLBS;
 use App\Models\MKartuStok;
 use App\Models\MMemberLab;
 use App\Models\MProgramStudi;
-use App\Models\MSatuanDetail;
+use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
@@ -197,7 +197,6 @@ class C_IjinPenggunaanLBS extends Controller{
     }
 
     public function edit($id){
-
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         if(count($qrlab)){
@@ -348,7 +347,6 @@ class C_IjinPenggunaanLBS extends Controller{
         return redirect(route('ijinLBS.index'))->with('success','Permintaan Bon Alat Berhasil Di Ubah.');
     }
 
-
     public function destroy($id){
         $idDecrypt = Crypt::decryptString($id);
         $staff_id = Auth::user()->tm_staff_id;
@@ -382,7 +380,6 @@ class C_IjinPenggunaanLBS extends Controller{
         }
         $IjinLBS->delete();
     }
-
 
     public function getIjinLBS(Request $request){
         $staff_id = Auth::user()->tm_staff_id;
@@ -430,6 +427,7 @@ class C_IjinPenggunaanLBS extends Controller{
             }
 
             //$button = $button." <a href='#' data-href='".route('ijinLBS.selesai',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnKembaliClass'><i class=' ri-install-line'></i></a>";
+            $button = $button." <a href='#' data-href='".route('ijinLBS.cetak',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnCetakClass'><i class=' ri-printer-fill'></i></a>";
 
             if(Gate::check('ijinLBS-delete')){
                 $button = $button." <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete' data-id='".$idEncrypt."' data-href='".route('ijinLBS.destroy',$idEncrypt)."' >
@@ -573,5 +571,49 @@ class C_IjinPenggunaanLBS extends Controller{
             );
         }
         echo json_encode($response);
+    }
+
+    public function Cetak($id){
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($qrlab)){
+            $lab_id = $qrlab[0]->tm_laboratorium_id;
+            $tm_lab_id = $qrlab[0]->tm_laboratorium_id;
+            $lab = $qrlab[0]->LaboratoriumData->laboratorium;
+            $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
+            $idDecrypt = Crypt::decryptString($id);
+            $qrIjinLBS = MIjinLBS::find($idDecrypt);
+            if($qrIjinLBS->count()){
+                $qrDetailIjinLBS = MDetailIjinLBS::where('tr_ijin_penggunaan_lbs_id',$qrIjinLBS->id)->get();
+                $data = [
+                    'title'     => "Sistem Informasi Laboratorium",
+                    'subtitle'  => "Ijin Penggunaan LBS",
+                    'npage'     => 79,
+                    'lab_id'    => $tm_lab_id,
+                    'lab'       => $lab,
+                    'jurusan'   => $jurusan,
+                    'prodi'                 => MProgramStudi::where('tm_jurusan_id',8)->get(),
+                    //'memberlab' => MMemberLab::where([['tm_laboratorium_id',$tm_lab_id],['is_aktif',1]])->get(),
+                    'memberlab' => $qrlab[0]->staffData->nama,
+                ];
+
+                $date = Carbon::now()->format('YmdHis');
+                $nama ="";
+            if($qrIjinLBS->is_pegawai){
+                $nama = $qrIjinLBS->StaffData->nama;
+            }else{
+                $nama = $qrIjinLBS->nim." - ".$qrIjinLBS->nama;
+            }
+
+                $pdf = PDF::loadView('cetak.ijinLBS',compact('data','qrIjinLBS','qrDetailIjinLBS'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
+                return $pdf->download($date."#IjinPenggunaanLBS".$nama.".pdf");
+            }else{
+                return abort(403, 'Unauthorized action.');
+            }
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
+
+
     }
 }

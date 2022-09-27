@@ -72,6 +72,14 @@ function initIndex(){
         })
     });
 
+    $("body").on("click",".btnCetakClass",function(){
+        event.preventDefault();
+        let pageCetak =$(this).attr("data-href");
+        $('#ShowUsulanAlat').hide("slide",{direction:'left'},1000, function(){
+            window.open(pageCetak,'_blank');
+        });
+    });
+
 }
 
 function initAdd(){

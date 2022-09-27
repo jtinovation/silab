@@ -20,7 +20,7 @@
     <div class="row col-md-12 col-lg-12 col-sm-12 animate__animated animate__backInLeft">
             <div class="card">
                 <div class="card-body ">
-                    <h4 class="mt-0 header-title text-center" style="">Form Permohonan Menggunakan Fasilitas LBS</h4>
+                    <h4 class="mt-0 header-title text-center" style="">Form Permohonan Menggunakan Fasilitas LBS {{$data['lab']}}</h4>
                     <hr>
 
                     <form action="{{route('ijinLBS.store')}}" class="form-horizontal" id="frmIjinLBS" method="post" enctype="multipart/form-data">

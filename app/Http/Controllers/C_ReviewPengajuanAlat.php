@@ -39,11 +39,6 @@ class C_ReviewPengajuanAlat extends Controller
         return view('reviewpengajuanalat.index',compact('data','Breadcrumb'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
@@ -53,7 +48,6 @@ class C_ReviewPengajuanAlat extends Controller
     {
         //
     }
-
 
     public function show($id)
     {
@@ -111,8 +105,7 @@ class C_ReviewPengajuanAlat extends Controller
         return view('reviewpengajuanalat.show', compact('data', 'Breadcrumb','mvExist','dataTable'));
     }
 
-    public function getReviewUsulanCetak($id)
-    {
+    public function getReviewUsulanCetak($id){
         $enc = $id;
         $id = Crypt::decryptString($id);
         $mvExist = MvExistMK::where('tr_matakuliah_dosen_id',$id)->get();
@@ -167,9 +160,7 @@ class C_ReviewPengajuanAlat extends Controller
         return view('reviewpengajuanalat.show', compact('data', 'Breadcrumb','mvExist','dataTable'));
     }
 
-
-    public function edit($id)
-    {
+    public function edit($id){
         $qrUsulan = MUsulanKebutuhan::where('kode',$id)->get();
         $qrDetailUsulan = MDetailUsulanKebutuhan::where('tr_usulan_kebutuhan_id',$qrUsulan[0]->id)->get();
         $mvExist = MvExistMK::where('tr_matakuliah_dosen_id',$qrUsulan[0]->tr_matakuliah_dosen_id)->get();
@@ -191,8 +182,7 @@ class C_ReviewPengajuanAlat extends Controller
         return view('reviewpengajuanalat.edit', compact('data', 'Breadcrumb','mvExist','qrUsulan','qrDetailUsulan'));
     }
 
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         $update['acara_praktek']             = $request->acara_praktek;
         $update['jml_kel']                   = $request->jml_kel;
         $update['jml_gol']                   = $request->jml_gol;
@@ -229,8 +219,7 @@ class C_ReviewPengajuanAlat extends Controller
         return redirect(route('reviewPengajuan.index'))->with('success','Usulan Bahan dan Alat Praktikum Berhasil di Ubah.');
     }
 
-    public function destroy(Request $request)
-    {
+    public function destroy(Request $request){
         $qry = MDetailUsulanKebutuhan::find(Crypt::decryptString($request->id))->delete();
         if($qry){
             $response = array(
@@ -281,8 +270,6 @@ class C_ReviewPengajuanAlat extends Controller
         return json_encode($output);
     }
 
-
-
     public function getReviewUsulanMK($id){
         $qrExist = MvExistMK::where('tr_matakuliah_dosen_id',Crypt::decryptString($id))->get();
         foreach($qrExist as $v){
@@ -298,8 +285,7 @@ class C_ReviewPengajuanAlat extends Controller
         return json_encode($data);
     }
 
-    public function CetakOneWeek($id)
-    {
+    public function CetakOneWeek($id){
         $MainData = [
             'title' => 'DAFTAR USULAN KEBUTUHAN BAHAN PRAKTEK',
             'date' => date('m/d/Y')

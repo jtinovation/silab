@@ -178,13 +178,12 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('ijinLBS',                               C_IjinPenggunaanLBS::class);
     Route::get('getIjinLBS',                                [C_IjinPenggunaanLBS::class, 'getIjinLBS'])->name('getIjinLBS');
-    //Route::post('ijinLBSDelete',                            [C_IjinPenggunaanLBS::class, 'destroy'])->name('ijinLBSDelete');
     Route::get('saranaLabSelect',                           [C_IjinPenggunaanLBS::class, 'saranaLabSelect'])->name('saranaLabSelect');
     Route::get('satuanSaranaSelect',                        [C_IjinPenggunaanLBS::class, 'satuanSelect'])->name('satuanSaranaSelect');
-    Route::post('DetailDelete',                             [C_IjinPenggunaanLBS::class,'DetailDelete'])->name('DetailDelete');
+    Route::post('DetailDelete',                             [C_IjinPenggunaanLBS::class, 'DetailDelete'])->name('DetailDelete');
     Route::get('ijinLBS/{ijinLBS}/selesai',                 [C_IjinPenggunaanLBS::class, 'selesai'])->name('ijinLBS.selesai');
     Route::put('ijinLBSKembali/{ijinLBS}',                  [C_IjinPenggunaanLBS::class, 'kembaliUpdate'])->name('ijinLBS.kembaliUpdate');
-    //Route::post('bonAlatDetailDelete',                      [C_IjinPenggunaanLBS::class, 'delete'])->name('bonAlatDetailDelete');
+    Route::get('ijinLBSCetak/{id}',                         [C_IjinPenggunaanLBS::class, 'Cetak'])->name('ijinLBS.cetak');
 
 });
 
