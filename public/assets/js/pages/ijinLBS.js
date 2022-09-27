@@ -35,9 +35,10 @@ function initIndex(){
 
     $("body").on("click", ".delete", function() {
         event.preventDefault();
-        var id = $(this).attr("data-id");
+        var destroy = $(this).attr("data-href");
+        console.log(destroy);
         swal.fire({
-            title: 'Yakin, Hapus Data Bon Alat?',
+            title: 'Yakin, Hapus Data Ijin Penggunaan LBS?',
             text: "Data yang di hapus tidak bisa dikembalikan",
             icon: 'warning',
             showCancelButton: true,
@@ -49,8 +50,8 @@ function initIndex(){
                 var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
                     type: "POST",
-                    url: bonAlatDelete,
-                    data: { id: id, _token: token },
+                    url: destroy,
+                    data: { _method:"DELETE", _token: token },
                     dataType: "html",
                     success: function(data) {
                         swal.fire({
@@ -58,7 +59,9 @@ function initIndex(){
                             text: "",
                             icon: "success"
                         }).then(function() {
-                            location.reload();
+                            //location.reload();
+                            tableIjinLBS.ajax.reload();
+                            //initTable();
                         });
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
@@ -68,6 +71,7 @@ function initIndex(){
             }
         })
     });
+
 }
 
 function initAdd(){
@@ -134,7 +138,7 @@ function initEdit(){
 }
 
 function initTable(){
-    var tableIjinLBS = $('#tableIjinLBS').DataTable({
+    tableIjinLBS = $('#tableIjinLBS').DataTable({
         responsive: true,
         processing: true,
         serverSide: true,

@@ -63,6 +63,8 @@
     var BonAlatCreate   = "{{route('ijinLBS.create')}}";
     var bonAlatDelete    = "{{url('bonAlatDelete')}}";
     var token = "{{ csrf_token() }}";
+    var tableIjinLBS = "";
     initIndex();
+
 </script>
 @endsection

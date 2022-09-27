@@ -235,46 +235,6 @@ class C_IjinPenggunaanLBS extends Controller{
         }
     }
 
-    public function kembali($id){
-        $staff_id = Auth::user()->tm_staff_id;
-        $staff_nm = Auth::user()->staffData->nama;
-        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-        if(count($qrlab)){
-            $lab_id = $qrlab[0]->tm_laboratorium_id;
-            $tm_lab_id = $qrlab[0]->tm_laboratorium_id;
-            $lab = $qrlab[0]->LaboratoriumData->laboratorium;
-            $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
-            $idDecrypt = Crypt::decryptString($id);
-            $qrBonAlat = MBonalat::where('id',$idDecrypt)->get();
-            //dd($qrBonAlat);
-            if(count($qrBonAlat)){
-                $qrDetailBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$qrBonAlat[0]->id)->get();
-
-                $data = [
-                    'title' => "Sistem Informasi Laboratorium",
-                    'subtitle'  => "Bon Alat Laboratorium",
-                    'npage'     => 84,
-                    'lab_id'    => $tm_lab_id,
-                    'lab'       => $lab,
-                    'jurusan'   => $jurusan,
-                    //'memberlab' => MMemberLab::where([['tm_laboratorium_id',$tm_lab_id],['is_aktif',1]])->get(),
-                    'memberlab' => $qrlab[0]->staffData->nama,
-                    'barang' => MBarangLab::where('tm_laboratorium_id',$lab_id)->whereHas('BarangData', function($q){$q->select('nama_barang');})->get(),
-                    'staff'     => M_Staff::where('is_aktif',1)->orderBy('nama','ASC')->get(),];
-
-                $Breadcrumb = array(
-                    1 => array("link" => url("bonalat"), "label" => "Daftar Bon Alat"),
-                    2 => array("link" => "active", "label" => "Form Pengembalian Bon Alat"),
-                );
-                return view('bonalat.kembali', compact('data', 'Breadcrumb','qrBonAlat','qrDetailBonAlat','staff_nm','id'));
-            }else{
-                return abort(403, 'Unauthorized action.');
-            }
-        }else{
-            return abort(403, 'Unauthorized action.');
-        }
-    }
-
     public function update(Request $request, $id){
         //dd($request->barang);
         $staff_id = Auth::user()->tm_staff_id;
@@ -388,142 +348,41 @@ class C_IjinPenggunaanLBS extends Controller{
         return redirect(route('ijinLBS.index'))->with('success','Permintaan Bon Alat Berhasil Di Ubah.');
     }
 
-    public function kembaliUpdate(Request $request, $id){
-        $staff_id = Auth::user()->tm_staff_id;
-        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+
+    public function destroy($id){
         $idDecrypt = Crypt::decryptString($id);
-        $bonalat = MBonalat::find($idDecrypt);
-        $detailBonAlat = @$request->detailBonAlat;
-        if(count($detailBonAlat)){
-            foreach($detailBonAlat as $vdu){
-                //echo "</br>".$vdu;
-                $qrDetailBonalat = MDetailBonAlat::find($vdu);
-                $tr_barang_laboratorium_id = $qrDetailBonalat->tr_barang_laboratorium_id;
-                $oldJml = $qrDetailBonalat->jumlah;
-                $newJml = $_REQUEST['jmlkembali-'.$vdu];
-                $status = 1;
-                if($oldJml>$newJml){
-                    $status = 0;
-                }
-                $ks['qty'] = $newJml;
-                //$ks['stok'] = $qrDetailBonalat->kartuStokData->stok + $newJml;
-                $qrKartuStok = MKartuStok::find($qrDetailBonalat->tr_kartu_stok_id);
-                $qrBarangLab = MBarangLab::find($qrKartuStok->tr_barang_laboratorium_id);
-                    $qrBarang    = MBarang::find($qrBarangLab->tm_barang_id);
-                        $updateQrBarang['qty']= $qrBarang->qty + $newJml;
-                        $ks['stok'] = $qrBarang->qty + $newJml;
-                        $qrBarang->update($updateQrBarang);
-                        //echo "</br>Update TM Barang "; var_dump($updateQrBarang);
-
-                    $updateQrBarangLab['stok'] = $qrBarangLab->stok + $newJml;
-                    $qrBarangLab->update($updateQrBarangLab);
-                    //echo "</br> Update Barang Lab "; var_dump($updateQrBarangLab);
-                $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                $ks['is_stok_in'] = 1;
-                $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
-                $ks['keterangan'] = $idDecrypt."#".$vdu."#bon alat - kembali";
-                $kartustok = MKartuStok::create($ks);
-
-                $detailInput['jumlah_kembali']          = $newJml ;
-                $detailInput['status']                  = $status;
-                $detailInput['keterangan']              = $_REQUEST['keterangan-'.$vdu];
-                $detailInput['tr_kartu_stok_id_kembali']= $kartustok->id;
-                $qrDetailBonalat->update($detailInput);
-            }
-        }
-
-        if($request->kembali_is_pegawai==1){
-            $updateBonAlat['kembali_is_pegawai']               = $request->kembali_is_pegawai;
-            $updateBonAlat['kembali_tm_staff_id']              = $request->kembali_tm_staff_id;
-        }else{
-            $updateBonAlat['kembali_nama']                     = $request->kembali_nama;
-            $updateBonAlat['kembali_nim']                      = $request->kembali_nim;
-            $updateBonAlat['kembali_golongan_kelompok']        = $request->kembali_gol;
-        }
-        $updateBonAlat['tr_member_laboratorium_id_kembali'] = $qrlab[0]->id;
-        $updateBonAlat['tanggal_kembali']                   = $request->tanggalKembali.":00";
-        $updateBonAlat['status']                            = 2;
-        $bonalat->update($updateBonAlat);
-        //return $updateBonAlat;
-        return redirect(route('bonalat.index'))->with('success','Pengembalian Bon Alat Berhasil Di Simpan.');
-    }
-
-    public function destroy(Request $request){
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $IjinLBS = MIjinLBS::find($idDecrypt);
+        $tdIjinLBS = MDetailIjinLBS::where('tr_ijin_penggunaan_lbs_id',$id)->get();
+        if(count($tdIjinLBS)){
+            foreach($tdIjinLBS as $vba){
+                $qrSisaPratek = MDetailIjinLBS::find($vba->id);
+                $tr_barang_laboratorium_id = $qrSisaPratek->tr_barang_laboratorium_id;
+                $qrKS = MKartuStok::find($qrSisaPratek->tr_kartu_stok_id);
+                $qtyKS = $qrKS->qty;
+                $barangLab = MBarangLab::find($tr_barang_laboratorium_id);
+                $StokLabNew = $barangLab->stok + $qtyKS;
+                    $TmBarang = MBarang::find($barangLab->tm_barang_id);
+                    $stokBarang = $TmBarang->qty + $qtyKS;
 
-        $id = Crypt::decryptString($request->id);
-        $bonalat = MBonalat::find($id);
-        $tdBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$id)->get();
-        if(count($tdBonAlat)){
-            foreach($tdBonAlat as $vba){
-                $tr_barang_laboratorium_id = $vba->tr_barang_laboratorium_id;
-                $jumlah = $vba->jumlah;
+                    $inputKS['tr_member_laboratorium_id'] = $qrlab[0]->id;
+                    $inputKS['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                    $inputKS['is_stok_in']                = 1;
+                    $inputKS['qty']                       = $qtyKS;
+                    $inputKS['stok']                      = $StokLabNew;
+                    $KS = MKartuStok::create($inputKS);
 
-                $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
-                $stokLab = $tr_barang_laboratorium->stok;
-                $updateStokLab['stok'] = $stokLab + $jumlah;
-                $tr_barang_laboratorium->update($updateStokLab);
+                    $TmBarang->update(array('qty' => $stokBarang));
+                $barangLab->update(array('stok'=>$StokLabNew));
 
-                $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                $ks['is_stok_in'] = 1;
-                $ks['qty'] = $jumlah;
-                $ks['stok'] = $stokLab + $jumlah;
-                $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
-                $ks['keterangan'] = $vba->tr_kartu_stok_id."# was deleted";
-                $kartustok = MKartuStok::create($ks);
-
-                $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
-                $stokBarang = $tr_barang->qty;
-                $updateStokBarang['qty'] = $stokBarang + $jumlah;
-                $tr_barang->update($updateStokBarang);
-
-                MDetailBonAlat::find($vba->id)->delete();
+                $qrKS->update(array('keterangan'=>"Ijin Penggunaan LBS Dihapus, Stok Out in ".$KS->id));
+                $qrSisaPratek->delete();
             }
         }
-        $bonalat->delete();
+        $IjinLBS->delete();
     }
 
-    public function delete(Request $request){
-        $staff_id = Auth::user()->tm_staff_id;
-        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-
-        $id = Crypt::decryptString($request->id);
-        $tdBonAlat = MDetailBonAlat::find($id);
-
-                $tr_barang_laboratorium_id = $tdBonAlat->tr_barang_laboratorium_id;
-                $jumlah = $tdBonAlat->jumlah;
-
-                $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
-                $stokLab = $tr_barang_laboratorium->stok;
-                $updateStokLab['stok'] = $stokLab + $jumlah;
-                $tr_barang_laboratorium->update($updateStokLab);
-
-                $ks['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
-                $ks['is_stok_in'] = 1;
-                $ks['qty'] = $jumlah;
-                $ks['stok'] = $stokLab + $jumlah;
-                $ks['tr_member_laboratorium_id']  = $qrlab[0]->id;
-                $ks['keterangan'] = $tdBonAlat->tr_kartu_stok_id."# was deleted";
-                $kartustok = MKartuStok::create($ks);
-
-                $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
-                $stokBarang = $tr_barang->qty;
-                $updateStokBarang['qty'] = $stokBarang + $jumlah;
-                $tr_barang->update($updateStokBarang);
-
-
-        if($tdBonAlat->delete()){
-            $response = array(
-                'status' => 200,
-            );
-        }else{
-            $response = array(
-                'status' => 503,
-            );
-        }
-        echo json_encode($response);
-    }
 
     public function getIjinLBS(Request $request){
         $staff_id = Auth::user()->tm_staff_id;
@@ -570,8 +429,10 @@ class C_IjinPenggunaanLBS extends Controller{
                 <i class='ri-edit-2-line'></i></a>";
             }
 
+            //$button = $button." <a href='#' data-href='".route('ijinLBS.selesai',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnKembaliClass'><i class=' ri-install-line'></i></a>";
+
             if(Gate::check('ijinLBS-delete')){
-                $button = $button." <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete' data-id='".$idEncrypt."' >
+                $button = $button." <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete' data-id='".$idEncrypt."' data-href='".route('ijinLBS.destroy',$idEncrypt)."' >
                 <i class='ri-delete-bin-2-line'></i></a>";
             }
 

@@ -101,6 +101,9 @@ class C_Staff extends Controller
         $inputUser['tm_staff_id']   = $pegawai->id;
         $inputUser['password']   = Hash::make($request->password);;
         $user = User::create($inputUser);
+        if (Gate::check('set-staff-role')) {
+            $user->assignRole($request->input('roles'));
+        }
 
         return redirect(route('staff.index'))->with('success','Staff Berhasil di Simpan.');
     }
