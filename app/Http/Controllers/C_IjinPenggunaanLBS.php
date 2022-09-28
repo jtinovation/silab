@@ -12,6 +12,7 @@ use App\Models\MIjinLBS;
 use App\Models\MKartuStok;
 use App\Models\MMemberLab;
 use App\Models\MProgramStudi;
+use App\Models\MSatuanDetail;
 use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use PharIo\Manifest\ApplicationName;
+
 class C_IjinPenggunaanLBS extends Controller{
 
     function __construct(){
@@ -584,6 +587,15 @@ class C_IjinPenggunaanLBS extends Controller{
             $idDecrypt = Crypt::decryptString($id);
             $qrIjinLBS = MIjinLBS::find($idDecrypt);
             if($qrIjinLBS->count()){
+                $nama   = "";
+                $ni     = "";
+                if($qrIjinLBS->is_pegawai){
+                    $nama = $qrIjinLBS->StaffData->nama;
+                    $ni = $qrIjinLBS->StaffData->kode;
+                }else{
+                    $nama = $qrIjinLBS->nama;
+                    $ni = $qrIjinLBS->nim;
+                }
                 $qrDetailIjinLBS = MDetailIjinLBS::where('tr_ijin_penggunaan_lbs_id',$qrIjinLBS->id)->get();
                 $data = [
                     'title'     => "Sistem Informasi Laboratorium",
@@ -592,21 +604,20 @@ class C_IjinPenggunaanLBS extends Controller{
                     'lab_id'    => $tm_lab_id,
                     'lab'       => $lab,
                     'jurusan'   => $jurusan,
-                    'prodi'                 => MProgramStudi::where('tm_jurusan_id',8)->get(),
+                    'nama'      => $nama,
+                    'ni'        => $ni,
+                    'prodi'     => MProgramStudi::where('tm_jurusan_id',8)->get(),
                     //'memberlab' => MMemberLab::where([['tm_laboratorium_id',$tm_lab_id],['is_aktif',1]])->get(),
                     'memberlab' => $qrlab[0]->staffData->nama,
                 ];
 
                 $date = Carbon::now()->format('YmdHis');
-                $nama ="";
-            if($qrIjinLBS->is_pegawai){
-                $nama = $qrIjinLBS->StaffData->nama;
-            }else{
-                $nama = $qrIjinLBS->nim." - ".$qrIjinLBS->nama;
-            }
+
+
 
                 $pdf = PDF::loadView('cetak.ijinLBS',compact('data','qrIjinLBS','qrDetailIjinLBS'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
                 return $pdf->download($date."#IjinPenggunaanLBS".$nama.".pdf");
+
             }else{
                 return abort(403, 'Unauthorized action.');
             }

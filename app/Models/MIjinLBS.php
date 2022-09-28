@@ -57,12 +57,14 @@ class MIjinLBS extends Model
     }
 
     public function getMulaiAttribute(){
-        $dateMulai = Carbon::parse("{$this->start_date}")->format('d/m/Y');
+        $dateMulai = Carbon::createFromFormat('d/m/Y',"{$this->start_date}")->format('Y-m-d');
         return Carbon::parse("{$dateMulai}")->format('d F Y');
     }
 
     public function getSelesaiAttribute(){
-        $dateSelesai = Carbon::parse("{$this->end_date}")->format('d/m/Y');
+        $dateSelesai = Carbon::createFromFormat('d/m/Y',"{$this->end_date}")->format('Y-m-d');
         return Carbon::parse("{$dateSelesai}")->format('d F Y');
     }
+
+
 }

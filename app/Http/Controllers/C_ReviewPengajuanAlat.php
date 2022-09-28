@@ -307,7 +307,7 @@ class C_ReviewPengajuanAlat extends Controller
             $tahun   = $v->tahun_ajaran." (".$v->OddEven.")";
             $nama = $v->nama;
             $nip = $v->staffData->kode;
-            $tanggal = $qrUsulan[0]->created_at->format('Y-m-d');;
+            $tanggal = $qrUsulan[0]->created_at->format('Y-m-d');
 
             $dataDukung[]=array('mk'=>$mk, 'smst'=>$smst, 'prodi'=>$prodi, 'jurusan'=>$jurusan, 'tahun'=>$tahun, 'nama'=>$nama, 'nip'=>$nip, 'tanggal'=>$tanggal);
         }
