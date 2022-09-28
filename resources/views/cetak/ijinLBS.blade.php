@@ -96,7 +96,7 @@
         <!-- Wrap the content of your PDF inside a main tag -->
         <main>
             <p>
-
+                Yang Bertanda Tangan dibawah Ini saya:
             </p>
 
         </main>
