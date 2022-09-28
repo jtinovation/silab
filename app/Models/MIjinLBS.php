@@ -38,14 +38,10 @@ class MIjinLBS extends Model
 
     public function setStartDateAttribute($value){
         $this->attributes['start_date'] = Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
-        //Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d')
-        //$this->attributes['tanggal'] = Carbon::parse($value)->format('Y-m-d');
     }
 
     public function setEndDateAttribute($value){
         $this->attributes['end_date'] = Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
-        //Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d')
-        //$this->attributes['tanggal'] = Carbon::parse($value)->format('Y-m-d');
     }
 
     public function getStartDateAttribute($value){
@@ -64,6 +60,11 @@ class MIjinLBS extends Model
     public function getSelesaiAttribute(){
         $dateSelesai = Carbon::createFromFormat('d/m/Y',"{$this->end_date}")->format('Y-m-d');
         return Carbon::parse("{$dateSelesai}")->format('d F Y');
+    }
+
+    public function getTanggalAttribute(){
+        $tanggal = Carbon::parse("{$this->created_at}")->format('Y-m-d');
+        return Carbon::parse("{$tanggal}")->format('d F Y');
     }
 
 

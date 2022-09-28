@@ -75,4 +75,10 @@ class MBonalat extends Model
         $datePinjam = Carbon::parse("{$this->tanggal_pinjam}")->format('d/m/Y H:i:s');
         return Carbon::parse("{$datePinjam}")->format('d F Y H:i:s');
     }
+
+    public function getTanggalBonAttribute(){
+        $tanggal = Carbon::parse("{$this->created_at}")->format('Y-m-d');
+        //$tanggal = Carbon::createFromFormat('d/m/Y', "{$this->tanggal}")->format('Y-m-d');
+        return Carbon::parse("{$tanggal}")->format('d F Y');
+    }
 }

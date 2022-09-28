@@ -72,6 +72,19 @@
                                             <input type="text" class="form-control" name="gol" id="gol" value="{{@$qrBonAlat[0]->golongan_kelompok}}" />
                                         </div>
                                     </div>
+                                    <div class="row d-flex justify-content-center mt-2" >
+                                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-8 col-sm-8 col-xs-12 mb-3" style="display: block;">
+                                            <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+                                                <label for="tm_staff_id_pembimbing" class="form-label text-right">Pilih Dosen Pembimbing</label></br>
+                                                <select class="form-control" style="font-size: 15px;" name="tm_staff_id_pembimbing" id="tm_staff_id_pembimbing" >
+                                                    <option></option>
+                                                    @foreach($data['staff'] as $v)
+                                                        <option value="{{$v->id}}" {{$v->id == @$qrBonAlat[0]->tm_staff_id_pembimbing?"selected":""}} >{{$v->nama}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             @endif
@@ -275,6 +288,11 @@ $("body").on("keyup", "input.number", function(event) {
             return value.replace(/\D/g, "");
         });
     }
+});
+
+$("#tm_staff_id_pembimbing").select2({
+    placeholder: "Pilih Dosen Pembimbing",
+    allowClear: true
 });
 
 new AutoNumeric.multiple('.txtNumeric', { 'digitGroupSeparator': '.', 'decimalCharacter': ',', 'decimalPlaces': '0' });

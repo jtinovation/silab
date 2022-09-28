@@ -63,7 +63,7 @@
             </div>
         </br>
             <div style="margin-top:15px;margin-bottom: 0px">
-               <p style="text-align: center; margin-bottom: 5px; font-size:20px;"><strong>Perihal : Permohonan Menggunakan Fasilitas LBS</strong></p>
+               <p style="text-align: center; margin-bottom: 5px; font-size:20px;"><strong>SERAH TERIMA HASIL PRAKTEK DAN SISA PRAKTEK</strong></p>
             </div>
         </header>
 
@@ -79,79 +79,64 @@
             <div class="nama" style="margin-bottom: 5px;">
                 <div class="column" style="text-align:left; float: left; width: 30%;font-size:16px;line-height: 18px; padding-left:45px;">NAMA</div>
                 <div class="column" style="text-align:left; float: left; width: 3%;font-size:16px;line-height: 18px;">:</div>
-                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$data['nama']}}</div>
+                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$data['pengampu']}}</div>
             </div>
         </br>
             <div class="nip" style="margin-bottom: 5px;">
                 <div class="column" style="text-align:left; float: left; width: 30%;font-size:16px;line-height: 18px; padding-left:45px;">NIM/NIP</div>
                 <div class="column" style="text-align:left; float: left; width: 3%;font-size:16px;line-height: 18px;">:</div>
-                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$data['ni']}}</div>
+                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$data['pengampunip']}}</div>
             </div>
         </br>
-            @if($qrIjinLBS->is_pegawai==0)
+
             <div class="prodi" style="margin-bottom: 5px;">
                 <div class="column" style="text-align:left; float: left; width: 30%;font-size:16px;line-height: 18px; padding-left:45px;">Program Studi</div>
                 <div class="column" style="text-align:left; float: left; width: 3%;font-size:16px;line-height: 18px;">:</div>
-                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$qrIjinLBS->prodiData->program_studi}}</div>
+                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$data['prodi']}}</div>
             </div>
         </br>
             <div class="jurusan" style="margin-bottom: 5px;">
                 <div class="column" style="text-align:left; float: left; width: 30%;font-size:16px;line-height: 18px; padding-left:45px;">Jurusan</div>
                 <div class="column" style="text-align:left; float: left; width: 3%;font-size:16px;line-height: 18px;">:</div>
-                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$qrIjinLBS->prodiData->JurusanData->jurusan}}</div>
+                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$data['jurusan']}}</div>
             </div>
         </br>
-            @endif
-            <div class="keterangan" style="margin-bottom: 5px;">
-                <div class="" style="text-align:left; font-size:16px;line-height: 18px; margin-bottom:5px;">Bermaksud akan melaksanakan kegiatan Tugas Akhir / Penelitian yang dimulai :</div>
-                <div class="" style="text-align:center; font-size:16px;line-height: 18px;margin-bottom:5px;"> <strong>{{$qrIjinLBS->Mulai}} </strong> s/d   <strong>{{$qrIjinLBS->Selesai}}</strong></div>
-                <div class="" style="text-align:left; font-size:16px;line-height: 18px;margin-bottom:5px;">Adapun Sarana dan Prasarana yang saya perlukan selama kegiatan Tugas Akhir/Penelitian adalah sebagai berikut :</div>
-            </div>
 
-            @foreach ($qrDetailIjinLBS as $key=>$vd)
+            <div class="keterangan" style="margin: 5px 0px 5px 0px;">
+                <div class="" style="text-align:left; font-size:16px;line-height: 18px; margin-bottom:5px;">Menyerahkan hasil praktek dan sisa bahan praktek ke Laboratorium/Bengkel/Studio </div>
+                <div class="" style="text-align:left; font-size:16px;line-height: 18px;margin-bottom:5px;"> {{$data['lab']}}, berupa </div>
+            </div>
+            @php
+                $nomor=0;
+            @endphp
+            <div style="margin: 10px 0px 10px 0px;">
+            @foreach ($qrSisa as $key=>$vds)
                 <div class="" style="text-align:left; font-size:16px;line-height: 18px; margin-bottom:5px; padding-left:25px;">
-                    {{++$key.". ".$vd->barangLabData->BarangData->nama_barang." @".$vd->jumlah." ".$vd->detailSatuanData->satuanData->satuan}}
+                    {{++$nomor.". ".$vds->barangLabData->BarangData->nama_barang." @".$vds->jumlah." ".$vds->detailSatuanData->satuanData->satuan}}
                 </div>
             @endforeach
-            <div class="" style="text-align:left; font-size:16px;line-height: 18px;margin-bottom:5px;">Demikian permohonan kami atas ijin yang diberikan, saya sampaikan terima kasih.</div>
+            @foreach ($qrHasil as $key=>$vdh)
+                <div class="" style="text-align:left; font-size:16px;line-height: 18px; margin-bottom:5px; padding-left:25px;">
+                    {{++$nomor.". ".$vdh->barangLabData->BarangData->nama_barang." @".$vdh->jumlah}}
+                </div>
+            @endforeach
+        </div>
+            <div class="" style="text-align:left; font-size:16px;line-height: 18px;margin-bottom:5px;">Demikian berita serah terima kami buat agar dapat digunakan sebagaimana mestinya.</div>
 
-
-            @if($qrIjinLBS->is_pegawai)
-            <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; margin-top:20px;">
-                <div>Mengetahui</div>
-                <div>Ketua Jurusan,</div>
-                <div style="margin-top: 50px;"><u>Hendra Yufit Riskiawan</u></div>
-                <div>NIP. 198302032006041003</div>
-            </div>
-
-            <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; margin-top:20px; padding-left:100px;">
-                <div>Jember, {{$qrIjinLBS->tanggal }}</div>
-                <div>Pemohon,</div>
-                <div style="margin-top: 50px;"><u>{{$data['nama']}}</u></div>
-                <div>NIP. {{$data['ni']}}</div>
-            </div>
-            @else
-            <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; margin-top:20px;">
+            <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; margin-top:20px;padding-left:50px;">
+                <div>Yang Menerima</div>
                 <div>&nbsp;</div>
-                <div>Dosen Pembimbing</div>
-                <div style="margin-top: 50px;"><u>{{$qrIjinLBS->StaffDataPembimbing->nama}}</u></div>
-                <div>NIP. {{$qrIjinLBS->StaffDataPembimbing->kode}}</div>
+                <div style="margin-top: 50px;"><u>{{$data['memberlab']}}</u></div>
+                <div>NIP. {{$data['memberlabnip']}}</div>
             </div>
 
-            <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; margin-top:20px; padding-left:100px;">
-                <div>Jember, {{$qrIjinLBS->tanggal }}</div>
-                <div>Pemohon,</div>
-                <div style="margin-top: 50px;"><u>{{$data['nama']}}</u></div>
-                <div>NIM. {{$data['ni']}}</div>
+            <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; margin-top:20px; padding-left:50px;">
+                <div>Yang Menyerahkan</div>
+                <div>&nbsp;</div>
+                <div style="margin-top: 50px;"><u>{{$data['pengampu']}}</u></div>
+                <div>NIP. {{$data['pengampunip']}}</div>
             </div>
-        </br>
-            <div class="" style="text-align:left; width: 100%;font-size:16px;line-height: 18px; margin-top:30px; padding-left:200px;">
-                <div>Mengetahui</div>
-                <div>Ketua Jurusan,</div>
-                <div style="margin-top: 50px;"><u>Hendra Yufit Riskiawan</u></div>
-                <div>NIP. 198302032006041003</div>
-            </div>
-            @endif
+
         </main>
     </body>
 </html>

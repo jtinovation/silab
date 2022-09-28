@@ -32,4 +32,10 @@ class MSerma extends Model
         return Carbon::parse($value)->format('d/m/Y');
     }
 
+    public function getTanggalSermaAttribute(){
+        //$tanggal = Carbon::parse("{$this->tanggal}")->format('Y-m-d');
+        $tanggal = Carbon::createFromFormat('d/m/Y', "{$this->tanggal}")->format('Y-m-d');
+        return Carbon::parse("{$tanggal}")->format('d F Y');
+    }
+
 }

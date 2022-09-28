@@ -9,13 +9,14 @@ use App\Models\MBonalat;
 use App\Models\MDetailBonAlat;
 use App\Models\MKartuStok;
 use App\Models\MMemberLab;
+use App\Models\MProgramStudi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class C_BonAlat extends Controller
 {
@@ -54,8 +55,7 @@ class C_BonAlat extends Controller
 
     }
 
-    public function create()
-    {
+    public function create(){
         $staff_id = Auth::user()->tm_staff_id;
         $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         if(count($lab_id)){
@@ -84,8 +84,7 @@ class C_BonAlat extends Controller
         }
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         $lab_id = $qrlab[0]->tm_laboratorium_id;
@@ -93,13 +92,14 @@ class C_BonAlat extends Controller
             $date = Carbon::now();
             $input['kode']                         = Str::random(8).$date->format('YmdHis');
             if($request->is_pegawai==1){
-                $input['is_pegawai']               = $request->is_pegawai;
                 $input['tm_staff_id']              = $request->tm_staff_id;
             }else{
                 $input['nama']                     = $request->nama;
                 $input['nim']                      = $request->nim;
                 $input['golongan_kelompok']        = $request->gol;
+                $input['tm_staff_id_pembimbing']   = $request->tm_staff_id_pembimbing;
             }
+            $input['is_pegawai']                        = $request->is_pegawai;
             $input['tm_laboratorium_id']                = $lab_id;
             $input['tanggal_pinjam']                    = $request->tanggalPinjam.":00";
             $input['tr_member_laboratorium_id_pinjam']  = $qrlab[0]->id;
@@ -142,8 +142,7 @@ class C_BonAlat extends Controller
         }
     }
 
-    public function show($id)
-    {
+    public function show($id){
         $staff_id = Auth::user()->tm_staff_id;
         $staff_nm = Auth::user()->staffData->nama;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
@@ -183,8 +182,7 @@ class C_BonAlat extends Controller
         }
     }
 
-    public function edit($id)
-    {
+    public function edit($id){
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         if(count($qrlab)){
@@ -222,8 +220,7 @@ class C_BonAlat extends Controller
         }
     }
 
-    public function kembali($id)
-    {
+    public function kembali($id){
         $staff_id = Auth::user()->tm_staff_id;
         $staff_nm = Auth::user()->staffData->nama;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
@@ -263,8 +260,7 @@ class C_BonAlat extends Controller
         }
     }
 
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         $bonalat = MBonalat::find($id);
@@ -343,11 +339,21 @@ class C_BonAlat extends Controller
                 $qrDetailBonalat->update($detailInput);
             }
         }
+
+        if($request->is_pegawai==1){
+            $updateBonAlat['tm_staff_id']              = $request->tm_staff_id;
+        }else{
+            $updateBonAlat['nama']                     = $request->nama;
+            $updateBonAlat['nim']                      = $request->nim;
+            $updateBonAlat['golongan_kelompok']        = $request->gol;
+            $updateBonAlat['tm_staff_id_pembimbing']   = $request->tm_staff_id_pembimbing;
+        }
+        $bonalat->update($updateBonAlat);
+
         return redirect(route('bonalat.index'))->with('success','Permintaan Bon Alat Berhasil Di Ubah.');
     }
 
-    public function kembaliUpdate(Request $request, $id)
-    {
+    public function kembaliUpdate(Request $request, $id){
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         $idDecrypt = Crypt::decryptString($id);
@@ -407,8 +413,7 @@ class C_BonAlat extends Controller
         return redirect(route('bonalat.index'))->with('success','Pengembalian Bon Alat Berhasil Di Simpan.');
     }
 
-    public function destroy(Request $request)
-    {
+    public function destroy(Request $request){
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
 
@@ -444,8 +449,7 @@ class C_BonAlat extends Controller
         $bonalat->delete();
     }
 
-    public function delete(Request $request)
-    {
+    public function delete(Request $request){
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
 
@@ -526,12 +530,15 @@ class C_BonAlat extends Controller
             $idEncrypt = Crypt::encryptString($record->id);
 
             $button = "";
+            $button = $button." <a href='#' data-href='".route('bonalat.cetak',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnCetakClass'><i class=' ri-printer-fill'></i></a>";
+
             if(Gate::check('bonalat-edit')){
-                $button = $button."<a href='#' data-href='".route('bonalat.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
+                $button = $button." <a href='#' data-href='".route('bonalat.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
                 <i class='ri-edit-2-line'></i></a>";
             }
 
-            $button = $button." <a href='#' data-href='".route('bonalat.kembali',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnKembaliClass'>
+
+            $button = $button." <a href='#' data-href='".route('bonalat.kembali',$idEncrypt)."' class='btn btn-primary btn-outline btn-circle btn-md m-r-5 btnKembaliClass'>
             <i class=' ri-install-line'></i></a>";
 
             if(Gate::check('bonalat-delete')){
@@ -550,7 +557,7 @@ class C_BonAlat extends Controller
                 $kembali = $record->Kembali;
                 $button = "";
                 $button = $button."<a href='#' data-href='".route('bonalat.show',$idEncrypt)."' class='btn btn-success btn-outline btn-circle btn-md m-r-5 btnDetailClass'>
-                <i class='ri-folders-fill'></i></a>";
+                <i class='ri-folders-fill'></i></a> <a href='#' data-href='".route('bonalat.cetak',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnCetakClass'><i class=' ri-printer-fill'></i></a>";
             }
 
             $data_arr[] = array(
@@ -645,4 +652,56 @@ class C_BonAlat extends Controller
         }
 		return json_encode($data);
     }
+
+    public function Cetak($id){
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($qrlab)){
+            $lab_id = $qrlab[0]->tm_laboratorium_id;
+            $tm_lab_id = $qrlab[0]->tm_laboratorium_id;
+            $lab = $qrlab[0]->LaboratoriumData->laboratorium;
+            $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
+            $idDecrypt = Crypt::decryptString($id);
+            $qrBonAlat = MBonalat::find($idDecrypt);
+            if($qrBonAlat->count()){
+                $nama   = "";
+                $ni     = "";
+                if($qrBonAlat->is_pegawai){
+                    $nama = $qrBonAlat->StaffData->nama;
+                    $ni = $qrBonAlat->StaffData->kode;
+                }else{
+                    $nama = $qrBonAlat->nama;
+                    $ni = $qrBonAlat->nim;
+                }
+                $qrDetailBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$qrBonAlat->id)->get();
+                $data = [
+
+                    'lab_id'    => $tm_lab_id,
+                    'lab'       => $lab,
+                    'jurusan'   => $jurusan,
+                    'nama'      => $nama,
+                    'ni'        => $ni,
+                    'prodi'     => MProgramStudi::where('tm_jurusan_id',8)->get(),
+                    //'memberlab' => MMemberLab::where([['tm_laboratorium_id',$tm_lab_id],['is_aktif',1]])->get(),
+                    'memberlab' => $qrlab[0]->staffData->nama,
+                ];
+
+                $date = Carbon::now()->format('YmdHis');
+
+
+
+                $pdf = PDF::loadView('cetak.bonalat',compact('data','qrBonAlat','qrDetailBonAlat'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
+                return $pdf->download($date."#BonAlat".$nama.".pdf");
+
+            }else{
+                return abort(403, 'Unauthorized action.');
+            }
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
+
+
+    }
 }
+
+

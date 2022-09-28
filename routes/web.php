@@ -153,6 +153,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('bonAlatDetailDelete',                      [C_BonAlat::class, 'delete'])->name('bonAlatDetailDelete');
     Route::get('bonalat/{bonalat}/kembali',                 [C_BonAlat::class, 'kembali'])->name('bonalat.kembali');
     Route::put('bonalatKembali/{bonalat}',                  [C_BonAlat::class, 'kembaliUpdate'])->name('bonalat.kembaliUpdate');
+    Route::get('bonalatCetak/{id}',                         [C_BonAlat::class, 'Cetak'])->name('bonalat.cetak');
 
     Route::resource('penggantianPraktek',                    C_PenggantianPraktek::class);
     Route::get('getPenggantianPraktek',                     [C_PenggantianPraktek::class, 'gantiJadwal'])->name('getPenggantianPraktek');
@@ -175,6 +176,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('satuanSelectSerma',                         [C_Serma::class, 'satuanSelect'])->name('satuanSelectSerma');
     Route::post('sisaDetailDelete',                         [C_Serma::class,'sisaDetailDelete'])->name('sisaDetailDelete');
     Route::post('hasilDetailDelete',                        [C_Serma::class,'hasilDetailDelete'])->name('hasilDetailDelete');
+    Route::get('SermaCetak/{id}',                           [C_Serma::class, 'Cetak'])->name('serma.cetak');
 
     Route::resource('ijinLBS',                               C_IjinPenggunaanLBS::class);
     Route::get('getIjinLBS',                                [C_IjinPenggunaanLBS::class, 'getIjinLBS'])->name('getIjinLBS');

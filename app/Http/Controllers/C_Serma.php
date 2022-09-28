@@ -24,6 +24,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class C_Serma extends Controller
 {
@@ -484,6 +485,7 @@ class C_Serma extends Controller
                     $button = $button." <a href='#' data-href='".route('serma.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
                     <i class='ri-edit-2-line'></i></a>";
                 }
+                $button = $button." <a href='#' data-href='".route('serma.cetak',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnCetakClass'><i class=' ri-printer-fill'></i></a>";
 
                 if(Gate::check('serma-delete')){
                     $button = $button." <a href='#' data-href='".route('serma.destroy',$idEncrypt)."'  class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete'>
@@ -779,6 +781,56 @@ class C_Serma extends Controller
             );
         }
         echo json_encode($response);
+    }
+
+    public function Cetak($id){
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+
+        if(count($qrlab)){
+            $lab_id = $qrlab[0]->tm_laboratorium_id;
+            $tm_lab_id = $qrlab[0]->tm_laboratorium_id;
+            $lab = $qrlab[0]->LaboratoriumData->laboratorium;
+            $idDecrypt = Crypt::decryptString($id);
+            $qrSerma = MSerma::find($idDecrypt);
+            $date = Carbon::now()->format('YmdHis');
+            $nama = $qrSerma->pengampuData->pegawaiData->nama;
+            $pengampunip = $qrSerma->pengampuData->pegawaiData->kode;
+            if(!empty($qrSerma)){
+                $qrHasil                = MSermaHasil::where('tr_serma_hasil_sisa_praktek_id',$idDecrypt)->get();
+                $qrSisa                 = MSermaSisa::where('tr_serma_hasil_sisa_praktek_id',$idDecrypt)->get();
+                $prodi                  = $qrSerma->pengampuData->maproditerData->prodiData->program_studi;
+                $jurusan                = $qrSerma->pengampuData->maproditerData->prodiData->JurusanData->jurusan;
+                $tm_maproditer_id       = $qrSerma->pengampuData->tr_matakuliah_semester_prodi_id;
+                $data = [
+                    'title'                 => "Sistem Informasi Laboratorium",
+                    'subtitle'              => "Serah Terima Hasil dan Bahan Praktikum",
+                    'npage'                 => 80,
+                    'prodi'                 => $prodi,
+                    'pengampu'              => $nama,
+                    'pengampunip'           => $pengampunip,
+                    'lab_id'                => $tm_lab_id,
+                    'lab'                   => $lab,
+                    'jurusan'               => $jurusan,
+                    'memberlab'             => $qrlab[0]->staffData->nama,
+                    'memberlabnip'          => $qrlab[0]->staffData->kode,
+
+                ];
+
+
+
+                //return view('serma.edit', compact('data', 'Breadcrumb','qrHasil','qrSisa','id','qrSerma','nm_lab'));
+                $pdf = PDF::loadView('cetak.serma',compact('data','qrSerma','qrHasil','qrSisa'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
+                return $pdf->download($date."#Serma".$nama.".pdf");
+
+            }else{
+                return abort(403, 'Unauthorized action.');
+            }
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
+
+
     }
 }
 

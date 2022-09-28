@@ -126,6 +126,10 @@ function initailizeSelect2() {
         }
     });
 }
+$("#tm_staff_id_pembimbing").select2({
+    placeholder: "Pilih Dosen Pembimbing",
+    allowClear: true
+});
 
 
 
