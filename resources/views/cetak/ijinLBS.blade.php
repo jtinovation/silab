@@ -68,34 +68,7 @@
         </header>
 
         <footer>
-            <div style="margin-top:5px;margin-bottom: 2px">
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px;">
-                    <div>Mengetahui</div>
-                    <div>Ketua Jurusan,</div>
-                    </div>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; padding-left:20px;">
-                <div>Jember, {{\Carbon\Carbon::parse(@$dataDukung[0]['tanggal'])->translatedFormat('d F Y') }}</div>
-                </div>
-                <p  style="margin-bottom: 2px;line-height: 2px;">&nbsp;</p>
 
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; padding-left:250px;">Koordinator Mata Kuliah, </div>
-                <p  style="margin-bottom: 2px;line-height: 2px;">&nbsp;</p>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px;"><strong>&nbsp;</strong></div>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:14px;line-height: 18px;"><strong>&nbsp;</strong></div>
-                <p  style="margin-bottom: 2px;line-height: 2px;">&nbsp;</p>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:14px;line-height: 18px;"><strong>&nbsp;</strong></div>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:14px;line-height: 18px;"><strong>&nbsp;<strong></div>
-                <p  style="margin-bottom: 2px;line-height: 2px;">&nbsp;</p>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:14px;line-height: 18px;"><strong>&nbsp;</strong></div>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:14px;line-height: 18px;"><strong>&nbsp;<strong></div>
-                <p  style="margin-bottom: 2px;line-height: 2px;">&nbsp;</p>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px;"><u>Hendra Yufit Riskiawan</u></div>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; padding-left:250px;"><u></u></div>
-                <p  style="margin-bottom: 2px;line-height: 2px;">&nbsp;</p>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px;">NIP. 198302032006041003</div>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; padding-left:250px;"></div>
-                <p  style="margin-bottom: 2px;line-height: 2px;">&nbsp;</p>
-            </div>
         </footer>
 
         <!-- Wrap the content of your PDF inside a main tag -->
@@ -147,9 +120,10 @@
                 <div style="margin-top: 50px;"><u>Hendra Yufit Riskiawan</u></div>
                 <div>NIP. 198302032006041003</div>
             </div>
+
             <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; margin-top:20px;">
-                <div>Mengetahui</div>
-                <div>Ketua Jurusan,</div>
+                <div>Jember, {{\Carbon\Carbon::parse(@$dataDukung[0]['tanggal'])->translatedFormat('d F Y') }}</div>
+                <div>Pemohon,</div>
                 <div style="margin-top: 50px;"><u>Hendra Yufit Riskiawan</u></div>
                 <div>NIP. 198302032006041003</div>
             </div>
