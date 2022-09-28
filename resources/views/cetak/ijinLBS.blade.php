@@ -3,7 +3,7 @@
         <style>
             /** Define the margins of your page **/
             @page {
-                margin: 220px 40px 200px 40px;
+                margin: 220px 40px 10px 100px;
             }
 
             footer {
@@ -63,16 +63,21 @@
             </div>
         </br>
             <div style="margin-top:15px;margin-bottom: 0px">
-               <p style="text-align: center; margin-bottom: 5px; font-size:16px;"><strong>Perihal : Permohonan Menggunakan Fasilitas LBS</strong></p>
+               <p style="text-align: center; margin-bottom: 5px; font-size:20px;"><strong>Perihal : Permohonan Menggunakan Fasilitas LBS</strong></p>
             </div>
         </header>
 
         <footer>
             <div style="margin-top:5px;margin-bottom: 2px">
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px;">Mengetahui:</div>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; padding-left:250px;">Jember, {{\Carbon\Carbon::parse(@$dataDukung[0]['tanggal'])->translatedFormat('d F Y') }}</div>
+                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px;">
+                    <div>Mengetahui</div>
+                    <div>Ketua Jurusan,</div>
+                    </div>
+                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; padding-left:20px;">
+                <div>Jember, {{\Carbon\Carbon::parse(@$dataDukung[0]['tanggal'])->translatedFormat('d F Y') }}</div>
+                </div>
                 <p  style="margin-bottom: 2px;line-height: 2px;">&nbsp;</p>
-                <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px;">Ketua Jurusan,</div>
+
                 <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; padding-left:250px;">Koordinator Mata Kuliah, </div>
                 <p  style="margin-bottom: 2px;line-height: 2px;">&nbsp;</p>
                 <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px;"><strong>&nbsp;</strong></div>
@@ -124,13 +129,30 @@
             </div>
         </br>
             @endif
+            <div class="keterangan" style="margin-bottom: 5px;">
+                <div class="" style="text-align:left; font-size:16px;line-height: 18px; margin-bottom:5px;">Bermaksud akan melaksanakan kegiatan Tugas Akhir / Penelitian yang dimulai :</div>
+                <div class="" style="text-align:center; font-size:16px;line-height: 18px;margin-bottom:5px;"> <strong>{{$qrIjinLBS->Mulai}} </strong> s/d   <strong>{{$qrIjinLBS->Selesai}}</strong></div>
+                <div class="" style="text-align:left; font-size:16px;line-height: 18px;margin-bottom:5px;">Adapun Sarana dan Prasarana yang saya perlukan selama kegiatan Tugas Akhir/Penelitian adalah sebagai berikut :</div>
+            </div>
 
-            <p style="margin-top: 10px;">
-                Bermaksud akan melaksanakan kegiatan Tugas Akhir / Penelitian yang dimulai :
-                <strong>{{$qrIjinLBS->Mulai}} </strong> s/d   <strong>{{$qrIjinLBS->Selesai}}</strong>
-Adapun Sarana dan Prasarana yang saya perlukan selama kegiatan Tugas Akhir/Penelitian adalah sebagai berikut :
+            @foreach ($qrDetailIjinLBS as $key=>$vd)
+                <div class="" style="text-align:left; font-size:16px;line-height: 18px; margin-bottom:5px;">
+                    {{++$key.". ".$vd->barangLabData->BarangData->nama_barang." ".$vd->jumlah." ".$vd->detailSatuanData->satuanData->satuan}}
+                </div>
+            @endforeach
 
-            </p>
+            <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; margin-top:20px;">
+                <div>Mengetahui</div>
+                <div>Ketua Jurusan,</div>
+                <div style="margin-top: 50px;"><u>Hendra Yufit Riskiawan</u></div>
+                <div>NIP. 198302032006041003</div>
+            </div>
+            <div class="column" style="text-align:left; float: left; width: 50%;font-size:16px;line-height: 18px; margin-top:20px;">
+                <div>Mengetahui</div>
+                <div>Ketua Jurusan,</div>
+                <div style="margin-top: 50px;"><u>Hendra Yufit Riskiawan</u></div>
+                <div>NIP. 198302032006041003</div>
+            </div>
         </main>
     </body>
 </html>
