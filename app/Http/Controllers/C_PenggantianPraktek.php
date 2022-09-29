@@ -17,10 +17,12 @@ use App\Models\MSatuan;
 use App\Models\MSemester;
 use App\Models\MTahunAjaran;
 use App\Models\MvExistMK;
+use Illuminate\Support\Carbon;
 use App\Models\MvPenggantianPraktek;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Crypt;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class C_PenggantianPraktek extends Controller
 {
@@ -46,7 +48,6 @@ class C_PenggantianPraktek extends Controller
         );
         return view('penggantianpraktek.index',compact('data','Breadcrumb'));
     }
-
 
     public function create(){
         $data = [
@@ -199,8 +200,10 @@ class C_PenggantianPraktek extends Controller
                 $idEncrypt = Crypt::encryptString($record->id);
 
                 $button = "";
+                $button = $button." <a href='#' data-href='".route('penggantianPraktek.cetak',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnCetakClass'><i class=' ri-printer-fill'></i></a>";
+
                 if(Gate::check('penggantian-praktek-edit')){
-                    $button = $button."<a href='#' data-href='".route('penggantianPraktek.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
+                    $button = $button." <a href='#' data-href='".route('penggantianPraktek.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
                     <i class='ri-edit-2-line'></i></a>";
                 }
                 if(Gate::check('penggantian-praktek-delete')){
@@ -276,5 +279,54 @@ class C_PenggantianPraktek extends Controller
 		}
 		return json_encode($data);
 	}
+
+    public function Cetak($id){
+        dd("test");
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($qrlab)){
+            $lab_id = $qrlab[0]->tm_laboratorium_id;
+            $tm_lab_id = $qrlab[0]->tm_laboratorium_id;
+            $lab = $qrlab[0]->LaboratoriumData->laboratorium;
+            $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
+            $idDecrypt = Crypt::decryptString($id);
+            $qrPenggantianPraktek = MvPenggantianPraktek::find($idDecrypt);
+            if($qrPenggantianPraktek->count()){
+                $nama            = $qrPenggantianPraktek->staffData->nama;
+                $nip             = $qrPenggantianPraktek->staffData->kode;
+                $matakuliah      = $qrPenggantianPraktek->maproditerData->mkData->matakuliah;
+                $jadwal_asli     = $qrPenggantianPraktek->jadwal_asli;
+                $jadwal_ganti    = $qrPenggantianPraktek->jadwal_ganti;
+                $kaprodi         = $qrPenggantianPraktek->kaprodiData->StaffData->nama;
+                $kaprodiNip      = $qrPenggantianPraktek->kaprodiData->StaffData->kode;
+
+                $data = [
+                    'lab_id'    => $tm_lab_id,
+                    'lab'       => $lab,
+                    'jurusan'   => $jurusan,
+                    'nama'      => $nama,
+                    'ni'        => $nip,
+                    'mk'        => $matakuliah,
+                    'jadwal_asli' => $jadwal_asli,
+                    'jadwal_ganti' => $jadwal_ganti,
+                    'kaprodi'       => $kaprodi,
+                    'kaprodinip'    => $kaprodiNip,
+                    'memberlab' => $qrlab[0]->staffData->nama,
+                ];
+
+                $date = Carbon::now()->format('YmdHis');
+
+                $pdf = PDF::loadView('cetak.penggantianPraktek',compact('data','qrPenggantianPraktek'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
+                return $pdf->download($date."#penggantianPraktek".$nama."#".$matakuliah.".pdf");
+
+            }else{
+                return abort(403, 'Unauthorized action.');
+            }
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
+
+
+    }
 
 }

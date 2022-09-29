@@ -159,6 +159,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('getPenggantianPraktek',                     [C_PenggantianPraktek::class, 'gantiJadwal'])->name('getPenggantianPraktek');
     Route::post('penggantianPraktek.Del',                   [C_PenggantianPraktek::class, 'destroy'])->name('penggantianPraktek.Del');
     Route::get('getMKGantiPraktek',                         [C_PenggantianPraktek::class,'GetMatakuliah'])->name('getMKGantiPraktek');
+    Route::get('penggantianPraktek/{id}',                   [C_PenggantianPraktek::class, 'Cetak'])->name('penggantianPraktek.cetak');
 
     Route::resource('kehilangan',                            C_Kehilangan::class);
     Route::get('getKehilangan',                             [C_Kehilangan::class, 'getKehilangan'])->name('getKehilangan');
@@ -178,7 +179,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('hasilDetailDelete',                        [C_Serma::class,'hasilDetailDelete'])->name('hasilDetailDelete');
     Route::get('SermaCetak/{id}',                           [C_Serma::class, 'Cetak'])->name('serma.cetak');
 
-    Ro`ute::resource('ijinLBS',                               C_IjinPenggunaanLBS::class);
+    Route::resource('ijinLBS',                               C_IjinPenggunaanLBS::class);
     Route::get('getIjinLBS',                                [C_IjinPenggunaanLBS::class, 'getIjinLBS'])->name('getIjinLBS');
     Route::get('saranaLabSelect',                           [C_IjinPenggunaanLBS::class, 'saranaLabSelect'])->name('saranaLabSelect');
     Route::get('satuanSaranaSelect',                        [C_IjinPenggunaanLBS::class, 'satuanSelect'])->name('satuanSaranaSelect');
