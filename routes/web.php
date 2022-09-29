@@ -178,7 +178,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('hasilDetailDelete',                        [C_Serma::class,'hasilDetailDelete'])->name('hasilDetailDelete');
     Route::get('SermaCetak/{id}',                           [C_Serma::class, 'Cetak'])->name('serma.cetak');
 
-    Route::resource('ijinLBS',                               C_IjinPenggunaanLBS::class);
+    Ro`ute::resource('ijinLBS',                               C_IjinPenggunaanLBS::class);
     Route::get('getIjinLBS',                                [C_IjinPenggunaanLBS::class, 'getIjinLBS'])->name('getIjinLBS');
     Route::get('saranaLabSelect',                           [C_IjinPenggunaanLBS::class, 'saranaLabSelect'])->name('saranaLabSelect');
     Route::get('satuanSaranaSelect',                        [C_IjinPenggunaanLBS::class, 'satuanSelect'])->name('satuanSaranaSelect');
