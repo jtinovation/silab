@@ -481,11 +481,12 @@ class C_Serma extends Controller
         foreach ($records as $record) { $number += 1;
             $idEncrypt = Crypt::encryptString($record->id);
             $button = "";
+            $button = $button." <a href='#' data-href='".route('serma.cetak',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnCetakClass'><i class=' ri-printer-fill'></i></a>";
+
                 if(Gate::check('serma-edit')){
                     $button = $button." <a href='#' data-href='".route('serma.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
                     <i class='ri-edit-2-line'></i></a>";
                 }
-                $button = $button." <a href='#' data-href='".route('serma.cetak',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnCetakClass'><i class=' ri-printer-fill'></i></a>";
 
                 if(Gate::check('serma-delete')){
                     $button = $button." <a href='#' data-href='".route('serma.destroy',$idEncrypt)."'  class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete'>

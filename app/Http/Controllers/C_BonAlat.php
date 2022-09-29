@@ -668,10 +668,18 @@ class C_BonAlat extends Controller
                 $ni     = "";
                 if($qrBonAlat->is_pegawai){
                     $nama = $qrBonAlat->StaffData->nama;
-                    $ni = $qrBonAlat->StaffData->kode;
+                    $ni = "NIP. ".$qrBonAlat->StaffData->kode;
                 }else{
                     $nama = $qrBonAlat->nama;
-                    $ni = $qrBonAlat->nim;
+                    $ni = "NIM. ".$qrBonAlat->nim;
+                }
+
+                if($qrBonAlat->kembali_is_pegawai){
+                    $kembali_nama = $qrBonAlat->StaffDataKembali->nama;
+                    $kembali_ni = "NIP. ".$qrBonAlat->StaffDataKembali->kode;
+                }else{
+                    $kembali_nama = $qrBonAlat->kembali_nama;
+                    $kembali_ni = "NIM. ".$qrBonAlat->kembali_nim;
                 }
                 $qrDetailBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$qrBonAlat->id)->get();
                 $data = [
@@ -681,6 +689,8 @@ class C_BonAlat extends Controller
                     'jurusan'   => $jurusan,
                     'nama'      => $nama,
                     'ni'        => $ni,
+                    'kembali_nama'      => $kembali_nama,
+                    'kembali_ni'        => $kembali_ni,
                     'prodi'     => MProgramStudi::where('tm_jurusan_id',8)->get(),
                     //'memberlab' => MMemberLab::where([['tm_laboratorium_id',$tm_lab_id],['is_aktif',1]])->get(),
                     'memberlab' => $qrlab[0]->staffData->nama,
