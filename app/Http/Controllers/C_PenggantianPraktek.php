@@ -281,7 +281,9 @@ class C_PenggantianPraktek extends Controller
 	}
 
     public function Cetak($id){
-        dd("test");
+        //$today = Carbon::now()->isoFormat('dddd, D MMMM Y');
+        //return $today;
+// "Minggu, 28 Juni 2020"
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         if(count($qrlab)){

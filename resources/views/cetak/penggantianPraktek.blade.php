@@ -58,7 +58,7 @@
             </div>
         </br>
             <div style="float: left; padding-left:200px;">
-                <p style="text-align: center; margin-bottom: 2px;line-height: 14px;font-size:12px;">Kode Dokumen : FR-JUR-003</p>
+                <p style="text-align: center; margin-bottom: 2px;line-height: 14px;font-size:12px;">Kode Dokumen : FR-JUR-009</p>
                 <p style="text-align: center; margin: 0;line-height: 14px;font-size:12px;">Revisi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
             </div>
         </br>
@@ -74,23 +74,51 @@
         <!-- Wrap the content of your PDF inside a main tag -->
         <main>
             <p style="margin-top: -30px;">
-               Sehubunan Dengan Praktikum {{$data['matakuliah']}} </br>
+               Sehubunan Dengan Praktikum {{$data['mk']}} </br>
                Maka praktek sesuai jadwal yang seharusnya dilaksanakan pada:
             </p>
             <div class="nama" style="margin-bottom: 5px;">
                 <div class="column" style="text-align:left; float: left; width: 30%;font-size:16px;line-height: 18px; padding-left:45px;">Hari/Tanggal</div>
                 <div class="column" style="text-align:left; float: left; width: 3%;font-size:16px;line-height: 18px;">:</div>
-                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$qrPenggantianPraktek->asli}}</div>
+                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$qrPenggantianPraktek->HariAsli}}</div>
+            </div>
+        </br>
+        <div class="nama" style="margin-bottom: 5px;">
+            <div class="column" style="text-align:left; float: left; width: 30%;font-size:16px;line-height: 18px; padding-left:45px;">Jam</div>
+            <div class="column" style="text-align:left; float: left; width: 3%;font-size:16px;line-height: 18px;">:</div>
+            <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$qrPenggantianPraktek->JamAsli}}</div>
+        </div>
+    </br>
+    <div class="nama" style="margin-bottom: 5px;">
+        <div class="column" style="text-align:left; float: left; width: 30%;font-size:16px;line-height: 18px; padding-left:45px;">Acara Praktek</div>
+        <div class="column" style="text-align:left; float: left; width: 3%;font-size:16px;line-height: 18px;">:</div>
+        <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$qrPenggantianPraktek->acara_praktek}}</div>
+    </div>
+</br>
+            <div class="nip" style="margin-bottom: 5px;">
+                <div class="column" style="text-align:left; float: left; width: 30%;font-size:16px;line-height: 18px; ">Diganti :</div>
             </div>
         </br>
             <div class="nip" style="margin-bottom: 5px;">
                 <div class="column" style="text-align:left; float: left; width: 30%;font-size:16px;line-height: 18px; padding-left:45px;">Hari/Tanggal</div>
                 <div class="column" style="text-align:left; float: left; width: 3%;font-size:16px;line-height: 18px;">:</div>
-                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$qrPenggantianPraktek->ganti}}</div>
+                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$qrPenggantianPraktek->HariGanti}}</div>
+            </div>
+        </br>
+            <div class="nip" style="margin-bottom: 5px;">
+                <div class="column" style="text-align:left; float: left; width: 30%;font-size:16px;line-height: 18px; padding-left:45px;">Jam</div>
+                <div class="column" style="text-align:left; float: left; width: 3%;font-size:16px;line-height: 18px;">:</div>
+                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$qrPenggantianPraktek->JamGanti}}</div>
+            </div>
+        </br>
+            <div class="nip" style="margin-bottom: 5px;">
+                <div class="column" style="text-align:left; float: left; width: 30%;font-size:16px;line-height: 18px; padding-left:45px;">Acara Praktek</div>
+                <div class="column" style="text-align:left; float: left; width: 3%;font-size:16px;line-height: 18px;">:</div>
+                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$qrPenggantianPraktek->acara_praktek}}</div>
             </div>
         </br>
 
-            <div class="" style="text-align:left; font-size:16px;line-height: 18px;margin-bottom:5px;">Demikian permohonan kami atas ijin yang diberikan, saya sampaikan terima kasih.</div>
+            <div class="" style="text-align:left; font-size:16px;line-height: 18px;margin-bottom:5px;">Demikian pemberitahuan kami atas perhatiannya disampaikan terima kasih.</div>
 
 
 

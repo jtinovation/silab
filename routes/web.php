@@ -137,6 +137,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('barangLabSelect',                           [C_KesiapanPraktek::class, 'barangLabSelect'])->name('barangLabSelect');
     Route::post('kestekDetailDelete',                       [C_KesiapanPraktek::class, 'destroy'])->name('kestekDetailDelete');
     Route::post('kestekDelete',                             [C_KesiapanPraktek::class, 'delete'])->name('kestekDelete');
+    Route::get('kestekCetak/{id}',                          [C_KesiapanPraktek::class, 'Cetak'])->name('kestek.cetak');
 
     Route::resource('invAlat',                               C_InvetarisAlat::class);
     Route::get('getInvAlat',                                [C_InvetarisAlat::class,'getInvAlat'])->name('getInvAlat');
@@ -159,13 +160,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('getPenggantianPraktek',                     [C_PenggantianPraktek::class, 'gantiJadwal'])->name('getPenggantianPraktek');
     Route::post('penggantianPraktek.Del',                   [C_PenggantianPraktek::class, 'destroy'])->name('penggantianPraktek.Del');
     Route::get('getMKGantiPraktek',                         [C_PenggantianPraktek::class,'GetMatakuliah'])->name('getMKGantiPraktek');
-    Route::get('penggantianPraktek/{id}',                   [C_PenggantianPraktek::class, 'Cetak'])->name('penggantianPraktek.cetak');
+    Route::get('penggantianPraktekCetak/{id}',              [C_PenggantianPraktek::class, 'Cetak'])->name('penggantianPraktek.cetak');
 
     Route::resource('kehilangan',                            C_Kehilangan::class);
     Route::get('getKehilangan',                             [C_Kehilangan::class, 'getKehilangan'])->name('getKehilangan');
     Route::post('kehilanganDetailDelete',                   [C_Kehilangan::class, 'delete'])->name('kehilanganDetailDelete');
     Route::get('kehilangan/{kehilangan}/kembali',           [C_Kehilangan::class, 'kembali'])->name('kehilangan.ganti');
     Route::put('kehilanganKembali/{kehilangan}',            [C_Kehilangan::class, 'kembaliUpdate'])->name('kehilangan.kembaliUpdate');
+    Route::get('kehilanganCetak/{id}',                      [C_Kehilangan::class, 'Cetak'])->name('kehilangan.cetak');
 
     Route::resource('serma',                                 C_Serma::class);
     Route::get('getSerma',                                  [C_Serma::class, 'getSerma'])->name('getSerma');

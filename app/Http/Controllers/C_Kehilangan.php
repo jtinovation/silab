@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class C_Kehilangan extends Controller
@@ -437,6 +438,8 @@ class C_Kehilangan extends Controller
 
             $button = $button." <a href='#' data-href='".route('kehilangan.ganti',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnKembaliClass'>
             <i class=' ri-install-line'></i></a>";
+            $button = $button." <a href='#' data-href='".route('kehilangan.cetak',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnCetakClass'><i class=' ri-printer-fill'></i></a>";
+
 
 
             if($record->status==0 && $statusDetailHilang == 0){
@@ -540,4 +543,40 @@ class C_Kehilangan extends Controller
         }
 		return json_encode($data);
     }
+
+    public function Cetak($id){
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($qrlab)){
+            $lab_id = $qrlab[0]->tm_laboratorium_id;
+            $tm_lab_id = $qrlab[0]->tm_laboratorium_id;
+            $lab = $qrlab[0]->LaboratoriumData->laboratorium;
+            $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
+            $idDecrypt = Crypt::decryptString($id);
+            $qrHilang = MHilang::find($idDecrypt);
+            if($qrHilang->count()){
+                $qrDetailHilang = MDetailHilang::where('tr_hilang_rusak_id',$qrHilang->id)->get();
+                $data = [
+                    'lab_id'    => $tm_lab_id,
+                    'lab'       => $lab,
+                    'jurusan'   => $jurusan,
+                    'memberlab' => $qrlab[0]->staffData->nama,
+                ];
+
+                $date = Carbon::now()->format('YmdHis');
+                $nama = $qrHilang->nama;
+
+                $pdf = PDF::loadView('cetak.kehilangan',compact('data','qrHilang','qrDetailHilang'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
+                return $pdf->download($date."#BAPKehilangan#".$nama.".pdf");
+
+            }else{
+                return abort(403, 'Unauthorized action.');
+            }
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
+
+
+    }
+
 }

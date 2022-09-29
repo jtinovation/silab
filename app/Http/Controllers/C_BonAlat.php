@@ -701,7 +701,7 @@ class C_BonAlat extends Controller
 
 
                 $pdf = PDF::loadView('cetak.bonalat',compact('data','qrBonAlat','qrDetailBonAlat'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
-                return $pdf->download($date."#BonAlat".$nama.".pdf");
+                return $pdf->download($date."#BonAlat#".$nama.".pdf");
 
             }else{
                 return abort(403, 'Unauthorized action.');

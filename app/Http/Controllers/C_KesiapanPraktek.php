@@ -14,19 +14,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class C_KesiapanPraktek extends Controller
 {
-    function __construct()
-    {
+    function __construct(){
          $this->middleware('permission:kesiapan-praktek-list|kesiapan-praktek-create|kesiapan-praktek-edit|kesiapan-praktek-delete', ['only' => ['index','store']]);
          $this->middleware('permission:kesiapan-praktek-create', ['only' => ['create','store']]);
          $this->middleware('permission:kesiapan-praktek-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:kesiapan-praktek-delete', ['only' => ['destroy']]);
     }
 
-    public function index()
-    {
+    public function index(){
         $staff_id = Auth::user()->tm_staff_id;
         $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         if(count($lab_id)){
@@ -47,9 +46,7 @@ class C_KesiapanPraktek extends Controller
 
     }
 
-
-    public function create()
-    {
+    public function create(){
         $data = [
             'title' => "Sistem Informasi Laboratorium",
             'subtitle' => "Daftar Data Kesiapan Praktek",
@@ -66,9 +63,7 @@ class C_KesiapanPraktek extends Controller
         return view('kesiapanalat.add', compact('data', 'Breadcrumb'));
     }
 
-
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         $lab_id = $qrlab[0]->tm_laboratorium_id;
@@ -99,15 +94,11 @@ class C_KesiapanPraktek extends Controller
 
     }
 
-
-    public function show($id)
-    {
+    public function show($id){
         //
     }
 
-
-    public function edit($id)
-    {
+    public function edit($id){
         $staff_id = Auth::user()->tm_staff_id;
         $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
         $lab_id = $qrlab[0]->tm_laboratorium_id;
@@ -132,9 +123,7 @@ class C_KesiapanPraktek extends Controller
         return view('kesiapanalat.edit', compact('data', 'Breadcrumb','qrKesiapan','qrDetailKesiapan'));
     }
 
-
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         $update['tr_matakuliah_semester_prodi_id']   = $request->tr_matakuliah_semester_prodi_id;
         $update['rekomendasi']                       = $request->rekomendasi;
         $update['tm_minggu_id']              = $request->tm_minggu_id;
@@ -167,9 +156,7 @@ class C_KesiapanPraktek extends Controller
         return redirect(route('kestek.index'))->with('success','Usulan Bahan dan Alat Praktikum Berhasil di Simpan.');
     }
 
-
-    public function destroy(Request $request)
-    {
+    public function destroy(Request $request){
         $qry = MDetailKesiapan::find(Crypt::decryptString($request->id))->delete();
         if($qry){
             $response = array(
@@ -183,8 +170,7 @@ class C_KesiapanPraktek extends Controller
         echo json_encode($response);
     }
 
-    public function delete(Request $request)
-    {
+    public function delete(Request $request){
         $qry = MDetailKesiapan::find(Crypt::decryptString($request->id))->delete();
         if($qry){
             $response = array(
@@ -234,8 +220,10 @@ class C_KesiapanPraktek extends Controller
             $idEncrypt = Crypt::encryptString($record->id);
 
             $button = "";
+            $button = $button." <a href='#' data-href='".route('kestek.cetak',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnCetakClass'><i class=' ri-printer-fill'></i></a>";
+
             if(Gate::check('kesiapan-praktek-edit')){
-                $button = $button."<a href='#' data-href='".route('kestek.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
+                $button = $button." <a href='#' data-href='".route('kestek.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
                 <i class='ri-edit-2-line'></i></a>";
             }
             if(Gate::check('kesiapan-praktek-delete')){
@@ -299,5 +287,40 @@ class C_KesiapanPraktek extends Controller
             }
         }
 		return json_encode($data);
+    }
+
+    public function Cetak($id){
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($qrlab)){
+            $lab_id = $qrlab[0]->tm_laboratorium_id;
+            $tm_lab_id = $qrlab[0]->tm_laboratorium_id;
+            $lab = $qrlab[0]->LaboratoriumData->laboratorium;
+            $jurusan = $qrlab[0]->LaboratoriumData->JurusanData->jurusan;
+            $idDecrypt = Crypt::decryptString($id);
+            $qrKesiapan = MKesiapan::find($idDecrypt);
+            if($qrKesiapan->count()){
+                $qrDetailKesiapan = MDetailKesiapan::where('tr_kesiapan_praktek_id',$qrKesiapan->id)->get();
+                $data = [
+
+                    'lab_id'    => $tm_lab_id,
+                    'lab'       => $lab,
+                    'jurusan'   => $jurusan,
+                    'memberlab' => $qrlab[0]->staffData->nama,
+                ];
+
+                $date = Carbon::now()->format('YmdHis');
+                $nama = $qrKesiapan->maproditerData->mkData->matakuliah."#".$qrKesiapan->maproditerData->prodiData->program_studi."#".$qrKesiapan->maproditerData->semesterData->semester;
+                $pdf = PDF::loadView('cetak.kestek',compact('data','qrKesiapan','qrDetailKesiapan'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
+                return $pdf->download($date."#kestek".$nama.".pdf");
+
+            }else{
+                return abort(403, 'Unauthorized action.');
+            }
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
+
+
     }
 }

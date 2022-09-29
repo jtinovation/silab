@@ -33,8 +33,20 @@ class MHilang extends Model
     }
 
     public function getSanggupAttribute(){
-        $dateSanggup = Carbon::parse("{$this->tanggal_sanggup}")->format('d/m/Y');
-        return Carbon::parse("{$dateSanggup}")->format('d F Y');
+        $dateSanggup = Carbon::createFromFormat('d/m/Y', "{$this->tanggal_sanggup}")->format('Y-m-d');
+        return  Carbon::parse("{$dateSanggup}")->isoFormat('D MMMM Y');
+        //return Carbon::parse("{$dateSanggup}")->format('d F Y');
+    }
+
+    public function getSanggupHariAttribute(){
+        $dateSanggup = Carbon::createFromFormat('d/m/Y', "{$this->tanggal_sanggup}")->format('Y-m-d');
+        return  Carbon::parse("{$dateSanggup}")->isoFormat('dddd');
+        //return Carbon::parse("{$dateSanggup}")->format('d F Y');
+    }
+
+    public function getTanggalAttribute(){
+        $tanggal = Carbon::parse("{$this->created_at}")->format('Y-m-d');
+        return Carbon::parse("{$tanggal}")->format('d F Y');
     }
 
 }

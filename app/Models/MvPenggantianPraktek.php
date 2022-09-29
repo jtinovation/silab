@@ -53,12 +53,37 @@ class MvPenggantianPraktek extends Model
     }
 
     public function getAsliAttribute(){
-        $dateAsli = Carbon::parse("{$this->jadwal_asli}")->format('d/m/Y H:i:s');
+        //$dateAsli = Carbon::parse("{$this->jadwal_asli}")->format('d/m/Y H:i:s');
+        $dateAsli = Carbon::createFromFormat('d/m/Y H:i:s', "{$this->jadwal_asli}")->format('Y-m-d H:i:s');
         return Carbon::parse("{$dateAsli}")->format('d F Y H:i:s');
     }
 
     public function getGantiAttribute(){
-        $dateGanti = Carbon::parse("{$this->jadwal_ganti}")->format('d/m/Y H:i:s');
+        //$dateGanti = Carbon::parse("{$this->jadwal_ganti}")->format('d/m/Y H:i:s');
+        $dateGanti = Carbon::createFromFormat('d/m/Y H:i:s', "{$this->jadwal_ganti}")->format('Y-m-d H:i:s');
         return Carbon::parse("{$dateGanti}")->format('d F Y H:i:s');
+    }
+
+    public function getHariAsliAttribute(){
+        //$dateGanti = Carbon::parse("{$this->jadwal_ganti}")->format('d/m/Y H:i:s');
+        $dateAsli = Carbon::createFromFormat('d/m/Y H:i:s', "{$this->jadwal_asli}")->format('Y-m-d H:i:s');
+        return Carbon::parse("{$dateAsli}")->isoFormat('dddd, D MMMM Y');
+    }
+    public function getJamAsliAttribute(){
+        //$dateGanti = Carbon::parse("{$this->jadwal_ganti}")->format('d/m/Y H:i:s');
+        $jamAsli = Carbon::createFromFormat('d/m/Y H:i:s', "{$this->jadwal_asli}")->format('Y-m-d H:i:s');
+        return Carbon::parse("{$jamAsli}")->format('H:i:s');
+    }
+
+    public function getHariGantiAttribute(){
+        //$dateGanti = Carbon::parse("{$this->jadwal_ganti}")->format('d/m/Y H:i:s');
+        $dateGanti = Carbon::createFromFormat('d/m/Y H:i:s', "{$this->jadwal_ganti}")->format('Y-m-d H:i:s');
+        return Carbon::parse("{$dateGanti}")->isoFormat('dddd, D MMMM Y');
+    }
+
+    public function getJamGantiAttribute(){
+        //$dateGanti = Carbon::parse("{$this->jadwal_ganti}")->format('d/m/Y H:i:s');
+        $jamGanti = Carbon::createFromFormat('d/m/Y H:i:s', "{$this->jadwal_ganti}")->format('Y-m-d H:i:s');
+        return Carbon::parse("{$jamGanti}")->format('H:i:s');
     }
 }
