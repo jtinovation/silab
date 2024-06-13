@@ -37,7 +37,7 @@
         </div>
     </div><!-- end col -->
     @endforeach
-</br>
+
 <div class="card tableBarangElement wow fadeInLeft" id="tableCard" style="display: none;">
     <div class="card-header align-items-center d-flex">
         <h4 class="card-title mb-0 flex-grow-1 tableBarangTitle"></h4>
@@ -68,7 +68,6 @@
         </div>
     </div><!-- end card-body -->
 </div>
-</br>
 
 @can('dashboard-lab')
 {{-- IJIN PENGGUNAAN LBS --}}

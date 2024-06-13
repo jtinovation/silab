@@ -46,6 +46,8 @@ class C_Lab extends Controller
         $input['kode']          = strtoupper($request->kodelaboratorium);
         $input['laboratorium']  = ucwords($request->laboratorium);
         $input['tm_jurusan_id'] = $request->tm_jurusan_id;
+        $input['singkatan']    = strtoupper($request->singkatan);
+        $input['warna']    = $request->warna;
         $lab = MLab::create($input);
 
         $member['tm_staff_id'] = $request->tm_staff_id;

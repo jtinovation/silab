@@ -23,6 +23,21 @@ function initTableBarang(){
     ]
     });
 }
+$("body").on("click",".addMode",function(){
+    console.log("addMode");
+    $('.wrap-bahan-to-lab').hide("slide", { direction: 'down' }, 1000, function() {
+        $('.wrap-master-alat').show("slide", { direction: 'down' }, 1000);
+    });
+});
+
+$("body").on("click","#btnCancel",function(){
+    $('.wrap-master-alat').hide("slide", { direction: 'down' }, 1000, function() {
+        $('.wrap-bahan-to-lab').show("slide", { direction: 'down' }, 1000);
+        $('#satuanDefault').val(null).trigger('change');
+        $('#barang').val("");
+        $('#spesifikasi').val("");
+    });
+});
 
 $("body").on("click",".btnDetailClass",function(){
     event.preventDefault();
@@ -70,6 +85,54 @@ if(tm_barang_id!="" && jumlah!=""){
     });
 }
 console.log(tm_barang_id);
+});
+
+$("body").on("click","#btnMasterAlat",function(){
+    let satuan = $('#satuanDefault').val();
+    let barang = $('#barang').val();
+    let spesifikasi = $('#spesifikasi').val();
+    if(barang!="" && satuan!=""){
+
+        $.ajax({
+            type: "POST",
+            url: saveMasterBahan,
+            data: { barang: barang, satuan: satuan , spesifikasi:spesifikasi , _token: token },
+            dataType: "html",
+            success: function(data) {
+                swal.fire({
+                    title: "Simpan Data Berhasil!",
+                    text: "",
+                    icon: "success"
+                }).then(function() {
+                    $('.wrap-master-alat').hide("slide", { direction: 'down' }, 1000, function() {
+                        $('.wrap-bahan-to-lab').show("slide", { direction: 'down' }, 1000);
+                        $('#satuanDefault').val(null).trigger('change');
+                        $('#barang').val("");
+                        $('#spesifikasi').val("");
+                    });
+                });
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                swal.fire("Error deleting!", "Please try again", "error");
+            }
+        });
+       // console.log(barang+" # "+satuan);
+    }else if(barang == ""){
+        //console.log("Isi Data Barang Untuk Melanjutkan");
+        swal.fire({
+            title: "Isi Data Barang Untuk Melanjutkan!",
+            text: "",
+            icon: "error"
+        });
+    }else if(satuan == ""){
+        //console.log("Isi Data Satuan Untuk Melanjutkan");
+        swal.fire({
+            title: "Isi Data Satuan Untuk Melanjutkan!",
+            text: "",
+            icon: "error"
+        });
+    }
+
 });
 
 $('.AddBahan').click(function(){

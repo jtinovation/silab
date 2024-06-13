@@ -65,6 +65,20 @@
 
                                     <div class="col-xxl-4 col-md-6">
                                         <div>
+                                            <label for="singkatan" class="form-label">Singkatan Laboratorium</label>
+                                            <input class="form-control" type="text" value="" id="singkatan" name="singkatan" placeholder="Masukan Singkatan Laboratorium" required="" style=" text-transform: capitalize;">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xxl-4 col-md-6">
+                                        <div>
+                                            <label for="warna" class="form-label">Warna Laboratorium</label>
+                                            <input class="form-control" type="color" value="" id="warna" name="warna" placeholder="Masukan Singkatan Laboratorium" required="" style=" text-transform: capitalize;">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xxl-4 col-md-6">
+                                        <div>
                                             <label for="SelectKaLab" class="form-label text-right">Pilih Ka. Laboratorium</label></br>
                                             <select class="form-control" style="font-size: 15px;" name="tm_staff_id" id="SelectKaLab">
                                                 <option></option>
@@ -76,7 +90,7 @@
                                     </div>
 
                                     <div class="col-md-12 row button-items justify-content-center gap-3" style="margin-top: 10px;">
-                                        <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Data Jurusan</button>
+                                        <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Data Lab</button>
                                         <button type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Tambah Data</button>
                                     </div>
                                 </div>
