@@ -65,14 +65,22 @@ class MBonalat extends Model
         return Carbon::parse($value)->format('d/m/Y H:i:s');
     }
 
+    /* public function getEndDateAttribute($value){
+        return Carbon::parse($value)->format('d/m/Y');
+    }
+    public function getSelesaiAttribute(){
+        $dateSelesai = Carbon::createFromFormat('d/m/Y',"{$this->end_date}")->format('Y-m-d');
+        return Carbon::parse("{$dateSelesai}")->format('d F Y');
+    } */
+
 
     public function getKembaliAttribute(){
-        $dateKembali = Carbon::parse("{$this->tanggal_kembali}")->format('d/m/Y H:i:s');
+        $dateKembali = Carbon::createFromFormat('d/m/Y H:i:s',"{$this->tanggal_kembali}")->format('Y-m-d H:i:s');
         return Carbon::parse("{$dateKembali}")->format('d F Y H:i:s');
     }
 
     public function getPinjamAttribute(){
-        $datePinjam = Carbon::parse("{$this->tanggal_pinjam}")->format('d/m/Y H:i:s');
+        $datePinjam = Carbon::createFromFormat('d/m/Y H:i:s',"{$this->tanggal_pinjam}")->format('Y-m-d H:i:s');
         return Carbon::parse("{$datePinjam}")->format('d F Y H:i:s');
     }
 

@@ -26,7 +26,7 @@ class C_Pengampu extends Controller
             'tahun_ajaran'  => MTahunAjaran::all(),
             'jurusan'       => MJurusan::all(),
             'mk'            => MMatakuliah::all(),
-            'pegawai'       => M_Staff::where('is_aktif',1)->get(),
+            'pegawai'       => M_Staff::where('is_aktif',1)->where('tm_status_kepegawaian_id',1)->get(),
         ];
 
         $Breadcrumb = array(

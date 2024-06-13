@@ -7,7 +7,6 @@ use App\Http\Controllers\C_InventarisBahan;
 use App\Http\Controllers\C_InvetarisAlat;
 use App\Http\Controllers\C_Permission;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Manage\ManageController;
 use App\Http\Controllers\C_Welcome;
 use App\Http\Controllers\C_Staff;
 use App\Http\Controllers\C_Role;
@@ -37,7 +36,9 @@ Route::get('/', [C_Welcome::class,'index'])->middleware(['auth'])->name('welcome
 
 Route::group(['middleware' => ['auth']], function() {
     Route::get('dashboard',                                 [C_Welcome::class, 'dashboard'])->name('dashboard');
-    //Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
+    Route::get('getDashboardBarang/{id}',                   [C_Welcome::class, 'getDashboardBarang'])->name('getDashboardBarang');
+    Route::get('getDashboardDetailBarang/{id}',             [C_Welcome::class, 'getDashboardDetailBarang'])->name('getDashboardDetailBarang');
+
     Route::resource('staff',                                 C_Staff::class);
     Route::get('getStaff',                                  [C_Staff::class, 'getStaff'])->name('getStaff');
     Route::get('cekPassword',                               [C_Staff::class,'checkPassword'])->name('cekPassword');
@@ -131,6 +132,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('invBahan',                              C_InventarisBahan::class);
     Route::get('GetInvBahan',                               [C_InventarisBahan::class,'GetInvBahan'])->name('GetInvBahan');
     Route::get('getInvent/{prodi}',                         [C_InventarisBahan::class, 'getInvent']);
+    Route::get('bahanSelect',                               [C_InventarisBahan::class, 'bahanSelect'])->name('bahanSelect');
+    Route::get('bahanSatuan',                               [C_InventarisBahan::class, 'satuanSelect'])->name('bahanSatuan');
+    Route::post('saveMasterBahan',                          [C_InventarisBahan::class, 'saveMasterBahan'])->name('saveMasterBahan');
 
     Route::resource('kestek',                                C_KesiapanPraktek::class);
     Route::get('getKestek',                                 [C_KesiapanPraktek::class, 'getKestek'])->name('getKestek');

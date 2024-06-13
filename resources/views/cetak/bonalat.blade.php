@@ -87,7 +87,7 @@
             <div class="nip" style="margin-bottom: 5px;">
                 <div class="column" style="text-align:left; float: left; width: 30%;font-size:16px;line-height: 18px; padding-left:0px;">NIM/NIP</div>
                 <div class="column" style="text-align:left; float: left; width: 3%;font-size:16px;line-height: 18px;">:</div>
-                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$data['ni']}}</div>
+                <div class="column" style="text-align:left; float: left; width: 76%;font-size:16px;line-height: 18px;">{{$data['n']}}</div>
             </div>
         </br>
             @if($qrBonAlat->is_pegawai==0)

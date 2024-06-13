@@ -616,7 +616,7 @@ class C_IjinPenggunaanLBS extends Controller{
 
 
 
-                $pdf = PDF::loadView('cetak.ijinLBS',compact('data','qrIjinLBS','qrDetailIjinLBS'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
+                $pdf = PDF::loadView('cetak.ijinLBS',compact('data','qrIjinLBS','qrDetailIjinLBS'))->setPaper('a4', 'portrait')->setWarnings(false);
                 return $pdf->download($date."#IjinPenggunaanLBS".$nama.".pdf");
 
             }else{

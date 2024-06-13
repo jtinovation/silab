@@ -25,7 +25,7 @@ class C_Satuan extends Controller
         $data = [
             'title' => "Sistem Informasi Laboratorium",
             'subtitle' => "Data Satuan",
-            'npage' => 3,
+            'npage' => 98,
         ];
 
         $Breadcrumb = array(
@@ -40,7 +40,7 @@ class C_Satuan extends Controller
         $data = [
             'title' => "Sistem Informasi Laboratorium",
             'subtitle' => "Data Satuan",
-            'npage' => 2,
+            'npage' => 98,
         ];
 
         $Breadcrumb = array(

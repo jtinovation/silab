@@ -100,6 +100,7 @@ class C_Kehilangan extends Controller
             $input['golongan_kelompok']        = $request->golongan_kelompok;
             $input['tanggal_sanggup']          = $request->tanggal_sanggup;
             $input['tr_member_laboratorium_id']  = $qrlab[0]->id;
+            $input['tm_laboratorium_id']         = $lab_id;
             $input['status']  = 0;
             $hilang_rusak = MHilang::create($input);
 
@@ -566,7 +567,7 @@ class C_Kehilangan extends Controller
                 $date = Carbon::now()->format('YmdHis');
                 $nama = $qrHilang->nama;
 
-                $pdf = PDF::loadView('cetak.kehilangan',compact('data','qrHilang','qrDetailHilang'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
+                $pdf = PDF::loadView('cetak.kehilangan',compact('data','qrHilang','qrDetailHilang'))->setPaper('a4', 'portrait')->setWarnings(false);
                 return $pdf->download($date."#BAPKehilangan#".$nama.".pdf");
 
             }else{

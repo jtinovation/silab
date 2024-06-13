@@ -56,24 +56,6 @@
     </div><!-- end row -->
 
 
-    <!-- modal start -->
-    <div class="modal fade" id="ultraModal-1" tabindex="-1" role="dialog" aria-labelledby="ultraModal-Label" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" style="color: black;">Detail Data Role</h4><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <div class="modal-body" style="color: white;">
-
-                </div>
-                <div class="modal-footer">
-                    <button data-dismiss="modal" class="btn btn-default" type="button">Close</button>
-                    <button class="btn btn-success" type="button">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- modal end -->
 
 
 <script src="{{ asset('assets/libs/datatables-bs4/jquery.dataTables.min.js') }}"></script>

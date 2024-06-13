@@ -318,7 +318,7 @@ class C_PenggantianPraktek extends Controller
 
                 $date = Carbon::now()->format('YmdHis');
 
-                $pdf = PDF::loadView('cetak.penggantianPraktek',compact('data','qrPenggantianPraktek'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
+                $pdf = PDF::loadView('cetak.penggantianPraktek',compact('data','qrPenggantianPraktek'))->setPaper('a4', 'portrait')->setWarnings(false);
                 return $pdf->download($date."#penggantianPraktek".$nama."#".$matakuliah.".pdf");
 
             }else{

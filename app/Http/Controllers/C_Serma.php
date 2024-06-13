@@ -87,6 +87,7 @@ class C_Serma extends Controller
             $input['tanggal']                       = $request->tanggal;
             $input['acara_praktek']                 = $request->acara_praktek;
             $input['tr_member_laboratorium_id']     = $qrlab[0]->id;
+            $input['tm_laboratorium_id']         = $lab_id;
             $serma = MSerma::create($input);
 
             foreach($request->barang as $key => $value){
@@ -821,7 +822,7 @@ class C_Serma extends Controller
 
 
                 //return view('serma.edit', compact('data', 'Breadcrumb','qrHasil','qrSisa','id','qrSerma','nm_lab'));
-                $pdf = PDF::loadView('cetak.serma',compact('data','qrSerma','qrHasil','qrSisa'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
+                $pdf = PDF::loadView('cetak.serma',compact('data','qrSerma','qrHasil','qrSisa'))->setPaper('a4', 'portrait')->setWarnings(false);
                 return $pdf->download($date."#Serma".$nama.".pdf");
 
             }else{

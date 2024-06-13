@@ -269,13 +269,6 @@
         });
 
     });
-
-    $("#btnCancel").click(function() {
-        $('#SelectJurusan').val(null).trigger('change');
-        $('#SelectTahunAjaran').val(null).trigger('change');
-        $(".core-ans").empty();
-        console.log("test");
-    });
 </script>
 
 @endsection

@@ -171,7 +171,7 @@
                 </div>
                 <div class="col-md-12 row button-items justify-content-center gap-3" style="margin-top: 10px;">
                     <button type="submit" id="btnSubmit" class="col-xxl-4 col-md-4 btn btn-primary waves-effect waves-light ">Simpan Data Barang</button>
-                    <button type="button" id="btnCancelAdd" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Tambah Data</button>
+                    <button type="button" id="btnCancel" class="col-xxl-4 col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Tambah Data</button>
                 </div>
         </div>
     </form>

@@ -3,6 +3,8 @@
 
 <!-- Select2 -->
 <link rel="stylesheet" href="{{ asset('assets/libs/select2/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/libs/select2/select2-bootstrap4.min.css') }}">
+
 <!-- Responsive Datatables -->
 <link rel="stylesheet" href="{{ asset('assets/libs/datatables-bs4/css/dataTables.bootstrap4.min.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/libs/datatables-responsive/css/responsive.bootstrap4.min.css') }}" />
@@ -32,13 +34,14 @@
                     @csrf
                     <input id="metod" type="hidden" name="_method" value="">
                     <div class="row d-flex justify-content-center g-3">
+
                         <div class="col-xxl-4 col-md-6">
                             <div>
                                 <label for="SelectTahunAjaran" class="form-label text-right">Pilih Tahun Ajaran</label>
                                 <select class="form-control" style="font-size: 15px;"  name="tahun_ajaran" id="SelectTahunAjaran">
                                     <option>Pilih Tahun Ajaran</option>
                                     @foreach($data['tahun_ajaran'] as $v)
-                                        <option value="{{$v->id}}">{{$v->tahun_ajaran}}</option>
+                                        <option value="{{$v->id}}">{{$v->tahun_ajaran ." (".$v->OddEven.")"}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -111,10 +114,7 @@
     <!-- Sweet alert -->
     <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
     <script type="text/javascript">
-        $("#SelectTahunAjaran").select2({
-        placeholder: "Pilih Tahun Ajaran",
-        allowClear: true
-    });
+
         var getSemester  = "{{route('getSemester')}}";
         var act         = "{{route('semester.store')}}";
         var SemesterDelete         = "{{url('SmstrDelete')}}";

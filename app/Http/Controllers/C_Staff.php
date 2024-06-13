@@ -90,7 +90,7 @@ class C_Staff extends Controller
         if ($image != null){
             $ext            = strtolower($image->getClientOriginalExtension());
             $fileName       = Str::random(8) . $date->format('YmdHis') . "." . $ext;
-            $upload         = $image->move('img/users', $fileName);
+            $upload         = $image->move('public/img/users', $fileName);
             $input['foto']  = $fileName;
         }
         $pegawai = M_Staff::create($input);
@@ -144,9 +144,9 @@ class C_Staff extends Controller
 
         $cekPassword = route('cekPassword');
         $imagePath  =  "img/users/".$pegawai->foto;
-        if (!file_exists($imagePath) || $pegawai->foto == "") {
-            $imagePath = "img/system/anonymous.jpg";
-        }
+            if (!file_exists("public/".$imagePath) || $pegawai->foto == "") {
+                $imagePath = "img/system/anonymous.jpg";
+            }
         $idEncrypt = Crypt::encryptString($id);
         return view('pegawai.edit',compact('pegawai','imagePath','data','user_id','cekPassword', 'Breadcrumb', 'roles', 'userRole','idEncrypt'));
     }
@@ -173,7 +173,7 @@ class C_Staff extends Controller
         if ($image != null){
             $ext            = strtolower($image->getClientOriginalExtension());
             $fileName       = Str::random(8) . $date->format('YmdHis') . "." . $ext;
-            $upload         = $image->move('img/users', $fileName);
+            $upload         = $image->move('public/img/users', $fileName);
             $input['foto']  = $fileName;
         }
         $pegawai = M_Staff::find($id);
@@ -258,7 +258,7 @@ class C_Staff extends Controller
             $idEncrypt = Crypt::encryptString($record->id);
             $button = "";
             $imgPath  =  "img/users/".$record->foto;
-            if (!file_exists($imgPath) || $record->foto == "") {
+            if (!file_exists("public/".$imgPath) || $record->foto == "") {
                 $imgPath = "img/system/anonymous.jpg";
             }
             if(Gate::check('staff-edit')){
@@ -272,7 +272,7 @@ class C_Staff extends Controller
               </a>";
             }
 
-            $foto = "<img src='" . asset($imgPath) . "'  class='img-rounded'  width='150' height='150'>";
+            $foto = "<img src='" .asset($imgPath) . "'  class='img-rounded'  width='150' height='150'>";
 
             $data_arr[] = array(
                 "id"               => $number,

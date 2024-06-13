@@ -17,6 +17,7 @@ use App\Models\MvKartuStok;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class C_PengadaanStokin extends Controller
 {
@@ -343,7 +344,7 @@ class C_PengadaanStokin extends Controller
         //print_r($dataDukung);
         //echo Carbon::parse('2019-03-01')->translatedFormat('d F Y'); // Output: "01 Maret 2019"
 
-        $pdf = PDF::loadView('cetak.cetak',compact('data','qrUsulan','dataDukung'))->setPaper('a4', 'landscape')->setWarnings(false)->save('myfile.pdf');
+        $pdf = PDF::loadView('cetak.cetak',compact('data','qrUsulan','dataDukung'))->setPaper('a4', 'landscape')->setWarnings(false);
         return $pdf->download($nama." ".$mk.".pdf");
     }
 

@@ -669,10 +669,12 @@ class C_BonAlat extends Controller
                 if($qrBonAlat->is_pegawai){
                     $nama = $qrBonAlat->StaffData->nama;
                     $ni = "NIP. ".$qrBonAlat->StaffData->kode;
+		    $n  = $qrBonAlat->StaffData->kode;
                 }else{
                     $nama = $qrBonAlat->nama;
                     $ni = "NIM. ".$qrBonAlat->nim;
-                }
+		    $n  =  $qrBonAlat->nim;
+	        }
 
                 if($qrBonAlat->kembali_is_pegawai){
                     $kembali_nama = $qrBonAlat->StaffDataKembali->nama;
@@ -683,12 +685,12 @@ class C_BonAlat extends Controller
                 }
                 $qrDetailBonAlat = MDetailBonAlat::where('tr_bon_alat_id',$qrBonAlat->id)->get();
                 $data = [
-
                     'lab_id'    => $tm_lab_id,
                     'lab'       => $lab,
                     'jurusan'   => $jurusan,
                     'nama'      => $nama,
                     'ni'        => $ni,
+		    'n'        => $n,
                     'kembali_nama'      => $kembali_nama,
                     'kembali_ni'        => $kembali_ni,
                     'prodi'     => MProgramStudi::where('tm_jurusan_id',8)->get(),
@@ -698,9 +700,7 @@ class C_BonAlat extends Controller
 
                 $date = Carbon::now()->format('YmdHis');
 
-
-
-                $pdf = PDF::loadView('cetak.bonalat',compact('data','qrBonAlat','qrDetailBonAlat'))->setPaper('a4', 'portrait')->setWarnings(false)->save('myfile.pdf');
+                $pdf = PDF::loadView('cetak.bonalat',compact('data','qrBonAlat','qrDetailBonAlat'))->setPaper('a4', 'portrait')->setWarnings(false);
                 return $pdf->download($date."#BonAlat#".$nama.".pdf");
 
             }else{

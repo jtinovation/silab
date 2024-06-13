@@ -12,7 +12,6 @@
 			</svg>
 		</div>
 	</div>
-
 	<!-- auth page content -->
 	<div class="auth-page-content">
 		<div class="container">
@@ -21,7 +20,7 @@
 					<div class="text-center mt-sm-5 mb-4 text-white-50">
 						<div>
 							<a href="index.html" class="d-inline-block auth-logo">
-								<img src="img/silab.svg" alt="" height="30">
+								<img src="{{ asset('img/silab.svg') }}" alt="" height="30">
 							</a>
 						</div>
 						<p class="mt-3 fs-15 fw-medium">Sistem Informasi Laboratorium Jurusan Teknologi Informasi</p>
@@ -38,14 +37,12 @@
 							<div class="p-2 mt-4">
 								<form method="POST" action="{{ route('login') }}">
 									@csrf
-
-									@if (session('error'))
-									<div class="alert alert-danger">{{ session('error') }}</div>
-									@endif
+									
 
 									<div class="mb-3">
 										<label for="username" class="form-label">Usernames</label>
-										<input tabindex="10" type="text" class="form-control" id="username" placeholder="Enter username" name="email">
+										<input tabindex="10" type="text" class="form-control" id="username" placeholder="tuladha@gmail.com" name="email" value="{{old('email')}}"  >
+								
 									</div>
 
 									<div class="mb-3">
@@ -55,9 +52,16 @@
 										<label class="form-label" for="password-input">Password</label>
 										<div class="position-relative auth-pass-inputgroup mb-3">
 											<input tabindex="11" type="password" class="form-control pe-5" placeholder="Enter password" id="password-input" name="password">
-											<button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
+										
+												<button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
+											</div>
+											@if($errors->any())
+										
+    {!! implode('', $errors->all('<small style="color: red;">:message</small>')) !!}
+@endif
 										</div>
-									</div>
+										
+										
 
 									<div class="form-check">
 										<input class="form-check-input" type="checkbox" value="" id="auth-remember-check">
@@ -68,7 +72,7 @@
 										<button class="btn btn-success w-100" type="submit">Login</button>
 									</div>
 
-									<div class="mt-4 text-center">
+									{{-- <div class="mt-4 text-center">
 										<div class="signin-other-title">
 											<h5 class="fs-13 mb-4 title">Sign In with</h5>
 										</div>
@@ -77,7 +81,7 @@
 												<img src="{{ url(asset('img/google.svg')) }}" alt=" " height="20"> <span class="fw-bold">&nbsp;Login dengan Google</span>
 											</a>
 										</div>
-									</div>
+									</div> --}}
 								</form>
 							</div>
 						</div>

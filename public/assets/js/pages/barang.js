@@ -110,16 +110,6 @@ $("body").on("click", ".remove", function() {
     $(this).parents(".input_copy").remove();
 });
 
-$("body").on("click",".btnEditClass",function(){
-    event.preventDefault();
-    let pageEdit =$(this).attr("data-href");
-    $('.tableElement').hide("slide",{direction:'left'},1000, function(){
-        window.location.href = pageEdit;
-    });
-});
-
-
-
 $(function() {
     setTimeout(function() {
         $(".alert-dismissable").hide('blind', {}, 500)

@@ -5,19 +5,19 @@
 		<!-- Dark Logo-->
 		<a href="index.html" class="logo logo-dark">
 			<span class="logo-sm">
-				<img src="{{ url(asset('img/silab-logo.png')) }}" alt="" height="30">
+				<img src="{{ url('public/img/silab-logo.png') }}" alt="" height="30">
 			</span>
 			<span class="logo-lg">
-				<img src="{{ url(asset('img/silab-dark.svg')) }}" alt="" height="25">
+				<img src="{{ url('public/img/silab-dark.svg') }}" alt="" height="25">
 			</span>
 		</a>
 		<!-- Light Logo-->
 		<a href="index.html" class="logo logo-light">
 			<span class="logo-sm">
-				<img src="{{ url(asset('img/silab-logo.png')) }}" alt="" height="30">
+				<img src="{{ url('public/img/silab-logo.png') }}" alt="" height="30">
 			</span>
 			<span class="logo-lg">
-				<img src="{{ url(asset('img/silab.svg')) }}" alt="" height="25">
+				<img src="{{ url('public/img/silab.svg') }}" alt="" height="25">
 			</span>
 		</a>
 		<button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
@@ -41,7 +41,7 @@
                 @if(Auth::user()->can('staff-list') || Auth::user()->can('role-list')|| Auth::user()->can('permission-list')|| Auth::user()->can('jurusan-list')|| Auth::user()->can('satuan-list')|| Auth::user()->can('barang-list') || Auth::user()->can('lab-list'))
                 <li class="nav-item">
 					<a class="nav-link menu-link{{ in_array($data['npage'], [1, 2, 3, 90, 98, 99, 89]) ? ' active' : '' }}" href="#sidebarMaster" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
-						<i class="ri-book-line"></i> <span data-key="t-master">Master</span>
+						<i class="ri-apps-2-line"></i> <span data-key="t-master">Master</span>
 					</a>
 					<div class="collapse menu-dropdown{{ in_array($data['npage'], [1, 2, 3, 90, 98, 99, 89]) ? ' show' : '' }}" id="sidebarMaster">
 						<ul class="nav nav-sm flex-column">
@@ -102,7 +102,7 @@
                 @if(Auth::user()->can('tahunajaran-list') || Auth::user()->can('minggu-list')|| Auth::user()->can('semester-list')|| Auth::user()->can('matakuliah-list')|| Auth::user()->can('setmatakuliah-list')|| Auth::user()->can('setpengampu-list'))
                 <li class="nav-item">
 					<a class="nav-link menu-link{{ in_array($data['npage'], [91, 92, 93, 94, 96, 97]) ? ' active' : '' }}" href="#sidebarAkademik" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
-						<i class="ri-book-line"></i> <span data-key="t-master">Akademik</span>
+						<i class="mdi mdi-school-outline"></i> <span data-key="t-master">Akademik</span>
 					</a>
 					<div class="collapse menu-dropdown{{ in_array($data['npage'], [91, 92, 93, 94, 96, 97]) ? ' show' : '' }}" id="sidebarAkademik">
 						<ul class="nav nav-sm flex-column">
@@ -174,7 +174,7 @@
                 @can('deliver-pangajuan-alat-list')
                 <li class="nav-item">
 					<a class="nav-link menu-link{{ $data['npage'] == 88 ? ' active' : '' }}" href="{{ route('deljulat.index') }}">
-						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Deliver Pengajuan Alat ACC</span>
+						<i class=" las la-truck"></i> <span data-key="t-dashboards">Deliver Pengajuan Alat ACC</span>
 					</a>
 				</li>
                 @endcan
@@ -182,7 +182,7 @@
                 @can('stok-in-pengadaan-list')
                 <li class="nav-item">
 					<a class="nav-link menu-link{{ $data['npage'] == 87 ? ' active' : '' }}" href="{{ route('pengadaanStokin.index') }}">
-						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Stok-In Pengadaan</span>
+						<i class="ri-folder-transfer-line"></i> <span data-key="t-dashboards">Stok-In Pengadaan</span>
 					</a>
 				</li>
                 @endcan
@@ -190,7 +190,7 @@
                 @can('inventaris-bahan-list')
                 <li class="nav-item">
                     <a class="nav-link menu-link{{ $data['npage'] == 86 ? ' active' : '' }}" href="{{ route('invBahan.index') }}">
-						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Inventaris Bahan </span>
+						<i class="bx bx-columns"></i> <span data-key="t-dashboards">Inventaris Bahan </span>
 					</a>
 				</li>
                 @endcan
@@ -198,7 +198,7 @@
                 @can('inventaris-alat-list')
                 <li class="nav-item">
                     <a class="nav-link menu-link{{ $data['npage'] == 83 ? ' active' : '' }}" href="{{ route('invAlat.index') }}">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Inventaris Alat </span>
+                        <i class="bx bx-briefcase-alt-2"></i> <span data-key="t-dashboards">Inventaris Alat </span>
                     </a>
                 </li>
                 @endcan
@@ -206,7 +206,7 @@
                 @can('kesiapan-praktek-list')
                 <li class="nav-item">
 					<a class="nav-link menu-link{{ $data['npage'] == 85 ? ' active' : '' }}" href="{{ route('kestek.index') }}">
-						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Kesiapan Bahan Praktikum</span>
+						<i class="mdi mdi-application-cog-outline"></i> <span data-key="t-dashboards">Kesiapan Bahan Praktikum</span>
 					</a>
 				</li>
                 @endcan
@@ -214,7 +214,7 @@
                 @can('bonalat-list')
                 <li class="nav-item">
 					<a class="nav-link menu-link{{ $data['npage'] == 84 ? ' active' : '' }}" href="{{ route('bonalat.index') }}">
-						<i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Bon Alat Praktikum</span>
+						<i class="mdi mdi-clipboard-clock-outline"></i> <span data-key="t-dashboards">Bon Alat Praktikum</span>
 					</a>
 				</li>
                 @endcan
@@ -222,7 +222,7 @@
                 @can('penggantian-praktek-list')
                 <li class="nav-item">
                     <a class="nav-link menu-link{{ $data['npage'] == 82 ? ' active' : '' }}" href="{{ route('penggantianPraktek.index') }}">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Penggantian Jadwal</span>
+                        <i class="mdi mdi-calendar-collapse-horizontal"></i> <span data-key="t-dashboards">Penggantian Jadwal</span>
                     </a>
                 </li>
                 @endcan
@@ -230,7 +230,7 @@
                 @can('kehilangan-list')
                 <li class="nav-item">
                     <a class="nav-link menu-link{{ $data['npage'] == 81 ? ' active' : '' }}" href="{{ route('kehilangan.index') }}">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Berita Acara Kerusakan / Hilang</span>
+                        <i class="mdi mdi-audio-input-xlr"></i> <span data-key="t-dashboards">Berita Acara Kerusakan / Hilang</span>
                     </a>
                 </li>
                 @endcan
@@ -238,14 +238,14 @@
                 @can('serma-list')
                 <li class="nav-item">
                     <a class="nav-link menu-link{{ $data['npage'] == 80 ? ' active' : '' }}" href="{{ route('serma.index') }}">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Serah Terima Hasil & Sisa Praktek</span>
+                        <i class="mdi mdi-handshake-outline"></i> <span data-key="t-dashboards">Serah Terima Hasil & Sisa Praktek</span>
                     </a>
                 </li>
                 @endcan
                 @can('ijinLBS-list')
                 <li class="nav-item">
                     <a class="nav-link menu-link{{ $data['npage'] == 79 ? ' active' : '' }}" href="{{ route('ijinLBS.index') }}">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Ijin Penggunaan LBS</span>
+                        <i class="mdi mdi-office-building-cog-outline"></i> <span data-key="t-dashboards">Ijin Penggunaan LBS</span>
                     </a>
                 </li>
                 @endcan

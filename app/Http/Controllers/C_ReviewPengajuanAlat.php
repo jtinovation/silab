@@ -347,7 +347,7 @@ class C_ReviewPengajuanAlat extends Controller
         //print_r($dataDukung);
         //echo Carbon::parse('2019-03-01')->translatedFormat('d F Y'); // Output: "01 Maret 2019"
 
-        $pdf = PDF::loadView('cetak.cetak',compact('data','qrUsulan','dataDukung'))->setPaper('a4', 'landscape')->setWarnings(false)->save('myfile.pdf');
+        $pdf = PDF::loadView('cetak.cetak',compact('data','qrUsulan','dataDukung'))->setPaper('a4', 'landscape')->setWarnings(false);
         return $pdf->download($nama." ".$mk.".pdf");
     }
 

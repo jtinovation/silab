@@ -50,7 +50,7 @@
 
                             <div class="col-md-12 row button-items justify-content-center gap-3">
                                 <button type="submit" id="btnSubmit" class="col-md-4 btn btn-primary waves-effect waves-light ">Simpan Data Matakuliah</button>
-                                <button type="button" id="btnCancelAdd" class="col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Tambah Data</button>
+                                <button type="button" id="btnCancel" class="col-md-4 btn btn-secondary waves-effect waves-light  ">Batalkan Tambah Data</button>
                             </div>
                         </div>
                     </form>
@@ -169,7 +169,6 @@ $("#btnCancel").click(function() {
     });
     $('#kode').val("");
     $('#matakuliah').val("");
-
 });
 
 $("#btnCancelAdd").click(function() {

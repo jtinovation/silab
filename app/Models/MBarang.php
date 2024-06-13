@@ -18,4 +18,6 @@ class MBarang extends Model
     public function JenisBarangData(){
         return $this->belongsTo(MJenisBarang::class,'tm_jenis_barang_id');//table class,fk
     }
+
+
 }

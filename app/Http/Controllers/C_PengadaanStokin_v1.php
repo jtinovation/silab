@@ -3,41 +3,51 @@
 namespace App\Http\Controllers;
 
 use App\Models\MBarang;
+use App\Models\MBarangLab;
 use App\Models\MDetailUsulanKebutuhan;
+use App\Models\MKartuStok;
 use App\Models\MLab;
+use App\Models\MMemberLab;
 use App\Models\MMinggu;
+use App\Models\MSatuanDetail;
 use App\Models\MUsulanKebutuhan;
+use App\Models\MvBarangLab;
 use App\Models\MvExistMK;
-use App\Models\MvNotExistMK;
-use Carbon\Carbon;
+use App\Models\MvKartuStok;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
-use PDF;
 
-class C_DeliverPengajuanAlatBahan extends Controller
+class C_PengadaanStokin extends Controller
 {
-    function __construct(){
-        $this->middleware('permission:review-pangajuan-alat-list|review-pangajuan-alat-edit|review-pangajuan-alat-cetak', ['only' => ['index','store']]);
-        $this->middleware('permission:review-pangajuan-alat-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:review-pangajuan-alat-show', ['only' => ['show']]);
+    function __construct()
+    {
+         $this->middleware('permission:stok-in-pengadaan-list|stok-in-pengadaan-create|stok-in-pengadaan-edit|stok-in-pengadaan-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:stok-in-pengadaan-create', ['only' => ['create','store']]);
+         $this->middleware('permission:stok-in-pengadaan-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:stok-in-pengadaan-delete', ['only' => ['destroy']]);
     }
-
     public function index(){
+        $staff_id = Auth::user()->tm_staff_id;
+        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        if(count($lab_id)){
+            $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
         $data = [
             'title' => "Sistem Informasi Laboratorium",
             'subtitle' => "Data Deliver Pengajuan Alat Bahan ACC",
-            'npage' => 88,
-            "MKExist" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where('status',4)->get())->get(),
-            "PengajuanCetak" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where('status',3)->get())->get(),
+            'npage' => 87,
+            "Deliver" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where([['status',5],['tm_laboratorium_id',$tm_lab_id]])->get())->get(),
+            "Done" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where([['status',6],['tm_laboratorium_id',$tm_lab_id]])->get())->get(),
 
         ];
 
         $Breadcrumb = array(
-            1 => array("link" => "active", "label" => "Data Deliver Pengajuan Alat & Bahan ACC"),
-            /*    2 => array("link" => "active", "label" => "Edit Pegawai"), */
+            1 => array("link" => "active", "label" => "Data Stok In Pengadaan"),
         );
-        return view('deliverpengajuanalat.index',compact('data','Breadcrumb'));
+        return view('pengadaanstokin.index',compact('data','Breadcrumb','tm_lab_id'));
+        }else{
+            return abort(403, 'Unauthorized action.');
+        }
     }
 
     /**
@@ -55,120 +65,6 @@ class C_DeliverPengajuanAlatBahan extends Controller
         //
     }
 
-
-    public function show($id)
-    {
-        $enc = $id;
-        $id = Crypt::decryptString($id);
-        $mvExist = MvExistMK::where('tr_matakuliah_dosen_id',$id)->get();
-
-        $data = [
-            'title' => "Sistem Informasi Laboratorium",
-            'subtitle' => "Data Usulan Pengajuan Alat Bahan",
-            'npage' => 95,
-        ];
-
-        $Breadcrumb = array(
-            1 => array("link" => url("staff"), "label" => "Data Pengajuan Alat & Bahan"),
-            2 => array("link" => "active", "label" => "Tambah Pengajuan Alat & Bahan"),
-        );
-
-        $qrUsulan = MUsulanKebutuhan::where([['tr_matakuliah_dosen_id',$id],['status',4]])->get();
-        if($id=="0"){
-            $dataTable[]=array("","","","","","","","","","","","");
-        }else{
-            foreach($qrUsulan as $vu){
-                $kode = $vu->kode;
-                $mingguke   = $vu->mingguData->minggu_ke;
-                $tanggal    = $vu->tanggal;
-                $acaraPraktek = $vu->acara_praktek;
-                $qrDetailUsulan = MDetailUsulanKebutuhan::where('tr_usulan_kebutuhan_id',$vu->id)->get();
-                if(count($qrDetailUsulan)){
-                    foreach($qrDetailUsulan as $vdu){
-                        $nmbrg       = $vdu->BarangData->nama_barang;
-                        $spesifikasi = $vdu->spesifikasi;
-                        $kebkel      = $vdu->keb_kel;
-                        $jmlkel      = $vu->jml_kel;
-                        $jmlgol      = $vu->jml_gol;
-                        $jml         = $vdu->total_keb;
-                        $satuan      = $vdu->detailSatuanData->satuanData->satuan."(".$vdu->detailSatuanData->qty.")";
-                        $keterangan  = $vdu->keterangan;
-
-                        $dataTable[]=array($mingguke,$tanggal,$acaraPraktek,$nmbrg,$spesifikasi,$kebkel,$jmlkel,$jmlgol,$jml,$satuan,$keterangan,$kode);
-                        $mingguke   = "";
-                        $tanggal    = "";
-                        $acaraPraktek = "";
-                    }
-                }else{
-                    $dataTable[]=array($mingguke,$tanggal,$acaraPraktek,"","","","","","","","","");
-                }
-
-            }
-        }
-
-        /* $output = array("data" => $data);
-        return json_encode($output); */
-
-        return view('deliverpengajuanalat.show', compact('data', 'Breadcrumb','mvExist','dataTable'));
-    }
-
-    public function getReviewUsulanCetak($id)
-    {
-        $enc = $id;
-        $id = Crypt::decryptString($id);
-        $mvExist = MvExistMK::where('tr_matakuliah_dosen_id',$id)->get();
-
-        $data = [
-            'title' => "Sistem Informasi Laboratorium",
-            'subtitle' => "Data Deliver Pengajuan Alat Bahan ACC",
-            'npage' => 88,
-        ];
-
-        $Breadcrumb = array(
-            1 => array("link" => url("staff"), "label" => "Data Pengajuan Alat & Bahan"),
-            2 => array("link" => "active", "label" => "Tambah Pengajuan Alat & Bahan"),
-        );
-
-        $qrUsulan = MUsulanKebutuhan::where([['tr_matakuliah_dosen_id',$id],['status',3]])->get();
-        if($id=="0"){
-            $dataTable[]=array("","","","","","","","","","","","");
-        }else{
-            foreach($qrUsulan as $vu){
-                $kode = $vu->kode;
-                $mingguke   = $vu->mingguData->minggu_ke;
-                $tanggal    = $vu->tanggal;
-                $acaraPraktek = $vu->acara_praktek;
-                $qrDetailUsulan = MDetailUsulanKebutuhan::where('tr_usulan_kebutuhan_id',$vu->id)->get();
-                if(count($qrDetailUsulan)){
-                    foreach($qrDetailUsulan as $vdu){
-                        $nmbrg       = $vdu->BarangData->nama_barang;
-                        $spesifikasi = $vdu->spesifikasi;
-                        $kebkel      = $vdu->keb_kel;
-                        $jmlkel      = $vu->jml_kel;
-                        $jmlgol      = $vu->jml_gol;
-                        $jml         = $vdu->total_keb;
-                        $satuan      = $vdu->detailSatuanData->satuanData->satuan."(".$vdu->detailSatuanData->qty.")";
-                        $keterangan  = $vdu->keterangan;
-
-                        $dataTable[]=array($mingguke,$tanggal,$acaraPraktek,$nmbrg,$spesifikasi,$kebkel,$jmlkel,$jmlgol,$jml,$satuan,$keterangan,$kode);
-                        $mingguke   = "";
-                        $tanggal    = "";
-                        $acaraPraktek = "";
-                    }
-                }else{
-                    $dataTable[]=array($mingguke,$tanggal,$acaraPraktek,"","","","","","","","","");
-                }
-
-            }
-        }
-
-        /* $output = array("data" => $data);
-        return json_encode($output); */
-
-        return view('deliverpengajuanalat.show', compact('data', 'Breadcrumb','mvExist','dataTable'));
-    }
-
-
     public function edit($id)
     {
         $qrUsulan = MUsulanKebutuhan::where('kode',$id)->get();
@@ -185,30 +81,138 @@ class C_DeliverPengajuanAlatBahan extends Controller
         ];
 
         $Breadcrumb = array(
-            1 => array("link" => url("staff"), "label" => "Data Pengajuan Alat & Bahan"),
-            2 => array("link" => "active", "label" => "Data Deliver Pengajuan Alat Bahan ACC"),
+            1 => array("link" => url("pengadaanStokin"), "label" => "Data Stok In Pengadaan"),
+            2 => array("link" => "active", "label" => "Form Data Stok In Pengadaan"),
         );
 
-        return view('deliverpengajuanalat.edit', compact('data', 'Breadcrumb','mvExist','qrUsulan','qrDetailUsulan'));
+        return view('pengadaanstokin.edit', compact('data', 'Breadcrumb','mvExist','qrUsulan','qrDetailUsulan'));
     }
 
     public function update(Request $request, $id)
     {
-        $update['tm_laboratorium_id']              = $request->tm_laboratorium_id;
-        $update['status']                          = 5;
-        $UsulanKebutuhan = MUsulanKebutuhan::find($id);
+        $staff_id = Auth::user()->tm_staff_id;
+        $qrlab   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
+        $lab_id = $qrlab[0]->tm_laboratorium_id;
+        $member_id = $qrlab[0]->id;
+        $UsulanKebutuhanId = $id;
+        $update['status']  = 6;
+        $UsulanKebutuhan = MUsulanKebutuhan::find($UsulanKebutuhanId);
         $UsulanKebutuhan->update($update);
 
-        $detailUsulan = @$request->detailUsulan;
-        if(count($detailUsulan)){
-            foreach($detailUsulan as $vdu){
-                //echo $_REQUEST['barang-'.$vdu]; ;
-                $detailInput['keb_acc'] = $_REQUEST['acc-'.$vdu];
-                $DetailUsulanKebutuhan = MDetailUsulanKebutuhan::find($vdu);
+        $konfirmasi = @$request->konfirmasi;
+        if(count($konfirmasi)){
+            foreach($konfirmasi as $vdu){
+                $stokDefault=1;
+                $exp = explode("-",$vdu); $id = $exp[0]; $tm_barang_id = $exp[1]; $qty = $exp[2]; $satuan = $exp[3];
+                $tduid[]=$id;
+                $tdubr[]=$tm_barang_id;
+                $tdsat[]=$satuan;
+                $tdqty[]=$qty;
+                $qtyXsatuan= $qty * $satuan;
+                $qtySatuan = "";
+
+                $qrBarangLab = MvBarangLab::where([['tm_laboratorium_id', $lab_id],['tm_barang_id',$tm_barang_id]])->get();
+
+                if(count($qrBarangLab)){
+                    $qrySatuan = MSatuanDetail::where([['tm_satuan_id',],['tm_barang_id',$qrBarangLab[0]->tm_barang_id]])->get();
+                    if(count($qrySatuan)){ $stokDefault = $qrySatuan[0]->qty; }
+                    $qtySatuan = $qtyXsatuan / $stokDefault;
+                    $qryKartuStok = MvKartuStok::where([['tm_barang_id',$tm_barang_id],['tr_usulan_kebutuhan_detail_id',$id]])->get();
+                    if(count($qryKartuStok)){
+                        //echo $qryKartuStok[0]->stok."-".$qryKartuStok[0]->qty_kartu_stok."</br>";
+                        $stokKS                   = ($qryKartuStok[0]->stok - $qryKartuStok[0]->qty_kartu_stok) + $qtySatuan;
+                        $stok                   = ($qrBarangLab[0]->stok - $qryKartuStok[0]->qty_kartu_stok) + $qtySatuan;
+                        $tr_barang_laboratorium_id = $qrBarangLab[0]->id;
+                        $updateStokLab['stok'] = $stok;
+                        $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
+                        $tr_barang_laboratorium->update($updateStokLab);
+
+                        $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
+                        $stokBarang = $tr_barang->qty;
+                        $updateStokBarang['qty'] = ($stokBarang - $qryKartuStok[0]->qty_kartu_stok) + $qtySatuan;
+                        $tr_barang->update($updateStokBarang);
+
+                        $updateKS['qty']                       = $qtySatuan;
+                        $updateKS['stok']                      = $stokKS;
+                        $kartuStok = MKartuStok::find($qryKartuStok[0]->id)->update($updateKS);
+                    }else{
+                        $stok                       = $qrBarangLab[0]->stok + $qtySatuan;
+                        $tr_barang_laboratorium_id  = $qrBarangLab[0]->id;
+                        $updateStokLab['stok'] = $stok;
+                        $tr_barang_laboratorium = MBarangLab::find($tr_barang_laboratorium_id);
+                        $tr_barang_laboratorium->update($updateStokLab);
+
+                        $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
+                        $stokBarang = $tr_barang->qty;
+                        $updateStokBarang['qty'] = $stokBarang + $qtySatuan;
+                        $tr_barang->update($updateStokBarang);
+
+                        $input['tr_barang_laboratorium_id'] = $tr_barang_laboratorium_id;
+                        $input['is_stok_in']                = 1;
+                        $input['qty']                       = $qtySatuan;
+                        $input['stok']                      = $stok;
+                        $input['tr_member_laboratorium_id'] = $member_id;
+                        $input['tr_usulan_kebutuhan_detail_id'] = $id;
+                        $kartuStok = MKartuStok::create($input);
+                    }
+
+                }else{
+                    $inputBarangLab['stok'] = $qtyXsatuan;
+                    $inputBarangLab['tm_laboratorium_id'] = $lab_id;
+                    $inputBarangLab['tm_barang_id'] = $tm_barang_id;
+                    $inputBarangLab['is_aktif'] =1;
+                    $BarangLab = MBarangLab::create($inputBarangLab);
+
+                    $tr_barang = MBarang::find($tm_barang_id);
+                    $stokBarang = $tr_barang->qty;
+                    $updateStokBarang['qty'] = $stokBarang + $qtyXsatuan;
+                    $tr_barang->update($updateStokBarang);
+
+                    $input['tr_barang_laboratorium_id'] = $BarangLab->id;
+                    $input['is_stok_in']                = 1;
+                    $input['qty']                       = $qtyXsatuan;
+                    $input['stok']                      = $qtyXsatuan;
+                    $input['tr_member_laboratorium_id'] = $member_id;
+                    $input['tr_usulan_kebutuhan_detail_id'] = $id;
+                    $kartuStok = MKartuStok::create($input);
+
+                }
+                $detailInput['status'] = 1;
+                $DetailUsulanKebutuhan = MDetailUsulanKebutuhan::find($id);
                 $DetailUsulanKebutuhan->update($detailInput);
             }
         }
-        return redirect(route('deljulat.index'))->with('success','Usulan Bahan dan Alat Praktikum Berhasil di Ubah.');
+
+        $qryNotIn = MDetailUsulanKebutuhan::where('tr_usulan_kebutuhan_id',$UsulanKebutuhanId)->whereNotIn('id',$tduid)->get();
+        if(count($qryNotIn)){
+            foreach($qryNotIn as $qni){
+                $qryKartuStok = MvKartuStok::where([['tr_usulan_kebutuhan_detail_id',$qni->id]])->get();
+                if(count($qryKartuStok)){
+                    $qrBarangLab = MBarangLab::find($qryKartuStok[0]->tr_barang_laboratorium_id);
+                    //echo $qryKartuStok[0]->stok." -". $qryKartuStok[0]->qty_kartu_stok;
+                    $stokKS                   = ($qryKartuStok[0]->stok - $qryKartuStok[0]->qty_kartu_stok);
+                    //echo "</br>".$qrBarangLab->stok."-" .$qryKartuStok[0]->qty_kartu_stok;
+                    $stok                   = ($qrBarangLab->stok - $qryKartuStok[0]->qty_kartu_stok);
+
+                    $updateStokLab['stok'] = $stok;
+                    $tr_barang_laboratorium = MBarangLab::find($qryKartuStok[0]->tr_barang_laboratorium_id);
+                    $tr_barang_laboratorium->update($updateStokLab);
+
+                    $tr_barang = MBarang::find($tr_barang_laboratorium->tm_barang_id);
+                    $stokBarang = $tr_barang->qty;
+                    $updateStokBarang['qty'] = $stokBarang - $qryKartuStok[0]->qty_kartu_stok;
+                    $tr_barang->update($updateStokBarang);
+
+
+                    $updateKS['qty']                       = 0;
+                    $updateKS['stok']                      = $stokKS;
+                    $kartuStok = MKartuStok::find($qryKartuStok[0]->id)->update($updateKS);
+
+                    MDetailUsulanKebutuhan::find($qni->id)->update(array("status"=>0));
+                }
+            }
+        }
+        return redirect(route('pengadaanStokin.index'))->with('success','Usulan Bahan dan Alat Praktikum Telah Diterima.');
     }
 
     public function destroy(Request $request)
@@ -406,5 +410,4 @@ class C_DeliverPengajuanAlatBahan extends Controller
         $data = $usulan->update($input);
         return response()->json($data);
     }
-
 }

@@ -263,12 +263,20 @@
 	});
 
     $("body").on("keyup", "input.number", function(event) {
-    if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57) {
-        $(this).val(function(index, value) {
-            return value.replace(/\D/g, "");
-        });
-    }
-});
+        if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57) {
+            $(this).val(function(index, value) {
+                return value.replace(/\D/g, "");
+            });
+        }
+    });
+
+    $("#btnCancel").click(function() {
+        $('#SelectJurusan').val(null).trigger('change');
+        $('#SelectTahunAjaran').val(null).trigger('change');
+        $("#txtMatakuliahId").prop('selectedIndex',-1);
+        demo1.bootstrapDualListbox('refresh', true);
+        $("#jumlah_golongan").val(0);
+    });
 
     </script>
 

@@ -1,4 +1,7 @@
-
+$("#SelectTahunAjaran").select2({
+    placeholder: "Pilih Tahun Ajaran",
+    allowClear: true
+});
 
 $('#tableUser').DataTable({
     responsive:true,
@@ -45,8 +48,8 @@ $("body").on("click",".btnEditClass",function(){
     var svrTahun_ajaran = $(this).attr("data-tahunajaran");
     var svrSemester = $(this).attr("data-semester");
     let dataUpdate=$(this).attr("data-update");
-    $('#tahun_ajaran').val(svrTahun_ajaran);
-    console.log($(this).attr("data-tahunajaran"));
+    $('#SelectTahunAjaran').val(svrTahun_ajaran).trigger('change');
+    console.log(svrTahun_ajaran);
     $('#semester').val(svrSemester);
     $('#metod').val("PUT");
 
@@ -83,20 +86,20 @@ $("body").on("click",".stts",function(){
         //$(this).attr("data-id", pk);
         $(this).text("Non Aktif");
     }
-    var curl= url + pk+"/"+status;
-    $.ajax({
-        url : "statusMK",
-        method : "GET",
-        data : {status: status, id:pk},
-        dataType: 'json',
-        success: function(response){
-            if (response) {
+        var curl= url + pk+"/"+status;
+        $.ajax({
+            url : "statusMK",
+            method : "GET",
+            data : {status: status, id:pk},
+            dataType: 'json',
+            success: function(response){
+                if (response) {
 
-            }else{
+                }else{
 
+                }
             }
-        }
-    });
+        });
     })
 
 
