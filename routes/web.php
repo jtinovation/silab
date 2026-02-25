@@ -39,8 +39,8 @@ Route::prefix('silab-jti')->group(
 
         Route::group(['middleware' => ['auth']], function () {
             Route::get('dashboard',                                 [C_Welcome::class, 'dashboard'])->name('dashboard');
-            Route::get('getDashboardBarang/{id}',                   [C_Welcome::class, 'getDashboardBarang'])->name('getDashboardBarang');
-            Route::get('getDashboardDetailBarang/{id}',             [C_Welcome::class, 'getDashboardDetailBarang'])->name('getDashboardDetailBarang');
+            Route::get('getDashboardBarang',                   [C_Welcome::class, 'getDashboardBarang'])->name('getDashboardBarang');
+            Route::get('getDashboardDetailBarang',             [C_Welcome::class, 'getDashboardDetailBarang'])->name('getDashboardDetailBarang');
 
             Route::resource('staff',                                 C_Staff::class);
             Route::get('getStaff',                                  [C_Staff::class, 'getStaff'])->name('getStaff');
