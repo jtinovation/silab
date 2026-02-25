@@ -18,6 +18,8 @@ class C_Welcome extends Controller
         if (Auth::user()->id) {
             //echo Auth::user()->id;
             return redirect()->route('dashboard');
+        } else {
+            return view('auth.login');
         }
     }
 
