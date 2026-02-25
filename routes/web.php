@@ -35,7 +35,9 @@ use App\Http\Controllers\PDFController;
 
 Route::prefix('silab-jti')->group(
     function () {
-        Route::get('/', [C_Welcome::class, 'index'])->middleware(['auth'])->name('welcome');
+        Route::get('/', function () {
+            return redirect()->route('login');
+        });
 
         Route::group(['middleware' => ['auth']], function () {
             Route::get('dashboard',                                 [C_Welcome::class, 'dashboard'])->name('dashboard');
