@@ -32,12 +32,19 @@ use App\Http\Controllers\C_PenggantianPraktek;
 use App\Http\Controllers\C_ReviewPengajuanAlat;
 use App\Http\Controllers\C_Serma;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
 
 Route::prefix('silab-jti')->group(
     function () {
         Route::get('/', function () {
             return redirect()->route('login');
         });
+
+        Route::get('login', [AuthenticatedSessionController::class, 'create'])
+            ->name('login');
+
+        Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
         Route::group(['middleware' => ['auth']], function () {
             Route::get('dashboard',                                 [C_Welcome::class, 'dashboard'])->name('dashboard');
@@ -198,6 +205,9 @@ Route::prefix('silab-jti')->group(
             Route::get('ijinLBS/{ijinLBS}/selesai',                 [C_IjinPenggunaanLBS::class, 'selesai'])->name('ijinLBS.selesai');
             Route::put('ijinLBSKembali/{ijinLBS}',                  [C_IjinPenggunaanLBS::class, 'kembaliUpdate'])->name('ijinLBS.kembaliUpdate');
             Route::get('ijinLBSCetak/{id}',                         [C_IjinPenggunaanLBS::class, 'Cetak'])->name('ijinLBS.cetak');
+
+            Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+                ->name('logout');
         });
 
         /* Route::get('google/login', [GoogleController::class, 'redirect'])->name('google');
@@ -207,6 +217,6 @@ Route::get('google/callback', [GoogleController::class, 'callback'])->name('goog
         Route::get('auth/callback',               [C_LoginWithGoogleController::class, 'handleGoogleCallback']);
 
 
-        require __DIR__ . '/auth.php';
+        // require __DIR__ . '/auth.php';
     }
 );
