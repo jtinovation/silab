@@ -16,7 +16,7 @@ class AddGoogleidAvatarRoleToUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->text('google_id')->after('password')->nullable();
             $table->text('avatar')->after('google_id')->nullable();
-            $table->integer('role')->after('avatar')->unsigned()->nullable();
+            $table->unsignedInteger('role')->after('avatar')->nullable();
         });
     }
 
