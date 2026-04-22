@@ -89,8 +89,8 @@
 
 <script type="text/javascript">
     var nmLab               = "{{$nm_lab}}";
-    var murl                = "{{url('getInvent')}}";
-    var murlnull            = "{{url('getInvent/0')}}";
+    var murl                = "{{ url('silab-jti/getInvent') }}";
+    var murlnull            = "{{ url('silab-jti/getInvent/0') }}";
     var bahanSelect         = "{{route('bahanSelect')}}";
     var satuanSelect        = "{{route('bahanSatuan')}}";
     var saveBahan           = "{{route('invBahan.store')}}";

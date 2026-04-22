@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\MBarang;
 use App\Models\MBarangLab;
 use App\Models\MDetailUsulanKebutuhan;
@@ -138,68 +139,71 @@ class C_InventarisBahan extends Controller
         echo json_encode($response);
     }
 
-    public function GetInvBahan(Request $request){
+public function GetInvBahan(Request $request)
+{
+    try {
+        // Ambil ID staff
         $staff_id = Auth::user()->tm_staff_id;
-        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-        $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
-        $draw = $request->get('draw');
-        $start = $request->get("start");
-        $rowperpage = $request->get("length"); // total number of rows per page
 
-        $columnIndex_arr = $request->get('order');
-        $columnName_arr = $request->get('columns');
-        $order_arr = $request->get('order');
-        $search_arr = $request->get('search');
+        // Query Utama (Gunakan nama tabel yang benar sesuai HeidiSQL tadi)
+        $query = DB::table('tm_barang')
+            ->join('tm_satuan', 'tm_barang.tm_satuan_id', '=', 'tm_satuan.id')
+            ->where('tm_barang.tm_jenis_barang_id', 2);
 
-        $columnIndex = $columnIndex_arr[0]['column']; // Column index
-        $columnName = $columnName_arr[$columnIndex]['data']; // Column name
-        $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-        $searchValue = $search_arr['value']; // Search value
+        $totalRecords = $query->count();
 
-        // Total records
-        $totalRecords = MvBarangLab::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id],['tm_jenis_barang_id',2],['is_aktif_lab',1]])->count();
-        $totalRecordswithFilter = MvBarangLab::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id],['nama_barang', 'like', '%' . $searchValue . '%'],['tm_jenis_barang_id',2],['is_aktif_lab',1]])->count();
+        // Hitung Filter Pencarian
+        if ($request->has('search') && !empty($request->search['value'])) {
+            $searchValue = $request->search['value'];
+            $query->where('tm_barang.nama_barang', 'like', '%' . $searchValue . '%');
+        }
 
-        // Get records, also we have included search filter as well
-        $records = MvBarangLab::orderBy($columnName, $columnSortOrder)
-            ->where([['tm_laboratorium_id',$lab_id[0]->tm_laboratorium_id],['nama_barang', 'like', '%' . $searchValue . '%'],['tm_jenis_barang_id',2],['is_aktif_lab',1]])
-            ->select('v_barang_laboratorium.*')
-            ->skip($start)
-            ->take($rowperpage)
+        // --- DEFISINISIKAN VARIABELNYA DI SINI ---
+        $totalRecordswithFilter = $query->count(); 
+
+        // Ambil Data
+        $records = $query->orderBy('tm_barang.nama_barang', 'asc')
+            ->skip($request->start)
+            ->take($request->length)
+            ->select(
+                'tm_barang.id', 
+                'tm_barang.nama_barang as brg', 
+                'tm_barang.qty as jmlh', // Pakai qty sesuai HeidiSQL kamu
+                'tm_satuan.satuan'
+            )
             ->get();
-        $data_arr = array();
 
-        $number = $start;
-        foreach ($records as $record) { $number += 1;
-            $idEncrypt = Crypt::encryptString($record->id);
-            $button = "";
-                if(Gate::check('inventaris-bahan-edit')){
-                    $button = $button."<a href='#' data-href='".route('invBahan.update',$idEncrypt)."' data-barang='$record->nama_barang' data-jumlah='$record->stok' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
-                    <i class='ri-edit-2-line'></i></a>";
-                }
-                if(Gate::check('inventaris-kartu-stok')){
-                    $button = $button." <a href='#'  class='btn btn-primary btn-outline btn-circle btn-md m-r-5 btnDetailClass' data-val='".$record->id."'>
-                    <i class='ri-file-list-line'></i></a>";
-                }
+        $data_arr = array();
+        $no = $request->start + 1;
+
+        foreach ($records as $row) {
+            $idEncrypt = Crypt::encryptString($row->id);
+            $action = "";
+            
+            if (Gate::check('inventaris-bahan-edit')) {
+                $action .= '<a href="#" data-href="'.route('invBahan.update', $idEncrypt).'" data-barang="'.$row->brg.'" data-jumlah="'.$row->jmlh.'" class="btn btn-info btn-circle btnEditClass"><i class="ri-edit-2-line"></i></a>';
+            }
+
             $data_arr[] = array(
-                "id"                => $number,
-                "brg"               => $record->nama_barang,
-                "satuan"            => $record->satuan,
-                "jmlh"              => $record->stok,
-                "action"           => $button
+                "id"     => $no++,
+                "brg"    => $row->brg,
+                "satuan" => $row->satuan,
+                "jmlh"   => $row->jmlh,
+                "action" => $action
             );
         }
 
-        $response = array(
-            "draw" => intval($draw),
+        return response()->json([
+            "draw" => intval($request->draw),
             "iTotalRecords" => $totalRecords,
-            "iTotalDisplayRecords" => $totalRecordswithFilter,
-            "aaData" => $data_arr,
-        );
-        echo json_encode($response);
+            "iTotalDisplayRecords" => $totalRecordswithFilter, // Sekarang variabel ini sudah ada
+            "aaData" => $data_arr
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
     }
-
-
+}
     public function getInvent($id){ //echo $prodi."##".$semester;
         //$barang_lab_id = Crypt::decryptString($id);
         if($id==0){

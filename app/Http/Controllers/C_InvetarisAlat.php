@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 
 class C_InvetarisAlat extends Controller
 {
@@ -146,108 +147,69 @@ class C_InvetarisAlat extends Controller
         $barangLab->update($up);
     }
 
-    public function getInvAlat(Request $request){
-        $staff_id = Auth::user()->tm_staff_id;
-        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-        if(count($lab_id)){
-            $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
-            $draw = $request->get('draw');
-            $start = $request->get("start");
-            $rowperpage = $request->get("length"); // total number of rows per page
+   public function GetInvAlat(Request $request)
+{
+    try {
+        // Query Manual tanpa is_aktif
+        $query = DB::table('tm_barang')
+            ->join('tm_satuan', 'tm_barang.tm_satuan_id', '=', 'tm_satuan.id')
+            ->where('tm_barang.tm_jenis_barang_id', 1); // Cukup filter berdasarkan jenis barang (Alat)
 
-            $columnIndex_arr = $request->get('order');
-            $columnName_arr = $request->get('columns');
-            $order_arr = $request->get('order');
-            $search_arr = $request->get('search');
+        $totalRecords = $query->count();
 
-            $columnIndex = $columnIndex_arr[0]['column']; // Column index
-            $columnName = $columnName_arr[$columnIndex]['data']; // Column name
-            //$columnSortOrder = $order_arr[0]['dir']; // asc or desc
-            $columnSortOrder = "desc"; // asc or desc
-            $searchValue = $search_arr['value']; // Search value
-
-            // Total records
-            $totalRecords = MvBarangLab::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id],['tm_jenis_barang_id',1],['is_aktif_lab',1]])->count();
-            $totalRecordswithFilter = MvBarangLab::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id],['nama_barang', 'like', '%' . $searchValue . '%'],['tm_jenis_barang_id',1],['is_aktif_lab',1]])->count();
-
-
-            // Get records, also we have included search filter as well
-            $records = MvBarangLab::orderBy($columnName, $columnSortOrder)
-            ->where([['tm_laboratorium_id',$lab_id[0]->tm_laboratorium_id],['nama_barang', 'like', '%' . $searchValue . '%'],['tm_jenis_barang_id',1],['is_aktif_lab',1]])
-            ->select('v_barang_laboratorium.*')
-            ->skip($start)
-            ->take($rowperpage)
-            ->get();
-            $data_arr = array();
-
-            $number = $start;
-
-            foreach ($records as $record) { $number += 1;
-                $idEncrypt = Crypt::encryptString($record->id);
-
-                $button = "";
-                if(Gate::check('inventaris-alat-edit')){
-                    $button = $button."<a href='#' data-href='".route('invAlat.update',$idEncrypt)."' data-barang='$record->nama_barang' data-jumlah='$record->stok' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
-                    <i class='ri-edit-2-line'></i></a>";
-                }
-                if(Gate::check('inventaris-alat-delete')){
-                    $button = $button." <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete' data-barang='$record->nama_barang' data-id='".$idEncrypt."' data-href='".route('invAlat.Del')."' >
-                    <i class='ri-delete-bin-2-line'></i></a>";
-                }
-                /* $span="";
-                if($record->is_aktif){
-                    $span = "<span data-val='$record->is_aktif' data-id='$idEncrypt' class='btn btn-rouded btn-info stts'>Aktif</span>";
-                }else{
-                    $span = "<span data-val='$record->is_aktif' data-id='$idEncrypt' class='btn btn-rouded btn-danger stts'>Non Aktif</span>";
-                } */
-
-
-                $data_arr[] = array(
-                    "id"                => $number,
-                    "brg"               => $record->nama_barang,
-                    "jmlh"              => $record->stok,
-                    "keterangan"        => $record->keterangan,
-                    "action"           => $button
-                );
-            }
-
-            $response = array(
-                "draw" => intval($draw),
-                "iTotalRecords" => $totalRecords,
-                "iTotalDisplayRecords" => $totalRecordswithFilter,
-                "aaData" => $data_arr,
-            );
-            echo json_encode($response);
+        // Fitur Pencarian
+        if ($request->has('search') && !empty($request->search['value'])) {
+            $searchValue = $request->search['value'];
+            $query->where('tm_barang.nama_barang', 'like', '%' . $searchValue . '%');
         }
+
+        $totalRecordswithFilter = $query->count();
+
+        // Ambil Data
+        $records = $query->orderBy('tm_barang.nama_barang', 'asc')
+            ->skip($request->start)
+            ->take($request->length)
+            ->select(
+            'tm_barang.id', 
+            'tm_barang.nama_barang as brg', 
+            'tm_barang.qty as jmlh', 
+            'tm_barang.keterangan', // TAMBAHKAN INI (Sesuai kolom di HeidiSQL tadi)
+            'tm_satuan.satuan'
+        )
+        ->get();
+
+        $data_arr = array();
+        $no = $request->start + 1;
+
+        foreach ($records as $row) {
+    $idEncrypt = Crypt::encryptString($row->id);
+    $action = "";
+    
+    // Tombol Edit
+    if (Gate::check('inventaris-alat-edit')) {
+        $action .= '<a href="#" data-href="'.route('invAlat.update', $idEncrypt).'" data-barang="'.$row->brg.'" data-jumlah="'.$row->jmlh.'" class="btn btn-info btn-circle btnEditClass"><i class="ri-edit-2-line"></i></a>';
     }
 
-    public function alatSelect(Request $request){
-        $staff_id = Auth::user()->tm_staff_id;
-        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-        if(count($lab_id)){
-            $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
-            $search = $request->searchTerm;
-        if($search != null){
-            $q = MBarang::where([['nama_barang','LIKE','%'.$search.'%'],['tm_jenis_barang_id',1]])->whereNotIn('id',MBarangLab::select('tm_barang_id')->where('tm_laboratorium_id',$tm_lab_id)->get())->get();
-            $data= array();
-            foreach($q as $v){
-                $id=$v->id;
-                $nm=$v->nama_barang;
-                $data[] = array("id"=>$id,"text"=>$nm);
-            }
-        }else{
-            $q = MBarang::where('tm_jenis_barang_id',1)->whereNotIn('id',MBarangLab::select('tm_barang_id')->where('tm_laboratorium_id',$tm_lab_id)->get())->get();
-            $data= array();
-            foreach($q as $v){
-                $id=$v->id;
-                $nm=$v->nama_barang;
-                $data[] = array("id"=>$id,"text"=>$nm);
-            }
-        }
-		return json_encode($data);
+    $data_arr[] = array(
+        "id"         => $no++,
+        "brg"        => $row->brg,
+        "jmlh"       => $row->jmlh,
+        "keterangan" => $row->keterangan ?? '-', // TAMBAHKAN INI (Jika kosong tampilkan strip)
+        "action"     => $action
+    );
+}
 
-        }
+        return response()->json([
+            "draw" => intval($request->draw),
+            "iTotalRecords" => $totalRecords,
+            "iTotalDisplayRecords" => $totalRecordswithFilter,
+            "aaData" => $data_arr
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
     }
+}
 
     public function satuanSelect(Request $request){
         $search = $request->searchTerm;
