@@ -160,83 +160,83 @@ class C_PenggantianPraktek extends Controller
         return redirect()->route('penggantianPraktek.index')->with('success','satuan deleted Data Penggantian Praktikum Berhasil di Hapus');
     }
 
-    public function GantiJadwal(Request $request){
-        $staff_id = Auth::user()->tm_staff_id;
-        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-        if(count($lab_id)){
-            $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
-            $draw = $request->get('draw');
-            $start = $request->get("start");
-            $rowperpage = $request->get("length"); // total number of rows per page
+    public function GantiJadwal(Request $request)
+{
+    $staff_id = Auth::user()->tm_staff_id;
+    // Gunakan tr_member_laboratorium (tabel asli, bukan view)
+    $lab_id = \Illuminate\Support\Facades\DB::table('tr_member_laboratorium')
+        ->where([['tm_staff_id', $staff_id], ['is_aktif', 1]])
+        ->first();
 
-            $columnIndex_arr = $request->get('order');
-            $columnName_arr = $request->get('columns');
-            $order_arr = $request->get('order');
-            $search_arr = $request->get('search');
+    if ($lab_id) {
+        $tm_lab_id = $lab_id->tm_laboratorium_id;
+        $draw = $request->get('draw');
+        $start = $request->get("start");
+        $rowperpage = $request->get("length");
 
-            $columnIndex = $columnIndex_arr[0]['column']; // Column index
-            $columnName = $columnName_arr[$columnIndex]['data']; // Column name
-            //$columnSortOrder = $order_arr[0]['dir']; // asc or desc
-            $columnSortOrder = "desc"; // asc or desc
-            $searchValue = $search_arr['value']; // Search value
+        $search_arr = $request->get('search');
+        $searchValue = $search_arr['value'];
 
-            // Total records
-            $totalRecords = MvPenggantianPraktek::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id]])->count();
-            $totalRecordswithFilter = MvPenggantianPraktek::select('count(*) as allcount')->where([['tm_laboratorium_id',$tm_lab_id],['acara_praktek', 'like', '%' . $searchValue . '%']])->count();
+        // --- JOIN MANUAL UNTUK BYPASS VIEW ---
+        $query = \Illuminate\Support\Facades\DB::table('tr_penggantian_praktek')
+            ->join('tr_matakuliah_semester_prodi', 'tr_penggantian_praktek.tr_matakuliah_semester_prodi_id', '=', 'tr_matakuliah_semester_prodi.id')
+            ->join('tm_matakuliah', 'tr_matakuliah_semester_prodi.tm_matakuliah_id', '=', 'tm_matakuliah.id')
+            ->join('tm_staff', 'tr_penggantian_praktek.tm_staff_id', '=', 'tm_staff.id')
+            ->where('tr_penggantian_praktek.tr_member_laboratorium_id', $lab_id->id); // Filter berdasarkan member lab
 
+        if (!empty($searchValue)) {
+            $query->where('tr_penggantian_praktek.acara_praktek', 'like', '%' . $searchValue . '%');
+        }
 
-            // Get records, also we have included search filter as well
-            $records = MvPenggantianPraktek::orderBy($columnName, $columnSortOrder)
-            ->where([['tm_laboratorium_id',$tm_lab_id],['acara_praktek', 'like', '%' . $searchValue . '%']])
-            ->select('vpenggantian_praktek.*')
+        $totalRecords = $query->count();
+        $totalRecordswithFilter = $totalRecords;
+
+        $records = $query->orderBy('tr_penggantian_praktek.id', 'desc')
             ->skip($start)
             ->take($rowperpage)
+            ->select(
+                'tr_penggantian_praktek.*', 
+                'tm_matakuliah.matakuliah', 
+                'tm_staff.nama as nama_dosen'
+            )
             ->get();
-            $data_arr = array();
 
-            $number = $start;
+        $data_arr = array();
+        $number = $start;
 
-            foreach ($records as $record) { $number += 1;
-                $idEncrypt = Crypt::encryptString($record->id);
+        foreach ($records as $record) {
+            $number += 1;
+            $idEncrypt = Crypt::encryptString($record->id);
 
-                $button = "";
-                $button = $button." <a href='#' data-href='".route('penggantianPraktek.cetak',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnCetakClass'><i class=' ri-printer-fill'></i></a>";
+            $button = "";
+            $button .= " <a href='#' data-href='".route('penggantianPraktek.cetak',$idEncrypt)."' class='btn btn-warning btn-outline btn-circle btn-md m-r-5 btnCetakClass'><i class=' ri-printer-fill'></i></a>";
 
-                if(Gate::check('penggantian-praktek-edit')){
-                    $button = $button." <a href='#' data-href='".route('penggantianPraktek.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
-                    <i class='ri-edit-2-line'></i></a>";
-                }
-                if(Gate::check('penggantian-praktek-delete')){
-                    $button = $button." <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete'  data-id='".$idEncrypt."' data-href='".route('penggantianPraktek.Del')."' >
-                    <i class='ri-delete-bin-2-line'></i></a>";
-                }
-                /* $span="";
-                if($record->is_aktif){
-                    $span = "<span data-val='$record->is_aktif' data-id='$idEncrypt' class='btn btn-rouded btn-info stts'>Aktif</span>";
-                }else{
-                    $span = "<span data-val='$record->is_aktif' data-id='$idEncrypt' class='btn btn-rouded btn-danger stts'>Non Aktif</span>";
-                } */
-
-
-                $data_arr[] = array(
-                    "id"                => $number,
-                    "jadwal_asli"       => $record->jadwal_asli,
-                    "jadwal_ganti"      => $record->jadwal_ganti,
-                    "matakuliah"        => $record->maproditerData->mkData->matakuliah,
-                    "dosen"             => $record->staffData->nama,
-                    "action"            => $button
-                );
+            if(Gate::check('penggantian-praktek-edit')){
+                $button .= " <a href='#' data-href='".route('penggantianPraktek.edit',$idEncrypt)."' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'><i class='ri-edit-2-line'></i></a>";
+            }
+            if(Gate::check('penggantian-praktek-delete')){
+                $button .= " <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete' data-id='".$idEncrypt."' data-href='".route('penggantianPraktek.Del')."' ><i class='ri-delete-bin-2-line'></i></a>";
             }
 
-            $response = array(
-                "draw" => intval($draw),
-                "iTotalRecords" => $totalRecords,
-                "iTotalDisplayRecords" => $totalRecordswithFilter,
-                "aaData" => $data_arr,
+            $data_arr[] = array(
+                "id"           => $number,
+                "jadwal_asli"  => $record->jadwal_asli,
+                "jadwal_ganti" => $record->jadwal_ganti,
+                "matakuliah"   => $record->matakuliah,
+                "dosen"        => $record->nama_dosen,
+                "action"       => $button
             );
-            echo json_encode($response);
         }
+
+        $response = array(
+            "draw" => intval($draw),
+            "iTotalRecords" => $totalRecords,
+            "iTotalDisplayRecords" => $totalRecordswithFilter,
+            "aaData" => $data_arr,
+        );
+        return response()->json($response);
     }
+}
 
     public function getMKGantiPraktek(Request $request){
 
