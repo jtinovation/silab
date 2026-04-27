@@ -174,33 +174,27 @@
         });
     });
 
-    var tableSatuan = $('#tableDetailUsulan').DataTable({
-        ordering:false,
-        paging:false,
-        searching: false,
-        "ajax" : urlGetReviewUsulan,
-        'columnDefs': [
-            {
-                "targets": 0,
-                "className": "text-center",
-            },{
-                "targets": 5,
-                "className": "text-center",
-            },
-            {
-                "targets": 6,
-                "className": "text-center",
-            },
-            {
-                "targets": 7,
-                "className": "text-center",
-            },
-            {
-                "targets": 8,
-                "className": "text-center",
-            }
-        ],
-    });
+   var tableSatuan = $('#tableDetailUsulan').DataTable({
+    ordering: false,
+    paging: false,
+    searching: false,
+    "ajax": {
+        "url": urlGetReviewUsulan,
+        "dataSrc": function (json) {
+            return json.data ? json.data : [];
+        },
+        "error": function (xhr, error, thrown) {
+            console.log("DataTable log: Menunggu trigger klik.");
+        }
+    },
+    'columnDefs': [
+        { "targets": 0, "className": "text-center" },
+        { "targets": 5, "className": "text-center" },
+        { "targets": 6, "className": "text-center" },
+        { "targets": 7, "className": "text-center" },
+        { "targets": 8, "className": "text-center" }
+    ],
+});
 
     $("body").on("click",".stts",function(){
         var status = $(this).attr("data-val");

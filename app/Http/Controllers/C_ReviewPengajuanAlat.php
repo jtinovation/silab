@@ -22,22 +22,54 @@ class C_ReviewPengajuanAlat extends Controller
         $this->middleware('permission:review-pangajuan-alat-show', ['only' => ['show']]);
     }
 
-    public function index(){
-        $data = [
-            'title' => "Sistem Informasi Laboratorium",
-            'subtitle' => "Data Pengajuan Alat Bahan",
-            'npage' => 95,
-            "MKExist" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where('status',1)->get())->get(),
-            "PengajuanCetak" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where('status',3)->get())->get(),
+  public function index() {
+    // 1. Ambil ID relasi dosen yang sudah punya pengajuan status 1 & 3
+    $idStatus1 = \App\Models\MUsulanKebutuhan::where('status', 1)->pluck('tr_matakuliah_dosen_id');
+    $idStatus3 = \App\Models\MUsulanKebutuhan::where('status', 3)->pluck('tr_matakuliah_dosen_id');
 
-        ];
+    $data = [
+        'title' => "Sistem Informasi Laboratorium",
+        'subtitle' => "Data Pengajuan Alat Bahan",
+        'npage' => 95,
 
-        $Breadcrumb = array(
-            1 => array("link" => "active", "label" => "Data Pengajuan Alat & Bahan"),
-            /*    2 => array("link" => "active", "label" => "Edit Pegawai"), */
-        );
-        return view('reviewpengajuanalat.index',compact('data','Breadcrumb'));
-    }
+        // Ganti MvExistMK dengan query manual DB::table
+        "MKExist" => \Illuminate\Support\Facades\DB::table('tr_matakuliah_semester_prodi')
+            ->join('tm_matakuliah', 'tr_matakuliah_semester_prodi.tm_matakuliah_id', '=', 'tm_matakuliah.id')
+            ->join('tm_program_studi', 'tr_matakuliah_semester_prodi.tm_program_studi_id', '=', 'tm_program_studi.id')
+            ->join('tr_matakuliah_dosen', 'tr_matakuliah_semester_prodi.id', '=', 'tr_matakuliah_dosen.tr_matakuliah_semester_prodi_id')
+            ->join('tm_staff', 'tr_matakuliah_dosen.tm_staff_id', '=', 'tm_staff.id') // Ambil data dosen
+            ->whereIn('tr_matakuliah_dosen.id', $idStatus1)
+            ->select(
+                'tr_matakuliah_dosen.id as tr_matakuliah_dosen_id',
+                'tm_matakuliah.matakuliah',
+                'tm_matakuliah.kode',
+                'tm_program_studi.program_studi as nama_prodi',
+                'tm_staff.nama' // Untuk menampilkan nama dosen pengampu
+            )
+            ->get(),
+
+        "PengajuanCetak" => \Illuminate\Support\Facades\DB::table('tr_matakuliah_semester_prodi')
+            ->join('tm_matakuliah', 'tr_matakuliah_semester_prodi.tm_matakuliah_id', '=', 'tm_matakuliah.id')
+            ->join('tm_program_studi', 'tr_matakuliah_semester_prodi.tm_program_studi_id', '=', 'tm_program_studi.id')
+            ->join('tr_matakuliah_dosen', 'tr_matakuliah_semester_prodi.id', '=', 'tr_matakuliah_dosen.tr_matakuliah_semester_prodi_id')
+            ->join('tm_staff', 'tr_matakuliah_dosen.tm_staff_id', '=', 'tm_staff.id')
+            ->whereIn('tr_matakuliah_dosen.id', $idStatus3)
+            ->select(
+                'tr_matakuliah_dosen.id as tr_matakuliah_dosen_id',
+                'tm_matakuliah.matakuliah',
+                'tm_matakuliah.kode',
+                'tm_program_studi.program_studi as nama_prodi',
+                'tm_staff.nama'
+            )
+            ->get(),
+    ];
+
+    $Breadcrumb = array(
+        1 => array("link" => "active", "label" => "Data Pengajuan Alat & Bahan"),
+    );
+
+    return view('reviewpengajuanalat.index', compact('data', 'Breadcrumb'));
+}
 
     public function create()
     {
@@ -233,42 +265,68 @@ class C_ReviewPengajuanAlat extends Controller
         echo json_encode($response);
     }
 
-    public function getReviewUsulan($id){
-        $qrUsulan = MUsulanKebutuhan::where('kode',$id)->get();
-        if($id=="0"){
-            $data[]=array("","","","","","","","","","","");
-        }else{
-            foreach($qrUsulan as $vu){
-                $mingguke   = $vu->mingguData->minggu_ke;
-                $tanggal    = $vu->tanggal;
-                $acaraPraktek = $vu->acara_praktek;
-                $qrDetailUsulan = MDetailUsulanKebutuhan::where('tr_usulan_kebutuhan_id',$vu->id)->get();
-                if(count($qrDetailUsulan)){
-                    foreach($qrDetailUsulan as $vdu){
-                        $nmbrg       = $vdu->BarangData->nama_barang;
-                        $spesifikasi = $vdu->spesifikasi;
-                        $kebkel      = $vdu->keb_kel;
-                        $jmlkel      = $vu->jml_kel;
-                        $jmlgol      = $vu->jml_gol;
-                        $jml         = $vdu->total_keb;
-                        $satuan      = $vdu->detailSatuanData->satuanData->satuan."(".$vdu->detailSatuanData->qty.")";
-                        $keterangan  = $vdu->keterangan;
+   public function getReviewUsulan($id)
+{
+    // Inisialisasi $data sebagai array kosong di awal
+    $data = [];
 
-                        $data[]=array($mingguke,$tanggal,$acaraPraktek,$nmbrg,$spesifikasi,$kebkel,$jmlkel,$jmlgol,$jml,$satuan,$keterangan);
-                        $mingguke   = "";
-                        $tanggal    = "";
-                        $acaraPraktek = "";
-                    }
-                }else{
-                    $data[]=array($mingguke,$tanggal,$acaraPraktek,"","","","","","","","");
-                }
-
-            }
-        }
-
-        $output = array("data" => $data);
-        return json_encode($output);
+    // Jika ID adalah 0 atau null, langsung balikkan data kosong agar DataTable tidak error
+    if ($id == "0" || $id == "null" || !$id) {
+        return json_encode(["data" => $data]);
     }
+
+    $qrUsulan = MUsulanKebutuhan::where('kode', $id)->get();
+
+    foreach ($qrUsulan as $vu) {
+        $mingguke     = $vu->mingguData->minggu_ke ?? '-';
+        $tanggal      = $vu->tanggal;
+        $acaraPraktek = $vu->acara_praktek;
+        
+        $qrDetailUsulan = MDetailUsulanKebutuhan::where('tr_usulan_kebutuhan_id', $vu->id)->get();
+
+        if ($qrDetailUsulan->count() > 0) {
+            foreach ($qrDetailUsulan as $vdu) {
+                // Gunakan optional() atau null coalescing ?? untuk menghindari error object non-existent
+                $nmbrg       = $vdu->BarangData->nama_barang ?? '-';
+                $spesifikasi = $vdu->spesifikasi ?? '-';
+                $kebkel      = $vdu->keb_kel;
+                $jmlkel      = $vu->jml_kel;
+                $jmlgol      = $vu->jml_gol;
+                $jml         = $vdu->total_keb;
+                
+                // Ambil satuan dengan aman
+                $satuanNama  = $vdu->detailSatuanData->SatuanData->satuan ?? '';
+                $satuanQty   = $vdu->detailSatuanData->qty ?? '';
+                $satuan      = $satuanNama . " (" . $satuanQty . ")";
+                
+                $keterangan  = $vdu->keterangan ?? '-';
+
+                $data[] = [
+                    $mingguke, 
+                    $tanggal, 
+                    $acaraPraktek, 
+                    $nmbrg, 
+                    $spesifikasi, 
+                    $kebkel, 
+                    $jmlkel, 
+                    $jmlgol, 
+                    $jml, 
+                    $satuan, 
+                    $keterangan
+                ];
+
+                // Kosongkan baris berikutnya untuk row yang sama agar tampilan "merge" di tabel
+                $mingguke = "";
+                $tanggal = "";
+                $acaraPraktek = "";
+            }
+        } else {
+            $data[] = [$mingguke, $tanggal, $acaraPraktek, "", "", "", "", "", "", "", ""];
+        }
+    }
+
+    return response()->json(["data" => $data]);
+}
 
     public function getReviewUsulanMK($id){
         $qrExist = MvExistMK::where('tr_matakuliah_dosen_id',Crypt::decryptString($id))->get();

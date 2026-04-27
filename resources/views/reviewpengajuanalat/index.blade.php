@@ -178,32 +178,28 @@
     });
 
     var tableSatuan = $('#tableDetailUsulan').DataTable({
-        ordering:false,
-        paging:false,
-        searching: false,
-        "ajax" : urlGetReviewUsulan,
-        'columnDefs': [
-            {
-                "targets": 0,
-                "className": "text-center",
-            },{
-                "targets": 5,
-                "className": "text-center",
-            },
-            {
-                "targets": 6,
-                "className": "text-center",
-            },
-            {
-                "targets": 7,
-                "className": "text-center",
-            },
-            {
-                "targets": 8,
-                "className": "text-center",
-            }
-        ],
-    });
+    ordering: false,
+    paging: false,
+    searching: false,
+    // Ubah bagian ini agar tidak menembak URL /0 saat awal load
+    "ajax": {
+        "url": "{{url('getReviewUsulan/null')}}", // Gunakan string 'null' atau biarkan kosong
+        "dataSrc": function (json) {
+            return json.data ? json.data : [];
+        },
+        "error": function (xhr, error, thrown) {
+            // Menghilangkan alert error default dari DataTables
+            console.log("DataTable waiting for user trigger...");
+        }
+    },
+    'columnDefs': [
+        { "targets": 0, "className": "text-center" },
+        { "targets": 5, "className": "text-center" },
+        { "targets": 6, "className": "text-center" },
+        { "targets": 7, "className": "text-center" },
+        { "targets": 8, "className": "text-center" }
+    ],
+});
 
     $("body").on("click",".stts",function(){
         var status = $(this).attr("data-val");

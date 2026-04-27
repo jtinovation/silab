@@ -23,22 +23,56 @@ class C_DeliverPengajuanAlatBahan extends Controller
         $this->middleware('permission:review-pangajuan-alat-show', ['only' => ['show']]);
     }
 
-    public function index(){
-        $data = [
-            'title' => "Sistem Informasi Laboratorium",
-            'subtitle' => "Data Deliver Pengajuan Alat Bahan ACC",
-            'npage' => 88,
-            "MKExist" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where('status',4)->get())->get(),
-            "PengajuanCetak" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where('status',3)->get())->get(),
+    public function index() {
+    // 1. Ambil ID mata kuliah yang sudah di-ACC (status 4)
+    $idStatus4 = \App\Models\MUsulanKebutuhan::where('status', 4)->pluck('tr_matakuliah_dosen_id');
+    
+    // 2. Ambil ID mata kuliah yang siap cetak (status 3)
+    $idStatus3 = \App\Models\MUsulanKebutuhan::where('status', 3)->pluck('tr_matakuliah_dosen_id');
 
-        ];
+    $data = [
+        'title' => "Sistem Informasi Laboratorium",
+        'subtitle' => "Data Deliver Pengajuan Alat Bahan ACC",
+        'npage' => 88,
 
-        $Breadcrumb = array(
-            1 => array("link" => "active", "label" => "Data Deliver Pengajuan Alat & Bahan ACC"),
-            /*    2 => array("link" => "active", "label" => "Edit Pegawai"), */
-        );
-        return view('deliverpengajuanalat.index',compact('data','Breadcrumb'));
-    }
+        // Ganti query MvExistMK dengan manual join
+        "MKExist" => \Illuminate\Support\Facades\DB::table('tr_matakuliah_semester_prodi')
+            ->join('tm_matakuliah', 'tr_matakuliah_semester_prodi.tm_matakuliah_id', '=', 'tm_matakuliah.id')
+            ->join('tm_program_studi', 'tr_matakuliah_semester_prodi.tm_program_studi_id', '=', 'tm_program_studi.id')
+            ->join('tr_matakuliah_dosen', 'tr_matakuliah_semester_prodi.id', '=', 'tr_matakuliah_dosen.tr_matakuliah_semester_prodi_id')
+            ->join('tm_staff', 'tr_matakuliah_dosen.tm_staff_id', '=', 'tm_staff.id')
+            ->whereIn('tr_matakuliah_dosen.id', $idStatus4)
+            ->select(
+                'tr_matakuliah_dosen.id as tr_matakuliah_dosen_id',
+                'tm_matakuliah.matakuliah',
+                'tm_matakuliah.kode',
+                'tm_program_studi.program_studi as nama_prodi',
+                'tm_staff.nama'
+            )
+            ->get(),
+
+        "PengajuanCetak" => \Illuminate\Support\Facades\DB::table('tr_matakuliah_semester_prodi')
+            ->join('tm_matakuliah', 'tr_matakuliah_semester_prodi.tm_matakuliah_id', '=', 'tm_matakuliah.id')
+            ->join('tm_program_studi', 'tr_matakuliah_semester_prodi.tm_program_studi_id', '=', 'tm_program_studi.id')
+            ->join('tr_matakuliah_dosen', 'tr_matakuliah_semester_prodi.id', '=', 'tr_matakuliah_dosen.tr_matakuliah_semester_prodi_id')
+            ->join('tm_staff', 'tr_matakuliah_dosen.tm_staff_id', '=', 'tm_staff.id')
+            ->whereIn('tr_matakuliah_dosen.id', $idStatus3)
+            ->select(
+                'tr_matakuliah_dosen.id as tr_matakuliah_dosen_id',
+                'tm_matakuliah.matakuliah',
+                'tm_matakuliah.kode',
+                'tm_program_studi.program_studi as nama_prodi',
+                'tm_staff.nama'
+            )
+            ->get(),
+    ];
+
+    $Breadcrumb = array(
+        1 => array("link" => "active", "label" => "Data Deliver Pengajuan Alat & Bahan ACC"),
+    );
+
+    return view('deliverpengajuanalat.index', compact('data', 'Breadcrumb'));
+}
 
     /**
      * Show the form for creating a new resource.

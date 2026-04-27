@@ -46,8 +46,8 @@
 
                 </div><!-- end cardbody -->
                 <div class="card-footer justify-content-center">
-                    <div class="alert alert-primary alert-dismissible alert-label-icon rounded-label fade show" role="alert">
-                        <i class="ri-user-smile-line label-icon text-center"></i><strong> {{$MK->nama}}</strong>
+                <div class="alert alert-primary alert-dismissible alert-label-icon rounded-label fade show" role="alert">
+                    <i class="ri-user-smile-line label-icon text-center"></i><strong> {{$MK->nama}}</strong>
                     </div>
                     <div class="col-md-12 row button-items justify-content-end gap-3" style="margin-top: 10px;">
                         <?php $enc = Crypt::encryptString($MK->tr_matakuliah_dosen_id);?>
@@ -122,33 +122,44 @@
         });
     });
 
-    var tableSatuan = $('#tableDetailUsulan').DataTable({
-        ordering:false,
-        paging:false,
-        searching: false,
-        "ajax" : urlGetReviewUsulan,
-        'columnDefs': [
-            {
-                "targets": 0,
-                "className": "text-center",
-            },{
-                "targets": 5,
-                "className": "text-center",
-            },
-            {
-                "targets": 6,
-                "className": "text-center",
-            },
-            {
-                "targets": 7,
-                "className": "text-center",
-            },
-            {
-                "targets": 8,
-                "className": "text-center",
-            }
-        ],
-    });
+   var tableSatuan = $('#tableDetailUsulan').DataTable({
+    ordering: false,
+    paging: false,
+    searching: false,
+    "ajax": {
+        "url": urlGetReviewUsulan,
+        "dataSrc": function (json) {
+            // Jika json.data ada, kembalikan datanya, jika tidak kembalikan array kosong
+            return json.data ? json.data : [];
+        },
+        "error": function (xhr, error, thrown) {
+            // Mencegah DataTables menampilkan alert default jika terjadi error (seperti 404/500)
+            console.log("DataTable log: Menunggu trigger klik untuk memuat data.");
+        }
+    },
+    'columnDefs': [
+        {
+            "targets": 0,
+            "className": "text-center",
+        },
+        {
+            "targets": 5, // Keb. Kelompok
+            "className": "text-center",
+        },
+        {
+            "targets": 6, // Jml. Kelompok
+            "className": "text-center",
+        },
+        {
+            "targets": 7, // Jml. Golongan
+            "className": "text-center",
+        },
+        {
+            "targets": 8, // Total Keb.
+            "className": "text-center",
+        }
+    ],
+});
 
     $("body").on("click",".stts",function(){
         var status = $(this).attr("data-val");

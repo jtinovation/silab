@@ -46,23 +46,39 @@ class C_PengajuanAlatBahan extends Controller
     }
 
 
-    public function index(){
-        $data = [
-            'title' => "Sistem Informasi Laboratorium",
-            'subtitle' => "Data Pengajuan Alat Bahan",
-            'npage' => 95,
-            "MKExist" => MvExistMK::where('tm_staff_id',Auth::user()->tm_staff_id)->get(),
-            "MKNotExist" => MvNotExistMK::where('tm_staff_id',Auth::user()->tm_staff_id)->get(),
+  public function index()
+{
+    $staff_id = Auth::user()->tm_staff_id;
 
-        ];
+    $data = [
+        'title' => "Sistem Informasi Laboratorium",
+        'subtitle' => "Data Pengajuan Alat Bahan",
+        'npage' => 95,
+        
+       "MKExist" => \Illuminate\Support\Facades\DB::table('tr_matakuliah_semester_prodi')
+    ->join('tm_matakuliah', 'tr_matakuliah_semester_prodi.tm_matakuliah_id', '=', 'tm_matakuliah.id')
+    ->join('tm_program_studi', 'tr_matakuliah_semester_prodi.tm_program_studi_id', '=', 'tm_program_studi.id')
+    ->join('tm_semester', 'tr_matakuliah_semester_prodi.tm_semester_id', '=', 'tm_semester.id')
+    ->join('tr_matakuliah_dosen', 'tr_matakuliah_semester_prodi.id', '=', 'tr_matakuliah_dosen.tr_matakuliah_semester_prodi_id')
+    ->where('tr_matakuliah_dosen.tm_staff_id', $staff_id)
+    // ->where('tm_semester.is_active', 1) // Hapus atau komentari baris yang bikin error ini
+    ->select(
+        'tr_matakuliah_dosen.id as tr_matakuliah_dosen_id',
+        'tm_matakuliah.matakuliah',
+        'tm_matakuliah.kode',
+        'tm_program_studi.program_studi as nama_prodi'
+    )
+    ->get(),
 
-        $Breadcrumb = array(
-            1 => array("link" => "active", "label" => "Data Pengajuan Alat & Bahan"),
-            /*    2 => array("link" => "active", "label" => "Edit Pegawai"), */
-        );
-        return view('pengajuanalat.index',compact('data','Breadcrumb'));
-    }
+        "MKNotExist" => [] // Kosongkan dulu supaya tidak error 500
+    ];
 
+    $Breadcrumb = array(
+        1 => array("link" => "active", "label" => "Data Pengajuan Alat & Bahan"),
+    );
+
+    return view('pengajuanalat.index', compact('data', 'Breadcrumb'));
+}
     public function create($id){
         $enc = $id;
         $id = Crypt::decryptString($id);

@@ -28,28 +28,64 @@ class C_PengadaanStokin extends Controller
          $this->middleware('permission:stok-in-pengadaan-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:stok-in-pengadaan-delete', ['only' => ['destroy']]);
     }
-    public function index(){
-        $staff_id = Auth::user()->tm_staff_id;
-        $lab_id   = MMemberLab::where([['tm_staff_id',$staff_id],['is_aktif',1]])->get();
-        if(count($lab_id)){
-            $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
+    public function index() {
+    $lab_id = \DB::table('tr_member_laboratorium')
+                ->where([['tm_staff_id', auth()->user()->id], ['is_aktif', 1]])
+                ->get();
+
+    if(count($lab_id) > 0){
+        $tm_lab_id = $lab_id[0]->tm_laboratorium_id;
+
+        // Ambil ID usulan untuk status 5 dan 6
+        $idStatus5 = \App\Models\MUsulanKebutuhan::where([['status', 5], ['tm_laboratorium_id', $tm_lab_id]])->pluck('tr_matakuliah_dosen_id');
+        $idStatus6 = \App\Models\MUsulanKebutuhan::where([['status', 6], ['tm_laboratorium_id', $tm_lab_id]])->pluck('tr_matakuliah_dosen_id');
+
         $data = [
             'title' => "Sistem Informasi Laboratorium",
-            'subtitle' => "Data Deliver Pengajuan Alat Bahan ACC",
+            'subtitle' => "Data Stok In Pengadaan", // Sesuaikan subtitle jika perlu
             'npage' => 87,
-            "Deliver" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where([['status',5],['tm_laboratorium_id',$tm_lab_id]])->get())->get(),
-            "Done" => MvExistMK::wherein('tr_matakuliah_dosen_id',MUsulanKebutuhan::select('tr_matakuliah_dosen_id')->where([['status',6],['tm_laboratorium_id',$tm_lab_id]])->get())->get(),
 
+            // Query Manual untuk menggantikan MvExistMK
+            "Deliver" => \Illuminate\Support\Facades\DB::table('tr_matakuliah_semester_prodi')
+                ->join('tm_matakuliah', 'tr_matakuliah_semester_prodi.tm_matakuliah_id', '=', 'tm_matakuliah.id')
+                ->join('tm_program_studi', 'tr_matakuliah_semester_prodi.tm_program_studi_id', '=', 'tm_program_studi.id')
+                ->join('tr_matakuliah_dosen', 'tr_matakuliah_semester_prodi.id', '=', 'tr_matakuliah_dosen.tr_matakuliah_semester_prodi_id')
+                ->join('tm_staff', 'tr_matakuliah_dosen.tm_staff_id', '=', 'tm_staff.id')
+                ->whereIn('tr_matakuliah_dosen.id', $idStatus5)
+                ->select(
+                    'tr_matakuliah_dosen.id as tr_matakuliah_dosen_id',
+                    'tm_matakuliah.matakuliah',
+                    'tm_matakuliah.kode',
+                    'tm_program_studi.program_studi as nama_prodi',
+                    'tm_staff.nama'
+                )
+                ->get(),
+
+            "Done" => \Illuminate\Support\Facades\DB::table('tr_matakuliah_semester_prodi')
+                ->join('tm_matakuliah', 'tr_matakuliah_semester_prodi.tm_matakuliah_id', '=', 'tm_matakuliah.id')
+                ->join('tm_program_studi', 'tr_matakuliah_semester_prodi.tm_program_studi_id', '=', 'tm_program_studi.id')
+                ->join('tr_matakuliah_dosen', 'tr_matakuliah_semester_prodi.id', '=', 'tr_matakuliah_dosen.tr_matakuliah_semester_prodi_id')
+                ->join('tm_staff', 'tr_matakuliah_dosen.tm_staff_id', '=', 'tm_staff.id')
+                ->whereIn('tr_matakuliah_dosen.id', $idStatus6)
+                ->select(
+                    'tr_matakuliah_dosen.id as tr_matakuliah_dosen_id',
+                    'tm_matakuliah.matakuliah',
+                    'tm_matakuliah.kode',
+                    'tm_program_studi.program_studi as nama_prodi',
+                    'tm_staff.nama'
+                )
+                ->get(),
         ];
 
         $Breadcrumb = array(
             1 => array("link" => "active", "label" => "Data Stok In Pengadaan"),
         );
-        return view('pengadaanstokin.index',compact('data','Breadcrumb','tm_lab_id'));
-        }else{
-            return abort(403, 'Unauthorized action.');
-        }
+
+        return view('pengadaanstokin.index', compact('data', 'Breadcrumb', 'tm_lab_id'));
+    } else {
+        return abort(403, 'Unauthorized action.');
     }
+}
 
     /**
      * Show the form for creating a new resource.
