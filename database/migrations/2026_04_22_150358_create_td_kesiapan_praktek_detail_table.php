@@ -6,26 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('td_kesiapan_praktek_detail', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('tr_barang_laboratorium_id');
-            $table->integer('tr_kesiapan_praktek_id');
-            $table->integer('jumlah')->default(0);
-            $table->string('keterangan');
-            $table->dateTime('created_at')->nullable();
-            $table->dateTime('updated_at')->nullable();
-            $table->string('kode');
+            $table->bigId('id');
+            $table->integer('tr_barang_laboratorium_id')->unsigned();
+            $table->integer('tr_kesiapan_praktek_id')->unsigned();
+            $table->integer('jumlah')->unsigned();
+            $table->string('keterangan')->nullable();
+            $table->timestamps();
+            $table->string('kode')->nullable();
+            $table->integer('tr_kartu_stok_id')->unsigned()->nullable();
+            $table->integer('td_satuan_id')->unsigned();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('td_kesiapan_praktek_detail');

@@ -6,28 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('tr_kartu_stok', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('tr_barang_laboratorium_id');
-            $table->boolean('is_stok_in');
-            $table->integer('qty')->default(0);
-            $table->integer('stok');
-            $table->integer('tr_member_laboratorium_id')->nullable();
-            $table->integer('tr_usulan_kebutuhan_detail_id')->nullable();
-            $table->dateTime('created_at')->nullable();
-            $table->dateTime('updated_at')->nullable();
-            $table->string('kode');
+            $table->integer('id')->unsigned()->autoIncrement();
+            $table->integer('tr_barang_laboratorium_id')->unsigned();
+            $table->tinyInteger('is_stok_in');
+            $table->integer('qty')->unsigned()->default(0);
+            $table->integer('stok')->unsigned();
+            $table->smallInteger('tr_member_laboratorium_id')->unsigned()->nullable();
+            $table->bigInteger('tr_usulan_kebutuhan_detail_id')->unsigned()->nullable();
+            $table->timestamps();
+            $table->string('kode', 32)->nullable();
+            $table->string('keterangan', 255)->nullable();
+            $table->string('keterangan_sys', 255)->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tr_kartu_stok');

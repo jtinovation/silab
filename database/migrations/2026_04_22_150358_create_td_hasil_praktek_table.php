@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('keterangan');
             $table->integer('tr_serma_hasil_sisa_praktek_id')->nullable();
             $table->dateTime('created_at')->nullable();
-            $table->dateTime('updated_at')->nullable();
+          $table->dateTime('updated_at')->nullable();
         });
     }
 

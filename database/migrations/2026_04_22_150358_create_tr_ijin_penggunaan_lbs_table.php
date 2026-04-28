@@ -6,31 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('tr_ijin_penggunaan_lbs', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('kode');
-            $table->boolean('is_pegawai');
-            $table->integer('tm_staff_id')->nullable();
-            $table->string('nama');
-            $table->string('nim');
-            $table->dateTime('start_date');
-            $table->dateTime('end_date');
-            $table->integer('tm_staff_id_pembimbing')->nullable();
-            $table->integer('tm_program_studi_id')->nullable();
-            $table->integer('tr_member_laboratorium_id')->nullable();
-            $table->dateTime('created_at')->nullable();
-            $table->dateTime('updated_at')->nullable();
+            $table->integer('id')->unsigned()->autoIncrement();
+            $table->string('kode', 32)->nullable();
+            $table->tinyInteger('is_pegawai')->nullable();
+            $table->integer('tm_staff_id')->unsigned()->nullable();
+            $table->string('nama', 255)->nullable();
+            $table->string('nim', 255)->nullable();
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->integer('tm_staff_id_pembimbing')->unsigned()->nullable();
+            $table->smallInteger('tm_program_studi_id')->unsigned()->nullable();
+            $table->smallInteger('tr_member_laboratorium_id')->unsigned()->nullable();
+            $table->timestamps();
+            $table->tinyInteger('status')->nullable();
+            $table->smallInteger('tm_laboratorium_id')->unsigned()->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tr_ijin_penggunaan_lbs');

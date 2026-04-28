@@ -6,25 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('tm_minggu', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('minggu_ke');
+            $table->smallInteger('id')->unsigned()->autoIncrement();
+            $table->tinyInteger('minggu_ke')->unsigned();
             $table->date('start_date');
             $table->date('end_date');
-            $table->integer('tm_tahun_ajaran_id')->nullable();
-            $table->dateTime('created_at')->nullable();
-            $table->dateTime('updated_at')->nullable();
+            $table->tinyInteger('tm_tahun_ajaran_id')->unsigned();
+            $table->timestamps();
+            $table->string('keterangan')->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tm_minggu');

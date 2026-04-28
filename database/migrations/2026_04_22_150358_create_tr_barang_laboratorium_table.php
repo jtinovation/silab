@@ -6,26 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('tr_barang_laboratorium', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('stok');
-            $table->integer('tm_laboratorium_id');
-            $table->integer('tm_barang_id');
-            $table->boolean('is_aktif')->default(true);
-            $table->dateTime('created_at')->nullable();
-            $table->dateTime('updated_at')->nullable();
-            $table->string('kode');
+            $table->integer('id')->unsigned()->autoIncrement();
+            $table->integer('stok')->unsigned();
+            $table->smallInteger('tm_laboratorium_id')->unsigned();
+            $table->integer('tm_barang_id')->unsigned();
+            $table->tinyInteger('is_aktif')->unsigned()->nullable();
+            $table->timestamps();
+            $table->string('kode')->nullable();
+            $table->string('keterangan')->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tr_barang_laboratorium');

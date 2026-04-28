@@ -6,25 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('tr_kesiapan_praktek', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('tr_matakuliah_dosen_id');
-            $table->integer('tm_staff_id');
-            $table->integer('rekomendasi');
-            $table->dateTime('created_at')->nullable();
-            $table->dateTime('updated_at')->nullable();
-            $table->string('kode');
+            $table->integer('id')->unsigned()->autoIncrement();
+            $table->string('kode', 32);
+            $table->integer('tr_matakuliah_kurikulum_id')->unsigned()->nullable();
+            $table->integer('tr_matakuliah_dosen_id')->unsigned()->nullable();
+            $table->integer('tm_staff_id')->unsigned()->nullable();
+            $table->tinyInteger('rekomendasi')->unsigned()->nullable();
+            $table->smallInteger('tr_member_laboratorium_id')->unsigned()->nullable();
+            $table->smallInteger('tm_minggu_id')->unsigned()->nullable();
+            $table->date('tanggal')->nullable();
+            $table->timestamps();
+            $table->smallInteger('tm_laboratorium_id')->unsigned()->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tr_kesiapan_praktek');

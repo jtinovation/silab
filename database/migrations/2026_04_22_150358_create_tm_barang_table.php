@@ -6,27 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('tm_barang', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('nama_barang');
-            $table->string('spesifikasi');
-            $table->string('keterangan');
-            $table->integer('user_id')->nullable();
-            $table->integer('tm_satuan_id')->nullable();
-            $table->integer('tm_jenis_barang_id')->nullable();
-            $table->dateTime('created_at')->nullable();
-            $table->dateTime('updated_at')->nullable();
+            $table->integer('id')->unsigned()->autoIncrement();
+            $table->string('nama_barang')->nullable();
+            $table->string('spesifikasi')->nullable();
+            $table->string('keterangan')->nullable();
+            $table->bigInteger('user_id')->unsigned()->nullable();
+            $table->smallInteger('tm_satuan_id')->unsigned()->nullable();
+            $table->tinyInteger('tm_jenis_barang_id')->unsigned()->nullable();
+            $table->timestamps();
+            $table->integer('qty')->unsigned()->nullable();
+            $table->string('kode_barang')->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tm_barang');
