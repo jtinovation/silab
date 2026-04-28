@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('td_ijin_penggunaan_lbs_detail', function (Blueprint $table) {
-            $table->bigId('id');
+            $table->id();
             $table->string('kode', 32)->nullable();
             $table->integer('jumlah')->unsigned();
             $table->integer('tr_ijin_penggunaan_lbs_id')->unsigned();
