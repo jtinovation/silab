@@ -12,22 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('roles', function (Blueprint $table) {
-            // `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
+            // #1 - id: BIGINT(20), UNSIGNED, AUTO_INCREMENT
             $table->id();
 
-            // `name` VARCHAR(191) NOT NULL
+            // #2 - name: VARCHAR(191), NOT NULL
             $table->string('name', 191);
 
-            // `guard_name` VARCHAR(191) NOT NULL
+            // #3 - guard_name: VARCHAR(191), NOT NULL
             $table->string('guard_name', 191);
 
-            // `created_at` & `updated_at` TIMESTAMP NULL DEFAULT NULL
+            // #4 & #5 - created_at & updated_at: TIMESTAMP, Allow Null
             $table->timestamps();
 
-            // UNIQUE INDEX `roles_name_guard_name_unique` (`name`, `guard_name`)
+            // UNIQUE INDEX roles_name_guard_name_unique sesuai ikon kunci merah
             $table->unique(['name', 'guard_name'], 'roles_name_guard_name_unique');
             
-            // Engine InnoDB
+            // Memastikan engine menggunakan InnoDB untuk mendukung integritas data
             $table->engine = 'InnoDB';
         });
     }

@@ -12,27 +12,29 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('role_has_permissions', function (Blueprint $table) {
-            // Kolom ID Referensi
+            // #1 - permission_id: BIGINT(20), UNSIGNED, NOT NULL (FK)
             $table->unsignedBigInteger('permission_id');
+
+            // #2 - role_id: BIGINT(20), UNSIGNED, NOT NULL (FK)
             $table->unsignedBigInteger('role_id');
 
-            // Menetapkan Composite Primary Key
+            // Menetapkan Composite Primary Key sesuai ikon kunci kuning di gambar
             $table->primary(['permission_id', 'role_id'], 'role_has_permissions_permission_primary');
 
-            // Foreign Key ke tabel permissions
+            // --- Definisi Foreign Key ---
+            // Berdasarkan ikon kunci biru yang menunjukkan relasi
+
             $table->foreign('permission_id')
                 ->references('id')
                 ->on('permissions')
                 ->onDelete('cascade');
 
-            // Foreign Key ke tabel roles
             $table->foreign('role_id')
                 ->references('id')
                 ->on('roles')
                 ->onDelete('cascade');
 
-            // Catatan: Index untuk role_id otomatis terbuat melalui foreign key di beberapa database,
-            // namun kita pastikan engine menggunakan InnoDB sesuai permintaan.
+            // Menggunakan Engine InnoDB untuk mendukung Foreign Key
             $table->engine = 'InnoDB';
         });
     }

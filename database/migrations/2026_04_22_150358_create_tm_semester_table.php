@@ -12,14 +12,32 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tm_semester', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('tahun_ajaran');
-            $table->integer('semester');
-            $table->boolean('is_genap');
-            $table->integer('user_id')->nullable();
-            $table->dateTime('created_at')->nullable();
-            $table->dateTime('updated_at')->nullable();
-            $table->integer('tm_tahun_ajaran_id')->nullable();
+            // #1 - id: SMALLINT(5), UNSIGNED, AUTO_INCREMENT
+            $table->smallIncrements('id');
+
+            // #2 - semester: TINYINT(3), UNSIGNED, NOT NULL
+            $table->unsignedTinyInteger('semester');
+
+            // #3 - is_genap: TINYINT(1), NOT NULL
+            $table->tinyInteger('is_genap');
+
+            // #4 - user_id: BIGINT(20), UNSIGNED, Allow Null (FK)
+            $table->unsignedBigInteger('user_id')->nullable();
+
+            // #5 & #6 - created_at & updated_at: TIMESTAMP, Allow Null
+            $table->timestamps();
+
+            // #7 - tm_tahun_ajaran_id: TINYINT(3), UNSIGNED, Allow Null (FK)
+            $table->unsignedTinyInteger('tm_tahun_ajaran_id')->nullable();
+
+            // --- Definisi Foreign Key sesuai simbol relasi di gambar ---
+            $table->foreign('user_id', 'fk_tm_semester_user')
+                  ->references('id')->on('users')
+                  ->onUpdate('cascade')->onDelete('set null');
+
+            $table->foreign('tm_tahun_ajaran_id', 'fk_tm_semester_tahun_ajaran')
+                  ->references('id')->on('tm_tahun_ajaran')
+                  ->onUpdate('cascade')->onDelete('set null');
         });
     }
 

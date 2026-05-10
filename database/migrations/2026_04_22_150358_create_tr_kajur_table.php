@@ -12,12 +12,27 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tr_kajur', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('tm_jurusan_id');
-            $table->integer('tm_staff_id');
-            $table->boolean('is_aktif')->default(true);
-            $table->dateTime('created_at')->nullable();
-            $table->dateTime('updated_at')->nullable();
+            // #1 - id: SMALLINT(5), UNSIGNED, AUTO_INCREMENT
+            $table->smallIncrements('id');
+
+            // #2 - tm_jurusan_id: TINYINT(3), UNSIGNED, NOT NULL (FK)
+            $table->unsignedTinyInteger('tm_jurusan_id');
+
+            // #3 - tm_staff_id: INT(10), UNSIGNED, NOT NULL (FK)
+            $table->unsignedInteger('tm_staff_id');
+
+            // #4 - is_aktif: TINYINT(1), Default '1'
+            $table->tinyInteger('is_aktif')->default(1);
+
+            // #5 & #6 - created_at & updated_at: TIMESTAMP, Allow Null
+            $table->timestamps();
+
+            // --- Definisi Foreign Key sesuai ikon kunci hijau di gambar ---
+            $table->foreign('tm_jurusan_id')->references('id')->on('tm_jurusan')
+                  ->onUpdate('cascade')->onDelete('restrict');
+            
+            $table->foreign('tm_staff_id')->references('id')->on('tm_staff')
+                  ->onUpdate('cascade')->onDelete('restrict');
         });
     }
 

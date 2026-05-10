@@ -12,19 +12,38 @@ class CreatePersonalAccessTokensTable extends Migration
      * @return void
      */
     public function up()
-{
-    Schema::create('personal_access_tokens', function (Blueprint $table) {
-        $table->id();
-        $table->string('tokenable_type', 191);
-        $table->unsignedBigInteger('tokenable_id');
-        $table->index(['tokenable_type', 'tokenable_id']); 
-        $table->string('name', 191); 
-        $table->string('token', 64)->unique();
-        $table->text('abilities')->nullable();
-        $table->timestamp('last_used_at')->nullable();
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('personal_access_tokens', function (Blueprint $table) {
+            // id: BIGINT(20), Unsigned, Auto Increment (Kunci Kuning)
+            $table->id();
+
+            /** * tokenable_type & tokenable_id (Kunci Hijau)
+             * Menggunakan morphs untuk menangani relasi ke berbagai model.
+             * Panjang string diset 191 sesuai gambar.
+             */
+            $table->string('tokenable_type', 191);
+            $table->unsignedBigInteger('tokenable_id');
+            $table->index(['tokenable_type', 'tokenable_id']); 
+
+            // name: VARCHAR(191)
+            $table->string('name', 191); 
+
+            // token: VARCHAR(64), Unique (Kunci Merah)
+            $table->string('token', 64)->unique();
+
+            // abilities: TEXT, Allow Null
+            $table->text('abilities')->nullable();
+
+            // last_used_at: TIMESTAMP, Allow Null
+            $table->timestamp('last_used_at')->nullable();
+
+            /** * timestamps() menghasilkan:
+             * created_at: TIMESTAMP, Allow Null
+             * updated_at: TIMESTAMP, Allow Null
+             */
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

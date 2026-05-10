@@ -12,13 +12,29 @@ class CreatePasswordResetsTable extends Migration
      * @return void
      */
     public function up()
-{
-    Schema::create('password_resets', function (Blueprint $table) {
-        $table->string('email', 191)->primary();
-        $table->string('token', 191);
-        $table->timestamp('created_at')->nullable();
-    });
-}
+    {
+        Schema::create('password_resets', function (Blueprint $table) {
+            // Kolom email sebagai primary key dengan panjang 191
+            $table->string('email', 191)->primary();
+            
+            // Kolom token dengan panjang 191
+            $table->string('token', 191);
+            
+            // Kolom created_at yang boleh bernilai NULL (Allow Null)
+            $table->timestamp('created_at')->nullable();
+
+            /**
+             * Relasi Foreign Key:
+             * Menghubungkan email di tabel ini ke kolom email di tabel users.
+             * cascadeOnDelete: Jika user dihapus, data reset password-nya ikut terhapus.
+             */
+            $table->foreign('email')
+                  ->references('email')
+                  ->on('users')
+                  ->cascadeOnDelete()
+                  ->cascadeOnUpdate();
+        });
+    }
 
     /**
      * Reverse the migrations.
