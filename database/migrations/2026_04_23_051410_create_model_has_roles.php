@@ -12,26 +12,27 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('model_has_roles', function (Blueprint $table) {
-            // Kolom Role ID (Foreign Key)
+            // #1 - role_id: BIGINT(20), UNSIGNED, NOT NULL
             $table->unsignedBigInteger('role_id');
-            
-            // Kolom Morph (model_type dan model_id)
+
+            // #2 - model_type: VARCHAR(191), NOT NULL
             $table->string('model_type', 191);
+
+            // #3 - model_id: BIGINT(20), UNSIGNED, NOT NULL
             $table->unsignedBigInteger('model_id');
 
-            // Menambahkan Index sesuai permintaan SQL
+            // Menambahkan Index untuk performa query polimorfik
             $table->index(['model_id', 'model_type'], 'model_has_roles_model_id_model_type_index');
 
-            // Membuat Composite Primary Key
+            // Menetapkan Composite Primary Key (ditandai ikon kunci kuning pada ketiga kolom)
             $table->primary(['role_id', 'model_id', 'model_type'], 'model_has_roles_role_primary');
 
-            // Foreign Key Constraint ke tabel roles
+            // Foreign Key ke tabel roles (ditandai ikon kunci biru pada role_id)
             $table->foreign('role_id')
                 ->references('id')
                 ->on('roles')
                 ->onDelete('cascade');
-            
-            // Opsional: Pengaturan Engine
+
             $table->engine = 'InnoDB';
         });
     }

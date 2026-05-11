@@ -23,6 +23,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
             $table->unsignedTinyInteger('is_aktif');
+            $table->unsignedInteger('tm_staff_id')->nullable();
         });
     }
 

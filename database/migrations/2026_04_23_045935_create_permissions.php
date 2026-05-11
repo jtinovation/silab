@@ -12,20 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('permissions', function (Blueprint $table) {
-            // `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
+            // #1 - id: BIGINT(20), UNSIGNED, AUTO_INCREMENT
             $table->id(); 
 
-            // `name` VARCHAR(191) NOT NULL
-            $table->string('name', 191);
+            // #2 - name: VARCHAR(125), NOT NULL
+            // Catatan: Gambar menunjukkan Length/Set 125
+            $table->string('name', 125);
 
-            // `guard_name` VARCHAR(191) NOT NULL
-            $table->string('guard_name', 191);
+            // #3 - guard_name: VARCHAR(125), NOT NULL
+            // Catatan: Gambar menunjukkan Length/Set 125
+            $table->string('guard_name', 125);
 
-            // `created_at` & `updated_at` TIMESTAMP NULL DEFAULT NULL
+            // #4 & #5 - created_at & updated_at: TIMESTAMP, Allow Null
             $table->timestamps();
 
-            // UNIQUE INDEX `permissions_name_guard_name_unique`
-            $table->unique(['name', 'guard_name'], 'permissions_name_guard_name_unique');
+            // Menambahkan Unique Index sesuai dengan tab 'Indexes' di HeidiSQL
+            // Biasanya dinamai 'permissions_name_guard_name_unique'
+            $table->unique(['name', 'guard_name']);
         });
     }
 

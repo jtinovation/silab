@@ -14,12 +14,21 @@ class CreateFailedJobsTable extends Migration
     public function up()
     {
         Schema::create('failed_jobs', function (Blueprint $table) {
+            // id: BIGINT(20), Unsigned, Auto Increment, Primary Key
             $table->id();
+
+            // uuid: VARCHAR(191), Unique (Kunci merah di gambar)
             $table->string('uuid', 191)->unique();
+
+            // connection & queue: TEXT
             $table->text('connection');
             $table->text('queue');
+
+            // payload & exception: LONGTEXT
             $table->longText('payload');
             $table->longText('exception');
+
+            // failed_at: TIMESTAMP, Default CURRENT_TIMESTAMP
             $table->timestamp('failed_at')->useCurrent();
         });
     }

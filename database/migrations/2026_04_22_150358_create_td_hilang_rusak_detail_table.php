@@ -12,29 +12,39 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('td_hilang_rusak_detail', function (Blueprint $table) {
-            // #1 - id: BIGINT(20), UNSIGNED, NOT NULL, AUTO_INCREMENT, PRIMARY KEY
+            // #1 - id: BIGINT(20), UNSIGNED, AUTO_INCREMENT (Kunci Kuning)
             $table->id();
 
-            // #2 - kode: VARCHAR(32), Allow Null, Default NULL
-            $table->string('kode', 32)->nullable()->collation('utf8mb4_unicode_ci');
+            // #2 - kode: VARCHAR(32), Allow Null
+            $table->string('kode', 32)->nullable();
 
-            // #3 - tr_barang_lab_id: INT(10), UNSIGNED, NOT NULL, No default (FK)
+            // #3 - tr_barang_lab_id: INT(10), UNSIGNED (Kunci Hijau + Relasi)
             $table->unsignedInteger('tr_barang_lab_id');
 
-            // #4 - tr_hilang_rusak_id: INT(10), UNSIGNED, NOT NULL, No default (FK)
+            // #4 - tr_hilang_rusak_id: INT(10), UNSIGNED (Kunci Hijau + Relasi)
             $table->unsignedInteger('tr_hilang_rusak_id');
 
-            // #5 - created_at: TIMESTAMP, Allow Null, Default NULL
-            $table->timestamp('created_at')->nullable();
-
-            // #6 - jumlah_hilang_rusak: INT(10), UNSIGNED, NOT NULL, No default
+            // #6 - jumlah_hilang_rusak: INT(10), UNSIGNED
             $table->unsignedInteger('jumlah_hilang_rusak');
 
             // #7 - status: TINYINT(3), UNSIGNED, Allow Null, Default '0'
             $table->tinyInteger('status')->unsigned()->nullable()->default(0);
 
-            // #8 - updated_at: TIMESTAMP, Allow Null, Default NULL
-            $table->timestamp('updated_at')->nullable();
+            // #5 & #8 - created_at & updated_at: TIMESTAMP, Allow Null
+            $table->timestamps();
+
+            // Definisi Foreign Key sesuai simbol relasi di gambar
+            $table->foreign('tr_barang_lab_id')
+                  ->references('id')
+                  ->on('tr_barang_laboratorium') // Pastikan nama tabel referensinya sesuai
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
+
+            $table->foreign('tr_hilang_rusak_id')
+                  ->references('id')
+                  ->on('tr_hilang_rusak') // Pastikan nama tabel referensinya sesuai
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
         });
     }
 

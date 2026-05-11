@@ -12,10 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tm_jenis_barang', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('jenis_barang')->nullable();
-            $table->dateTime('created_at')->nullable();
-            $table->dateTime('updated_at')->nullable();
+            // #1 - id: TINYINT(3), UNSIGNED, AUTO_INCREMENT
+            $table->tinyIncrements('id');
+
+            // #2 - jenis_barang: VARCHAR(32), Allow Null
+            $table->string('jenis_barang', 32)->nullable();
+
+            // #3 & #4 - created_at & updated_at: TIMESTAMP, Allow Null
+            $table->timestamps();
         });
     }
 
