@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
-//use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -19,6 +17,10 @@ class User extends Authenticatable
         'password',
         'is_aktif',
         'tm_staff_id',
+        'external_id',
+        'nim_nidn',
+        'photo_url',
+        'user_type',
     ];
 
     protected $hidden = [
@@ -30,7 +32,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function staffData(){
-        return $this->belongsTo(M_Staff::class,'tm_staff_id');//table class,fk
+    public function staffData()
+    {
+        return $this->belongsTo(M_Staff::class, 'tm_staff_id');
     }
 }
