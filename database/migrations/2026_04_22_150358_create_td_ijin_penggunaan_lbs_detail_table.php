@@ -47,7 +47,7 @@ return new class extends Migration
                   ->onUpdate('cascade')->onDelete('cascade');
 
             $table->foreign('tr_barang_lab_id', 'fk_ijin_lbs_detail_barang')
-                  ->references('id')->on('tr_barang_lab')
+                  ->references('id')->on('tr_barang_laboratorium')
                   ->onUpdate('cascade')->onDelete('cascade');
 
             $table->foreign('tr_kartu_stok_id', 'fk_ijin_lbs_detail_stok')

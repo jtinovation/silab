@@ -34,7 +34,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Definisi Foreign Key sesuai simbol relasi di gambar
-            $table->foreign('tr_barang_laboratorium_id')
+            $table->foreign('tr_barang_lab_id')
                   ->references('id')
                   ->on('tr_barang_laboratorium') // Pastikan nama tabel referensinya sesuai
                   ->onUpdate('cascade')

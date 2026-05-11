@@ -36,7 +36,7 @@ return new class extends Migration
             // Penyiapan Foreign Key untuk baris #5 sesuai gambar
             $table->foreign('tr_serma_hasil_id')
                   ->references('id')
-                  ->on('tr_serma_hasil') // Asumsi nama tabel referensinya
+                  ->on('tr_serma_hasil_sisa_praktek') // Asumsi nama tabel referensinya
                   ->onUpdate('cascade')
                   ->onDelete('set null');
         });

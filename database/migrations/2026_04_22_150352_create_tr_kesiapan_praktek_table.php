@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('kode', 32);
 
             // #3 - tr_matakuliah_kurikulum_id: INT(10), UNSIGNED, Allow Null (FK)
-            $table->unsignedInteger('tr_matakuliah_kurikulum_id')->nullable();
+           $table->unsignedInteger('tr_matakuliah_semester_prodi_id')->nullable();
 
             // #4 - tr_matakuliah_dosen_id: INT(10), UNSIGNED, Allow Null (FK)
             $table->unsignedInteger('tr_matakuliah_dosen_id')->nullable();
@@ -47,9 +47,11 @@ return new class extends Migration
 
             // --- Definisi Foreign Key sesuai simbol kunci & relasi di gambar ---
             
-            $table->foreign('tr_matakuliah_kurikulum_id', 'fk_kesiapan_kurikulum')
-                  ->references('id')->on('tr_matakuliah_kurikulum')
-                  ->onUpdate('cascade')->onDelete('set null');
+          $table->foreign('tr_matakuliah_semester_prodi_id', 'fk_kesiapan_kurikulum')
+                  ->references('id')
+                  ->on('tr_matakuliah_semester_prodi') // Tabel ini sudah ada di log migration Anda
+                  ->onUpdate('cascade')
+                  ->onDelete('set null');
 
             $table->foreign('tr_matakuliah_dosen_id', 'fk_kesiapan_dosen')
                   ->references('id')->on('tr_matakuliah_dosen')

@@ -43,7 +43,7 @@ return new class extends Migration
             // --- Definisi Foreign Key sesuai simbol relasi di gambar ---
 
             $table->foreign('tr_barang_lab_id', 'fk_kesiapan_detail_barang')
-                  ->references('id')->on('tr_barang_lab')
+                  ->references('id')->on('tr_barang_laboratorium')
                   ->onUpdate('cascade')->onDelete('cascade');
 
             $table->foreign('tr_kesiapan_praktek_id', 'fk_kesiapan_detail_parent')

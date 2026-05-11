@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tr_usulan_kebutuhan', function (Blueprint $table) {
-            // #1 - id: INT(10), UNSIGNED, AUTO_INCREMENT
-            $table->increments('id');
-
+                    Schema::create('tr_usulan_kebutuhan', function (Blueprint $table) {
+                    // Menghasilkan INT(10) UNSIGNED
+                    $table->bigIncrements('id');
+                    // ... kolom lainnya
             // #2 - kode: VARCHAR(32), Allow Null
             $table->string('kode', 32)->nullable();
 
