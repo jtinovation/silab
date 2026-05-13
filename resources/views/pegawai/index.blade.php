@@ -31,73 +31,70 @@
                         <a href="{{ route('staff.create') }}" class="btn btn-primary waves-effect waves-light"> Tambah Data Pegawai </a>
                     </div>
                 @endcan
-            </div><!-- end card header -->
+            </div>
 
             <div class="card-body">
-                {{-- <p class="text-muted mb-4">Use <code>table-card</code> class to show card-based table within a &lt;tbody&gt;.</p>
- --}}
                 <div class="live-preview">
                     <div class="table-responsive">
-                        <table id="tableUser" class="table align-middle table-nowrap mb-0">
+                        <table id="tableUser" class="table align-middle table-bordered mb-0" style="width:100%">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Nomor</th>
-                                    <th>Nama</th>
-                                    <th>Email</th>
-                                    <th>Foto</th>
-                                    <th>Action</th>
+                                    <th style="width:5%">Nomor</th>
+                                    <th style="width:20%">Nama</th>
+                                    <th style="width:25%">Email</th>
+                                    <th style="width:15%">Posisi</th>
+                                    <th style="width:15%">Status</th>
+                                    <th style="width:20%">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>
-            </div><!-- end card-body -->
-        </div><!-- end card -->
-    </div><!-- end col -->
-</div><!-- end row -->
-
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="{{ asset('assets/libs/datatables-bs4/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('assets/libs/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
 <script src="{{ asset('assets/libs/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-<!-- Sweet alert -->
 <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
 
 <script type="text/javascript">
     $('#tableUser').DataTable({
-        responsive:true,
+        responsive: true,
         processing: true,
         serverSide: true,
-        ajax: "{{route('getStaff')}}",
+        autoWidth: false,
+        ajax: "{{ route('getStaff') }}",
         columns: [
-            { data: 'id' },
-            { data: 'nama' },
-            { data: 'email' },
-            { data: 'foto'  },
-            { data: 'action' },
+            { data: 'id',     width: '5%' },
+            { data: 'nama',   width: '20%' },
+            { data: 'email',  width: '25%' },
+            { data: 'posisi', width: '15%' },
+            { data: 'status', width: '15%' },
+            { data: 'action', width: '20%', orderable: false },
         ]
     });
 
-    $("body").on("click",".btnEditClass",function(){
+    $("body").on("click", ".btnEditClass", function(){
         event.preventDefault();
-        let pageEdit =$(this).attr("data-href"); console.log(pageEdit);
-        $('.tableElement').hide("slide",{direction:'left'},1000, function(){
+        let pageEdit = $(this).attr("data-href");
+        $('.tableElement').hide("slide", {direction:'left'}, 1000, function(){
             window.location.href = pageEdit;
         });
     });
 
     $(function(){
-        $("body").on("click",".delete",function(){
+        $("body").on("click", ".delete", function(){
             event.preventDefault();
-            var id=$(this).attr("data-id");
+            var id = $(this).attr("data-id");
             var currentRow = $(this).closest("tr");
-            let staff   =currentRow.find("td:eq(1)").text(); // get current row 2nd TD
+            let staff = currentRow.find("td:eq(1)").text();
             swal.fire({
                 title: 'Are you sure?',
-                text: "Anda Akan Menghapus Pegawai "+staff,
+                text: "Anda Akan Menghapus Pegawai " + staff,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonClass: 'btn btn-success',
@@ -105,11 +102,10 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then(function (result) {
                 if (result.value) {
-                    var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
                     $.ajax({
                         type: "POST",
-                        url: "{{url('staffDelete')}}",
-                        data: {id:id, _token: "{{ csrf_token() }}"},
+                        url: "{{ url('staffDelete') }}",
+                        data: { id: id, _token: "{{ csrf_token() }}" },
                         dataType: "html",
                         success: function (data) {
                             swal.fire({
@@ -125,20 +121,19 @@
                         }
                     });
                 }
-            })
+            });
         });
     });
 
     $(function(){
         setTimeout(function(){
-            $(".alert-dismissable").hide('blind', {}, 500)
-        },3000);
+            $(".alert-dismissable").hide('blind', {}, 500);
+        }, 3000);
     });
 
-    $("body").on("click",".import",function(){
+    $("body").on("click", ".import", function(){
         event.preventDefault();
         $('#ultraModal-1').modal('show');
     });
-
 </script>
 @endsection
