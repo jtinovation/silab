@@ -12,10 +12,10 @@ class MKajur extends Model
     protected $guarded = ['id'];
 
     public function JurusanData(){
-        return $this->belongsTo(MLab::class,'tm_jurusan_id');//table class,fk
+        return $this->belongsTo(MJurusan::class,'tm_jurusan_id'); //table class,fk
     }
 
     public function StaffData(){
-        return $this->belongsTo(M_Staff::class,'tm_staff_id');//table class,fk
+        return $this->belongsTo(M_Staff::class,'tm_staff_id'); //table class,fk
     }
 }
