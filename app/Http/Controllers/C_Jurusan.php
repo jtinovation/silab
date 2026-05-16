@@ -177,23 +177,23 @@ class C_Jurusan extends Controller
             $idEncrypt = Crypt::encryptString($record['id'] ?? '');
             $button = "";
             if (Gate::check('jurusan-edit')) {
-                $button = $button . "<a href='#' data-href='" . route('jurusan.edit', $record['id'] ?? '') . "' data-update='" . route('jurusan.update', $record['id'] ?? '') . "' data-kode='" . ($record['kode'] ?? '') . "' data-jurusan='" . ($record['jurusan'] ?? '') . "' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
+                $button = $button . "<a href='#' data-href='" . route('jurusan.edit', $record['id'] ?? '') . "' data-update='" . route('jurusan.update', $record['id'] ?? '') . "' data-kode='" . ($record['code'] ?? '') . "' data-jurusan='" . ($record['name'] ?? '') . "' class='btn btn-info btn-outline btn-circle btn-md m-r-5 btnEditClass'>
                 <i class='ri-edit-2-line'></i></a>";
             }
             if (Gate::check('jurusan-delete')) {
                 $button = $button . " <a href='#' class='btn btn-danger btn-outline btn-circle btn-md m-r-5 delete' data-id='" . $idEncrypt . "' >
                 <i class='ri-delete-bin-2-line'></i></a>";
             }
-            $button = $button . " <a href='#'  class='btn btn-primary btn-outline btn-circle btn-md m-r-5 btnDetailClass' data-kode='" . ($record['kode'] ?? '') . "' data-jurusan='" . ($record['jurusan'] ?? '') . "' data-val='" . ($record['id'] ?? '') . "'>
+            $button = $button . " <a href='#' class='btn btn-primary btn-outline btn-circle btn-md m-r-5 btnDetailClass' data-kode='" . ($record['code'] ?? '') . "' data-jurusan='" . ($record['name'] ?? '') . "' data-val='" . ($record['id'] ?? '') . "'>
             <i class='ri-file-list-line'></i></a>";
 
-            $data_arr[] = array(
-                "id"      => $number,
-                "kode"    => $record['kode'] ?? '-',
-                "jurusan" => $record['jurusan'] ?? '-',
-                "kajur"   => $record['kajur'] ?? '',
-                "action"  => $button,
-            );
+                $data_arr[] = array(
+            "id"      => $number,
+            "kode"    => $record['code'] ?? '-',   // code bukan kode
+            "jurusan" => $record['name'] ?? '-',   // name bukan jurusan
+            "kajur"   => $record['head']['name'] ?? '-', // head.name untuk kajur
+            "action"  => $button,
+        );
         }
 
         $response = array(

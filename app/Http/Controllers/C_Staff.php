@@ -33,7 +33,7 @@ class C_Staff extends Controller
 
     public function getStaff(Request $request)
     {
-       $draw        = $request->get('draw');
+    $draw        = $request->get('draw');
     $start       = (int) $request->get('start', 0);
     $length      = (int) $request->get('length', 10);
     $searchValue = $request->get('search')['value'] ?? '';
@@ -67,15 +67,15 @@ class C_Staff extends Controller
             $foto = "<img src='" . asset('img/system/anonymous.jpg') . "' class='img-rounded' width='50' height='50'>";
 
                     $data_arr[] = [
-            'id'     => $number,
-            'nama'   => $employee['name'] ?: '-',
-            'email'  => $employee['email'] ?: '-',
-            'posisi' => $employee['position'] ?? '-',
-            'status' => $employee['status'] ?: 'Tidak Aktif',
-            'foto'   => $foto,
-            'action' => $button,
-        ];
-        }
+                    'id'     => $number,
+                    'nama'   => $employee['name'] ?: '-',
+                    'email'  => $employee['email'] ?: '-',
+                    'posisi' => $employee['position'] ?? '-',
+                    'status' => $employee['status'] ?: 'Tidak Aktif',
+                    'foto'   => $foto,
+                    'action' => $button,
+                ];
+                }
 
         return response()->json([
             'draw'                => intval($draw),

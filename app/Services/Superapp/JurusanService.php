@@ -23,11 +23,11 @@ class JurusanService
         ]);
 
         $response = SuperappService::requestWithToken(
-            url: '/jurusan',
-            token: $token,
-            method: 'GET',
-            queryParams: $queryParams,
-        );
+        url: '/majors', 
+        token: $token,
+        method: 'GET',
+        queryParams: $queryParams,
+    );
 
         if ($response->failed()) {
             return null;

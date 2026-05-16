@@ -16,10 +16,9 @@ class EmployeeService
 
    public function getAll(int $page = 1, int $perPage = 10, ?string $search = null, ?string $position = null): array
 {
-    $user  = Auth::user(); // ambil fresh di sini
+    $user  = Auth::user(); 
     $token = Cache::get('user_token_' . $user?->id);
     
-    // dd($token, $user?->id); // hapus dd ini sekarang
 
     $queryParams = array_filter([
         'page'     => $page,
